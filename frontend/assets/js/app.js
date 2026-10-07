@@ -1,0 +1,50 @@
+window.App = (() => {
+    const $ = id => document.getElementById(id);
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const labels = {MASTER_ADMIN:'Administrador mestre',ADMIN:'Administrador',SUPORTE:'Técnico de TI',USUARIO:'Usuário',ABERTO:'Aberto',EM_ATENDIMENTO:'Em atendimento',AGUARDANDO_USUARIO:'Aguardando usuário',FINALIZADO:'Finalizado',CANCELADO:'Cancelado',BAIXA:'Baixa',MEDIA:'Média',ALTA:'Alta',CRITICA:'Crítica'};
+    const statusClass = {ABERTO:'open',EM_ATENDIMENTO:'progress',AGUARDANDO_USUARIO:'waiting',FINALIZADO:'finished',CANCELADO:'cancelled'};
+    const priorityClass = {BAIXA:'low',MEDIA:'medium',ALTA:'high',CRITICA:'critical'};
+    function error(e) { let box=$('apiError'); if(!box){box=document.createElement('div');box.id='apiError';box.className='alert alert-danger m-3';box.setAttribute('role','alert');(document.querySelector('main')||document.body).prepend(box);}box.textContent=e.message||String(e);box.hidden=false; }
+    function clearError(){if($('apiError'))$('apiError').hidden=true;}
+    async function run(fn){clearError();try{return await fn();}catch(e){error(e);}}
+    function start(fn){const go=()=>run(async()=>{const user=await Auth.ready;if(user)await fn(user);});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();}
+    function text(id,value){if($(id))$(id).textContent=value??'';}
+    function date(value){return value?new Date(value).toLocaleString('pt-BR'):'—';}
+    function duration(s){s=Math.max(0,Math.floor(s||0));return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor(s/60)%60<10?'0':''}${Math.floor(s/60)%60}:${(s%60).toString().padStart(2,'0')}`;}
+    function options(id,items,valueKey,labelKey,placeholder='Selecione'){const select=$(id);if(!select)return;select.replaceChildren(new Option(placeholder,''),...items.map(v=>new Option(v[labelKey],v[valueKey])));}
+    function saveFile(blob,name){const link=document.createElement('a');const url=URL.createObjectURL(blob);link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+    function exportRows(rows,type='csv'){
+        const fields=['protocolo','titulo','solicitante','filial_nome','cidade','bloco','sala','tecnico','prioridade','status','abertura','atendimento','finalizacao'];
+        const names=['Protocolo','Título','Solicitante','Filial','Cidade','Bloco','Sala','Técnico','Prioridade','Status','Abertura','Atendimento','Finalização'];
+        if(type.toLowerCase()==='pdf'){const w=window.open('','_blank');if(!w)throw Error('Permita a janela de impressão.');w.document.write('<!doctype html><html lang="pt-BR"><title>Chamados</title><link rel="stylesheet" href="'+new URL('../assets/css/impressao.css',location.href).href+'"><body><h1>Chamados</h1><table><thead><tr>'+names.map(n=>'<th>'+esc(n)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+fields.map(k=>'<td>'+esc(r[k])+'</td>').join('')+'</tr>').join('')+'</tbody></table></body></html>');w.document.close();w.onload=()=>w.print();return;}
+        // CSV UTF-8 é compatível com Excel; neutraliza fórmulas em valores fornecidos pelo usuário.
+        const cell=v=>'"'+String(v??'').replace(/^[=+@\-\t\r]/,m=>"'"+m).replace(/"/g,'""')+'"';
+        const csv=[names,...rows.map(r=>fields.map(k=>r[k]))].map(row=>row.map(cell).join(';')).join('\r\n');saveFile(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),'chamados.csv');
+    }
+    function initials(name){return name.split(/\s+/).filter(Boolean).map(n=>n[0]).slice(0,2).join('').toUpperCase();}
+    start(async user=>{
+        document.querySelectorAll('.user-avatar').forEach(e=>e.textContent=initials(user.nome));
+        document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
+        document.querySelectorAll('.topbar .user-role,.topbar .text-muted,.user-menu-info small,.sidebar-user .user-info small').forEach(e=>e.textContent=labels[user.perfil]);
+        document.querySelectorAll('.sidebar a').forEach(a=>{if(['usuarios.html','filiais.html','qr-codes.html'].includes(a.getAttribute('href')))a.hidden=!Auth.admin();});
+        const ns=await API.get('/notificacoes');const count=ns.filter(n=>!n.lida).length;
+        document.querySelectorAll('.notification-count,.notification-badge,.menu-item[href="notificacoes.html"] .menu-badge').forEach(e=>e.textContent=count);
+        document.querySelectorAll('.notification-dot').forEach(e=>e.hidden=!count);
+    });
+    document.addEventListener('DOMContentLoaded',()=>{
+        document.querySelectorAll('.password-toggle').forEach(button=>button.addEventListener('click',()=>{const input=button.parentElement.querySelector('input');if(!input)return;input.type=input.type==='password'?'text':'password';button.innerHTML='<i class="bi bi-eye'+(input.type==='text'?'-slash':'')+'"></i>';button.setAttribute('aria-label',input.type==='text'?'Ocultar senha':'Mostrar senha');}));
+        document.querySelectorAll('.mobile-menu-button').forEach(button=>button.addEventListener('click',toggleSidebar));
+        document.querySelectorAll('.notification-button').forEach(button=>button.addEventListener('click',()=>location.href='notificacoes.html'));
+        document.querySelectorAll('.user-profile').forEach(button=>{button.tabIndex=0;button.setAttribute('role','link');button.addEventListener('click',()=>location.href='perfil.html');button.addEventListener('keydown',e=>{if(e.key==='Enter')location.href='perfil.html';});});
+    });
+    return {$,esc,labels,statusClass,priorityClass,error,clearError,run,start,text,date,duration,options,saveFile,exportRows,initials};
+})();
+function toggleSidebar(){document.querySelector('.sidebar')?.classList.toggle('show');document.querySelector('.sidebar-overlay')?.classList.toggle('show');}
+function logout(){if(confirm('Deseja sair do sistema?'))return App.run(()=>Auth.logout());}
+
+document.addEventListener('DOMContentLoaded',()=>{
+ if(!document.querySelector('.sidebar'))return;
+ if(!document.querySelector('.mobile-menu-button,.menu-toggle')){const b=document.createElement('button');b.type='button';b.className='menu-toggle hd-menu-button';b.setAttribute('aria-label','Abrir menu');b.innerHTML='<i class="bi bi-list"></i>';b.addEventListener('click',toggleSidebar);document.querySelector('.topbar > div')?.prepend(b);}
+ if(!document.querySelector('.sidebar-overlay')){const overlay=document.createElement('div');overlay.className='sidebar-overlay';overlay.addEventListener('click',toggleSidebar);document.body.append(overlay);}
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'){document.querySelector('.sidebar').classList.remove('show');document.querySelector('.sidebar-overlay').classList.remove('show');}});
+});
