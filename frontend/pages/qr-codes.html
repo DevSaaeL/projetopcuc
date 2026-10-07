@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" data-page="qr-codes">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Codes | HelpDesk TI</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="../assets/css/qr-codes.css">
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+            <i class="bi bi-headset"></i>
+        </div>
+        <span class="fw-bold">HelpDesk TI</span>
+    </div>
+
+    <nav class="sidebar-menu">
+        <div class="menu-title">Principal</div>
+
+        <a href="dashboard.html" class="menu-item">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="chamados.html" class="menu-item">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Chamados</span>
+        </a>
+
+        <a href="novo-chamado.html" class="menu-item">
+            <i class="bi bi-plus-circle"></i>
+            <span>Novo chamado</span>
+        </a>
+
+        <a href="meus-chamados.html" class="menu-item">
+            <i class="bi bi-person-lines-fill"></i>
+            <span>Meus chamados</span>
+        </a>
+
+        <div class="menu-title">Atendimento</div>
+
+        <a href="notificacoes.html" class="menu-item">
+            <i class="bi bi-bell"></i>
+            <span>Notificações</span>
+        </a>
+
+        <div class="menu-title">Administração</div>
+
+        <a href="usuarios.html" class="menu-item">
+            <i class="bi bi-people"></i>
+            <span>Usuários</span>
+        </a>
+
+        <a href="filiais.html" class="menu-item">
+            <i class="bi bi-building"></i>
+            <span>Filiais</span>
+        </a>
+
+        <a href="qr-codes.html" class="menu-item active">
+            <i class="bi bi-qr-code"></i>
+            <span>QR Codes</span>
+        </a>
+
+        <a href="relatorios.html" class="menu-item">
+            <i class="bi bi-bar-chart"></i>
+            <span>Relatórios</span>
+        </a>
+
+        <div class="menu-title">Conta</div>
+
+        <a href="perfil.html" class="menu-item">
+            <i class="bi bi-person-circle"></i>
+            <span>Meu perfil</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div>
+            <h1 class="page-title">QR Codes</h1>
+            <div class="page-subtitle">
+                Gere QR Codes para identificar salas e locais.
+            </div>
+        </div>
+
+        <div class="user-area">
+            <div class="text-end d-none d-sm-block">
+                <div class="fw-semibold">Samuel</div>
+                <div class="hd-inline-0 text-muted">
+                    Administrador
+                </div>
+            </div>
+            <div class="user-avatar">SG</div>
+        </div>
+    </header>
+
+    <section class="page-content">
+        <div class="row g-4">
+            <div class="col-12 col-xl-5">
+                <div class="card-custom">
+                    <div class="card-header-custom">
+                        <h5 class="mb-1 fw-bold">
+                            <i class="bi bi-qr-code me-2"></i>
+                            Gerar QR Code
+                        </h5>
+                        <small class="text-muted">
+                            Vincule o código a uma filial, bloco e sala.
+                        </small>
+                    </div>
+
+                    <div class="card-body-custom">
+                        <form id="qrForm">
+                            <div class="mb-3">
+                                <label for="qrNome" class="form-label fw-semibold">
+                                    Nome
+                                </label>
+                                <input
+                                    type="text"
+                                    id="qrNome"
+                                    class="form-control"
+                                    placeholder="Ex.: Sala 05"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="qrFilial" class="form-label fw-semibold">
+                                    Filial
+                                </label>
+                                <select
+                                    id="qrFilial"
+                                    class="form-select"
+                                    required
+                                >
+                                    <option value="">Selecione uma filial</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="qrBloco" class="form-label fw-semibold">
+                                        Bloco
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="qrBloco"
+                                        class="form-control"
+                                        placeholder="Ex.: A"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="qrSala" class="form-label fw-semibold">
+                                        Sala
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="qrSala"
+                                        class="form-control"
+                                        placeholder="Ex.: 05"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="qrDescricao" class="form-label fw-semibold">
+                                    Descrição
+                                </label>
+                                <input
+                                    type="text"
+                                    id="qrDescricao"
+                                    class="form-control"
+                                    placeholder="Ex.: Laboratório de informática"
+                                >
+                            </div>
+
+                            <button type="submit" class="btn btn-puc w-100">
+                                <i class="bi bi-qr-code me-2"></i>
+                                Gerar QR Code
+                            </button>
+                        </form>
+
+                        <div class="network-info">
+                            <i class="bi bi-globe2 me-1"></i>
+                            <strong>Endereço público da aplicação</strong>
+                            <div class="mt-2">
+                                Os QR Codes serão direcionados para:
+                            </div>
+                            <div id="enderecoPublico" class="mt-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-7">
+                <div class="card-custom">
+                    <div class="card-header-custom">
+                        <h5 class="mb-1 fw-bold">QR Code</h5>
+                        <small class="text-muted">
+                            Código gerado para o local selecionado.
+                        </small>
+                    </div>
+
+                    <div class="card-body-custom">
+                        <div class="qr-display">
+                            <div id="qrEmpty" class="text-center text-muted">
+                                <i
+                                    class="hd-inline-1 bi bi-qr-code"
+                                   
+                                ></i>
+                                <div class="mt-3">
+                                    Nenhum QR Code gerado.
+                                </div>
+                            </div>
+
+                            <div id="qrResult" class="d-none text-center">
+                                <div id="qrcode"></div>
+                                <div id="qrLocal" class="mt-3"></div>
+
+                                <div class="d-flex gap-2 mt-3 justify-content-center flex-wrap">
+                                    <button
+                                        type="button"
+                                        id="btnDownload"
+                                        class="btn btn-puc"
+                                    >
+                                        <i class="bi bi-download me-1"></i>
+                                        Baixar
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        id="btnPrint"
+                                        class="btn btn-outline-puc"
+                                    >
+                                        <i class="bi bi-printer me-1"></i>
+                                        Imprimir
+                                    </button>
+                                </div>
+
+                                <div class="mt-3">
+                                    <a
+                                        id="qrLink"
+                                        href="#"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-sm btn-outline-secondary"
+                                    >
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>
+                                        Testar link
+                                    </a>
+                                </div>
+
+                                <div id="qrUrl" class="url-preview mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-custom mt-4">
+            <div class="card-header-custom">
+                <h5 class="mb-1 fw-bold">
+                    QR Codes cadastrados
+                </h5>
+                <small class="text-muted">
+                    Códigos já criados.
+                </small>
+            </div>
+
+            <div class="card-body-custom">
+                <div id="listaQR"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/qr-codes.js"></script>
+
+</body>
+</html>

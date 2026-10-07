@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-page="login">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | HelpDesk TI PUC</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-side">
+        <div class="login-side-content">
+
+            <div class="login-brand">
+                <div class="login-brand-icon">
+                    <i class="bi bi-headset"></i>
+                </div>
+
+                <span class="login-brand-name">
+                    HelpDesk TI PUC
+                </span>
+            </div>
+
+            <h1>
+                Suporte de TI<br>
+                mais organizado.
+            </h1>
+
+            <p class="login-side-description">
+                Gerencie chamados, acompanhe atendimentos,
+                controle SLAs e mantenha todo o suporte
+                centralizado em um único sistema.
+            </p>
+
+            <div class="login-features">
+
+                <div class="login-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Gerenciamento completo de chamados</span>
+                </div>
+
+                <div class="login-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Acompanhamento em tempo real</span>
+                </div>
+
+                <div class="login-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Controle de SLA e produtividade</span>
+                </div>
+
+                <div class="login-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Atendimento para matriz e filiais</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="login-area">
+
+        <div class="login-box">
+
+            <div class="login-logo">
+                <i class="bi bi-headset"></i>
+            </div>
+
+            <h2 class="login-title">
+                Bem-vindo
+            </h2>
+
+            <p class="login-subtitle">
+                Entre com suas credenciais para acessar o sistema.
+            </p>
+            <div class="login-tabs" role="tablist" aria-label="Acesso ao sistema">
+                <button type="button" class="login-tab active" id="loginTab" role="tab" aria-selected="true">
+                    Entrar
+                </button>
+                <button type="button" class="login-tab" id="registerTab" role="tab" aria-selected="false">
+                    Criar conta
+                </button>
+            </div>
+
+            <form id="loginForm">
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        E-mail ou usuário
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        name="username"
+                        placeholder="Digite seu e-mail ou usuário"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+
+                    <div class="d-flex justify-content-between">
+                        <label for="password" class="form-label">
+                            Senha
+                        </label>
+
+                        <a
+                            href="#"
+                            class="small text-primary"
+                            id="forgotPassword"
+                        >
+                            Esqueci minha senha
+                        </a>
+                    </div>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Digite sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Mostrar senha"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="form-check mb-4">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="remember"
+                    >
+
+                    <label
+                        class="form-check-label small"
+                        for="remember"
+                    >
+                        Lembrar de mim
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-button"
+                    id="loginButton"
+                >
+                    <span id="loginButtonText">
+                        Entrar
+                    </span>
+
+                    <span id="loginLoading" class="d-none">
+                        <span
+                            class="spinner-border spinner-border-sm me-2"
+                            role="status"
+                        ></span>
+                        Entrando...
+                    </span>
+                </button>
+
+            </form>
+
+            <div
+                id="loginAlert"
+                class="alert alert-danger mt-3 d-none"
+                role="alert"
+            >
+                <i class="bi bi-exclamation-circle me-2"></i>
+
+                <span id="loginAlertMessage">
+                    Usuário ou senha inválidos.
+                </span>
+            </div>
+
+
+            <form id="registerForm" class="d-none" novalidate>
+                <div class="mb-3">
+                    <label for="registerEmail" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="registerEmail" name="email" placeholder="voce@exemplo.com" autocomplete="email" maxlength="200" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="registerPassword" name="senha" placeholder="Crie uma senha forte" autocomplete="new-password" minlength="12" maxlength="72" required>
+                        <button type="button" class="password-toggle" id="registerPasswordToggle" aria-label="Mostrar senha"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <div class="form-text">Use pelo menos 12 caracteres.</div>
+                </div>
+                <div class="mb-4">
+                    <label for="registerPasswordConfirm" class="form-label">Confirmar senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="registerPasswordConfirm" name="confirmacao" placeholder="Digite a senha novamente" autocomplete="new-password" minlength="12" maxlength="72" required>
+                        <button type="button" class="password-toggle" id="registerPasswordConfirmToggle" aria-label="Mostrar confirmação da senha"><i class="bi bi-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="login-button" id="registerButton">
+                    <span id="registerButtonText">Cadastrar</span>
+                    <span id="registerLoading" class="d-none"><span class="spinner-border spinner-border-sm me-2" role="status"></span>Criando conta...</span>
+                </button>
+            </form>
+
+            <div id="registerAlert" class="alert mt-3 d-none" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <span id="registerAlertMessage"></span>
+            </div>
+            <div class="login-footer">
+                <small>
+                    HelpDesk TI PUC
+                    <span class="mx-1">•</span>
+                    Sistema de gerenciamento de chamados
+                </small>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/login.js"></script>
+
+</body>
+</html>

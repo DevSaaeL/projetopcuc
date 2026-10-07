@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-page="chamados">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chamados | HelpDesk TI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+
+<link rel="stylesheet" href="../assets/css/chamados.css">
+
+</head>
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-icon">
+            <i class="bi bi-headset"></i>
+        </div>
+
+        <span>
+            HelpDesk TI
+        </span>
+
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+        <div class="menu-title">
+            Principal
+        </div>
+
+
+        <a href="dashboard.html" class="menu-item">
+
+            <i class="bi bi-grid-1x2-fill"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <a href="chamados.html" class="menu-item active">
+
+            <i class="bi bi-ticket-perforated"></i>
+
+            <span>
+                Chamados
+            </span>
+
+            <span
+                class="menu-badge"
+                id="sidebarTicketCount"
+            >
+                8
+            </span>
+
+        </a>
+
+
+        <a href="novo-chamado.html" class="menu-item">
+
+            <i class="bi bi-plus-circle"></i>
+
+            <span>
+                Novo chamado
+            </span>
+
+        </a>
+
+
+        <a href="meus-chamados.html" class="menu-item">
+
+            <i class="bi bi-person-lines-fill"></i>
+
+            <span>
+                Meus chamados
+            </span>
+
+        </a>
+
+
+        <div class="menu-title">
+            Atendimento
+        </div>
+
+
+        <a href="notificacoes.html" class="menu-item">
+
+            <i class="bi bi-bell"></i>
+
+            <span>
+                Notificações
+            </span>
+
+            <span class="menu-badge">
+                3
+            </span>
+
+        </a>
+
+
+        <div class="menu-title">
+            Administração
+        </div>
+
+
+        <a href="usuarios.html" class="menu-item">
+
+            <i class="bi bi-people"></i>
+
+            <span>
+                Usuários
+            </span>
+
+        </a>
+
+
+        <a href="filiais.html" class="menu-item">
+
+            <i class="bi bi-building"></i>
+
+            <span>
+                Filiais
+            </span>
+
+        </a>
+
+
+        <a href="filiais.html" class="menu-item">
+
+            <i class="bi bi-geo-alt"></i>
+
+            <span>
+                Cidades
+            </span>
+
+        </a>
+
+
+        <a href="novo-chamado.html#setor" class="menu-item">
+
+            <i class="bi bi-diagram-3"></i>
+
+            <span>
+                Setores
+            </span>
+
+        </a>
+
+
+        <div class="menu-title">
+            Gestão
+        </div>
+
+
+        <a href="relatorios.html" class="menu-item">
+
+            <i class="bi bi-bar-chart"></i>
+
+            <span>
+                Relatórios
+            </span>
+
+        </a>
+
+
+        <a href="perfil.html#atividades" class="menu-item">
+
+            <i class="bi bi-clock-history"></i>
+
+            <span>
+                Auditoria
+            </span>
+
+        </a>
+
+
+        <a href="perfil.html" class="menu-item">
+
+            <i class="bi bi-gear"></i>
+
+            <span>
+                Configurações
+            </span>
+
+        </a>
+
+    <a href="qr-codes.html" class="menu-item"><i class="bi bi-qr-code"></i><span>QR Codes</span></a><a href="perfil.html" class="menu-item"><i class="bi bi-person-circle"></i><span>Meu perfil</span></a></nav>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+            >
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+
+            <div>
+
+                <h1 class="page-title">
+                    Chamados
+                </h1>
+
+                <div class="page-subtitle">
+                    Gerenciamento e acompanhamento dos chamados
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+
+            <button
+                class="notification-button"
+                title="Notificações"
+            >
+
+                <i class="bi bi-bell"></i>
+
+                <span class="notification-count">
+                    3
+                </span>
+
+            </button>
+
+
+            <div class="user-profile">
+
+                <div class="user-avatar">
+                    SG
+                </div>
+
+
+                <div class="user-info">
+
+                    <span class="user-name">
+                        Samuel
+                    </span>
+
+                    <span class="user-role">
+                        Administrador
+                    </span>
+
+                </div>
+
+
+                <i class="bi bi-chevron-down"></i>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         PAGE CONTENT
+    ====================================================== -->
+
+    <div class="page-content">
+
+
+        <!-- CABEÇALHO -->
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    Todos os chamados
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Visualize, filtre e acompanhe os chamados de TI.
+                </p>
+
+            </div>
+
+
+            <a
+                href="novo-chamado.html"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-plus-lg me-1"></i>
+
+                Novo chamado
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================================
+             INDICADORES
+        ================================================== -->
+
+        <div class="row g-3 mb-4">
+
+
+            <div class="col-6 col-xl-3">
+
+                <div class="dashboard-card">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="stat-icon blue">
+
+                            <i class="bi bi-ticket-perforated"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div
+                                class="stat-value"
+                                id="totalTickets"
+                            >
+                                24
+                            </div>
+
+                            <div class="stat-label">
+                                Total
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-xl-3">
+
+                <div class="dashboard-card">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="stat-icon orange">
+
+                            <i class="bi bi-hourglass-split"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div
+                                class="stat-value"
+                                id="openTickets"
+                            >
+                                8
+                            </div>
+
+                            <div class="stat-label">
+                                Abertos
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-xl-3">
+
+                <div class="dashboard-card">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="stat-icon green">
+
+                            <i class="bi bi-check-circle"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div
+                                class="stat-value"
+                                id="finishedTickets"
+                            >
+                                11
+                            </div>
+
+                            <div class="stat-label">
+                                Finalizados
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-xl-3">
+
+                <div class="dashboard-card">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="stat-icon red">
+
+                            <i class="bi bi-exclamation-triangle"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div
+                                class="stat-value"
+                                id="lateTickets"
+                            >
+                                5
+                            </div>
+
+                            <div class="stat-label">
+                                Fora do SLA
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FILTROS
+        ================================================== -->
+
+        <div class="dashboard-card mb-4">
+
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+
+                        <i class="bi bi-funnel me-2 text-primary"></i>
+
+                        Filtros
+
+                    </h5>
+
+                    <small class="text-muted">
+                        Refine a lista de chamados
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="clearFilters"
+                >
+
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                    Limpar filtros
+
+                </button>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <!-- BUSCA -->
+
+                <div class="col-12 col-lg-4">
+
+                    <label class="form-label">
+                        Buscar chamado
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text bg-white">
+
+                            <i class="bi bi-search"></i>
+
+                        </span>
+
+                        <input
+                            type="search"
+                            id="searchInput"
+                            class="form-control"
+                            placeholder="Número, título, usuário ou sala..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STATUS -->
+
+                <div class="col-6 col-lg-2">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        id="statusFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="aberto">
+                            Aberto
+                        </option>
+
+                        <option value="atendimento">
+                            Em atendimento
+                        </option>
+
+                        <option value="aguardando">
+                            Aguardando usuário
+                        </option>
+
+                        <option value="finalizado">
+                            Finalizado
+                        </option>
+
+                        <option value="cancelado">
+                            Cancelado
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- PRIORIDADE -->
+
+                <div class="col-6 col-lg-2">
+
+                    <label class="form-label">
+                        Prioridade
+                    </label>
+
+                    <select
+                        id="priorityFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option value="baixa">
+                            Baixa
+                        </option>
+
+                        <option value="media">
+                            Média
+                        </option>
+
+                        <option value="alta">
+                            Alta
+                        </option>
+
+                        <option value="critica">
+                            Crítica
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- CATEGORIA -->
+
+                <div class="col-6 col-lg-2">
+
+                    <label class="form-label">
+                        Categoria
+                    </label>
+
+                    <select
+                        id="categoryFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option value="computador">
+                            Computador
+                        </option>
+
+                        <option value="notebook">
+                            Notebook
+                        </option>
+
+                        <option value="internet">
+                            Internet
+                        </option>
+
+                        <option value="wifi">
+                            Wi-Fi
+                        </option>
+
+                        <option value="sistema">
+                            Sistema
+                        </option>
+
+                        <option value="impressora">
+                            Impressora
+                        </option>
+
+                        <option value="rede">
+                            Rede
+                        </option>
+
+                        <option value="email">
+                            E-mail
+                        </option>
+
+                        <option value="hardware">
+                            Hardware
+                        </option>
+
+                        <option value="software">
+                            Software
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- SLA -->
+
+                <div class="col-6 col-lg-2">
+
+                    <label class="form-label">
+                        SLA
+                    </label>
+
+                    <select
+                        id="slaFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="normal">
+                            Dentro do SLA
+                        </option>
+
+                        <option value="atrasado">
+                            Fora do SLA
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="row g-3 mt-1">
+
+
+                <!-- CIDADE -->
+
+                <div class="col-6 col-lg-3">
+
+                    <label class="form-label">
+                        Cidade
+                    </label>
+
+                    <select
+                        id="cityFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option value="londrina">
+                            Londrina
+                        </option>
+
+                        <option value="cambe">
+                            Cambé
+                        </option>
+
+                        <option value="maringa">
+                            Maringá
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- FILIAL -->
+
+                <div class="col-6 col-lg-3">
+
+                    <label class="form-label">
+                        Filial
+                    </label>
+
+                    <select
+                        id="branchFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todas
+                        </option>
+
+                        <option value="matriz">
+                            Matriz Londrina
+                        </option>
+
+                        <option value="centro">
+                            Unidade Centro
+                        </option>
+
+                        <option value="cambe">
+                            Unidade Cambé
+                        </option>
+
+                        <option value="maringa">
+                            Unidade Maringá
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- TÉCNICO -->
+
+                <div class="col-6 col-lg-3">
+
+                    <label class="form-label">
+                        Técnico
+                    </label>
+
+                    <select
+                        id="technicianFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option value="samuel">
+                            Samuel
+                        </option>
+
+                        <option value="joao">
+                            João Silva
+                        </option>
+
+                        <option value="carlos">
+                            Carlos Souza
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DATA -->
+
+                <div class="col-6 col-lg-3">
+
+                    <label class="form-label">
+                        Período
+                    </label>
+
+                    <select
+                        id="dateFilter"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Qualquer período
+                        </option>
+
+                        <option value="hoje">
+                            Hoje
+                        </option>
+
+                        <option value="7dias">
+                            Últimos 7 dias
+                        </option>
+
+                        <option value="30dias">
+                            Últimos 30 dias
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABELA
+        ================================================== -->
+
+        <div class="dashboard-card p-0">
+
+
+            <!-- CABEÇALHO DA TABELA -->
+
+            <div class="p-4 border-bottom">
+
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Lista de chamados
+                        </h5>
+
+                        <small class="text-muted">
+
+                            Exibindo
+                            <strong id="visibleCount">
+                                8
+                            </strong>
+                            chamados
+
+                        </small>
+
+                    </div>
+
+
+                    <div class="d-flex gap-2">
+
+
+                        <button
+                            class="btn btn-sm btn-outline-secondary"
+                            title="Atualizar"
+                            id="refreshButton"
+                        >
+
+                            <i class="bi bi-arrow-clockwise"></i>
+
+                        </button>
+
+
+                        <button
+                            class="btn btn-sm btn-outline-secondary"
+                            title="Exportar"
+                            id="exportButton"
+                        >
+
+                            <i class="bi bi-download me-1"></i>
+
+                            Exportar
+
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TABELA -->
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover align-middle mb-0"
+                    id="ticketsTable"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Chamado
+                            </th>
+
+                            <th>
+                                Solicitação
+                            </th>
+
+                            <th>
+                                Solicitante
+                            </th>
+
+                            <th>
+                                Local
+                            </th>
+
+                            <th>
+                                Categoria
+                            </th>
+
+                            <th>
+                                Prioridade
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                SLA
+                            </th>
+
+                            <th class="text-end">
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="ticketsBody"></tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SEM RESULTADOS
+            ================================================== -->
+
+            <div
+                id="noResults"
+                class="text-center py-5 d-none"
+            >
+
+                <i
+                    class="bi bi-search fs-1 text-muted"
+                ></i>
+
+                <h5 class="mt-3">
+                    Nenhum chamado encontrado
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Tente alterar os filtros ou os termos da busca.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PAGINAÇÃO
+            ================================================== -->
+
+            <div class="p-4 border-top">
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                    <small class="text-muted">
+
+                        Mostrando
+                        <strong id="paginationStart">
+                            1
+                        </strong>
+                        -
+                        <strong id="paginationEnd">
+                            8
+                        </strong>
+                        de
+                        <strong id="paginationTotal">
+                            8
+                        </strong>
+
+                    </small>
+
+
+                    <nav>
+
+                        <ul class="pagination pagination-sm mb-0">
+
+                            <li
+                                class="page-item disabled"
+                                id="previousPage"
+                            >
+
+                                <button class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+
+                            </li>
+
+
+                            <li class="page-item active">
+
+                                <button class="page-link">
+                                    1
+                                </button>
+
+                            </li>
+
+
+                            <li class="page-item">
+
+                                <button class="page-link">
+                                    2
+                                </button>
+
+                            </li>
+
+
+                            <li class="page-item">
+
+                                <button class="page-link">
+                                    3
+                                </button>
+
+                            </li>
+
+
+                            <li class="page-item">
+
+                                <button class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+
+                            </li>
+
+                        </ul>
+
+                    </nav>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<!-- =========================================================
+     MODAL EXPORTAÇÃO
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="exportModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Exportar chamados
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <p class="text-muted">
+                    Escolha o formato desejado:
+                </p>
+
+
+                <div class="d-grid gap-2">
+
+
+                    <button
+                        class="btn btn-outline-success"
+                        data-event-0=""
+                    >
+
+                        <i class="bi bi-file-earmark-excel me-2"></i>
+
+                        Excel
+
+                    </button>
+
+
+                    <button
+                        class="btn btn-outline-primary"
+                        data-event-1=""
+                    >
+
+                        <i class="bi bi-filetype-csv me-2"></i>
+
+                        CSV
+
+                    </button>
+
+
+                    <button
+                        class="btn btn-outline-danger"
+                        data-event-2=""
+                    >
+
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+
+                        PDF
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/tickets.js"></script>
+<script src="../assets/js/chamados.js"></script>
+
+
+<link rel="stylesheet" href="../assets/css/chamados-2.css">
+
+
+</body>
+
+</html>

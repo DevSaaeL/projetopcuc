@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-page="perfil">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meu Perfil | Help Desk</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/perfil.css">
+</head>
+
+<body>
+
+<div class="app-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+
+            <div class="logo-container">
+
+                <div class="logo-icon">
+                    <i class="bi bi-headset"></i>
+                </div>
+
+                <div class="logo-text">
+                    <strong>HELP DESK</strong>
+                    <span>Service Desk</span>
+                </div>
+
+            </div>
+
+            <button
+                class="btn sidebar-close d-lg-none"
+                data-event-0=""
+            >
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+
+
+        <!-- USUÁRIO -->
+        <div class="sidebar-user">
+
+            <div class="user-avatar">
+                <span>SG</span>
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    Samuel Godeguez
+                </strong>
+
+                <small>
+                    Usuário
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- MENU -->
+        <nav class="sidebar-nav">
+
+            <div class="nav-section">
+
+                <span class="nav-section-title">
+                    PRINCIPAL
+                </span>
+
+
+                <a
+                    href="dashboard.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-grid-1x2-fill"></i>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="novo-chamado.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                    <span>
+                        Novo Chamado
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="meus-chamados.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-ticket-detailed-fill"></i>
+
+                    <span>
+                        Meus Chamados
+                    </span>
+
+                    <span class="nav-badge">
+                        4
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="notificacoes.html"
+                    class="nav-link"
+                >
+
+                    <i class="bi bi-bell-fill"></i>
+
+                    <span>
+                        Notificações
+                    </span>
+
+                    <span class="nav-badge notification-badge">
+                        3
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <div class="nav-section">
+
+                <span class="nav-section-title">
+                    CONTA
+                </span>
+
+
+                <a
+                    href="perfil.html"
+                    class="nav-link active"
+                >
+
+                    <i class="bi bi-person-fill"></i>
+
+                    <span>
+                        Meu Perfil
+                    </span>
+
+                </a>
+
+            </div>
+
+        </nav>
+
+
+        <!-- RODAPÉ -->
+        <div class="sidebar-footer">
+
+            <a
+                href="#"
+                class="nav-link logout-link"
+                data-event-1=""
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Sair
+                </span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- OVERLAY -->
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        data-event-2=""
+    ></div>
+
+
+    <!-- CONTEÚDO -->
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="btn menu-toggle d-lg-none"
+                    data-event-3=""
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+
+                <div>
+
+                    <h1 class="page-title">
+                        Meu Perfil
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Gerencie suas informações e preferências.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+
+                <button
+                    class="topbar-icon"
+                    title="Notificações"
+                    data-event-4=""
+                >
+
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+
+                <div class="dropdown">
+
+                    <button
+                        class="user-menu"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+
+                        <div class="user-avatar small">
+
+                            <span>
+                                SG
+                            </span>
+
+                        </div>
+
+
+                        <div class="user-menu-info d-none d-md-block">
+
+                            <strong>
+                                Samuel Godeguez
+                            </strong>
+
+                            <small>
+                                Usuário
+                            </small>
+
+                        </div>
+
+
+                        <i class="bi bi-chevron-down"></i>
+
+                    </button>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="perfil.html"
+                            >
+
+                                <i class="bi bi-person me-2"></i>
+
+                                Meu Perfil
+
+                            </a>
+
+                        </li>
+
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+
+                        <li>
+
+                            <a
+                                class="dropdown-item text-danger"
+                                href="#"
+                                data-event-5=""
+                            >
+
+                                <i class="bi bi-box-arrow-right me-2"></i>
+
+                                Sair
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ÁREA -->
+        <div class="content-area">
+
+
+            <!-- CABEÇALHO -->
+            <div class="content-header">
+
+                <div>
+
+                    <h2 class="content-title">
+                        Configurações da conta
+                    </h2>
+
+                    <p class="content-description">
+                        Atualize seus dados pessoais e preferências do sistema.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- COLUNA ESQUERDA -->
+                <div class="col-12 col-xl-4">
+
+
+                    <!-- PERFIL -->
+                    <div class="card custom-card profile-summary-card">
+
+                        <div class="card-body text-center">
+
+
+                            <div class="profile-avatar-wrapper">
+
+                                <div
+                                    class="profile-avatar"
+                                    id="profileAvatar"
+                                >
+                                    SG
+                                </div>
+
+
+                                <button
+                                    class="avatar-edit-button"
+                                    data-event-6=""
+                                    title="Alterar foto"
+                                >
+
+                                    <i class="bi bi-camera-fill"></i>
+
+                                </button>
+
+                            </div>
+
+
+                            <h4
+                                class="profile-name"
+                                id="profileName"
+                            >
+                                Samuel Godeguez
+                            </h4>
+
+
+                            <p class="profile-role">
+                                Usuário
+                            </p>
+
+
+                            <div class="profile-status">
+
+                                <span class="status-dot"></span>
+
+                                Conta ativa
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="profile-information">
+
+
+                                <div class="profile-info-item">
+
+                                    <i class="bi bi-envelope"></i>
+
+                                    <div>
+
+                                        <small>
+                                            E-mail
+                                        </small>
+
+                                        <strong>
+                                            samuel@empresa.com.br
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="profile-info-item">
+
+                                    <i class="bi bi-building"></i>
+
+                                    <div>
+
+                                        <small>
+                                            Unidade
+                                        </small>
+
+                                        <strong>
+                                            Unidade Matriz
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="profile-info-item">
+
+                                    <i class="bi bi-diagram-3"></i>
+
+                                    <div>
+
+                                        <small>
+                                            Setor
+                                        </small>
+
+                                        <strong>
+                                            Tecnologia da Informação
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="profile-info-item">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                    <div>
+
+                                        <small>
+                                            Cadastro
+                                        </small>
+
+                                        <strong>
+                                            15/01/2026
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SEGURANÇA -->
+                    <div class="card custom-card mt-4">
+
+                        <div class="card-header custom-card-header">
+
+                            <div>
+
+                                <h5 class="mb-1">
+                                    Segurança
+                                </h5>
+
+                                <span class="text-muted small">
+                                    Proteção da sua conta
+                                </span>
+
+                            </div>
+
+                            <i class="bi bi-shield-check fs-4 text-success"></i>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+
+                            <div class="security-item">
+
+                                <div class="security-icon success">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Senha
+                                    </strong>
+
+                                    <small>
+                                        Atualizada recentemente
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-sm btn-outline-primary"
+                                    data-event-7=""
+                                >
+                                    Alterar
+                                </button>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="security-item">
+
+                                <div class="security-icon warning">
+
+                                    <i class="bi bi-shield-lock-fill"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Autenticação em dois fatores
+                                    </strong>
+
+                                    <small id="mfaStatus">
+                                        Não configurada
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-sm btn-outline-primary"
+                                    data-event-8=""
+                                >
+                                    Configurar
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- COLUNA DIREITA -->
+                <div class="col-12 col-xl-8">
+
+
+                    <!-- DADOS PESSOAIS -->
+                    <div class="card custom-card">
+
+                        <div class="card-header custom-card-header">
+
+                            <div>
+
+                                <h5 class="mb-1">
+                                    Informações pessoais
+                                </h5>
+
+                                <span class="text-muted small">
+                                    Mantenha seus dados atualizados
+                                </span>
+
+                            </div>
+
+                            <i class="bi bi-person-vcard fs-4 text-primary"></i>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+
+                            <form
+                                id="profileForm"
+                                data-event-9=""
+                            >
+
+
+                                <div class="row g-3">
+
+
+                                    <!-- NOME -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Nome completo
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="bi bi-person"></i>
+                                            </span>
+
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                class="form-control"
+                                                value="Samuel Godeguez"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- EMAIL -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            E-mail
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="bi bi-envelope"></i>
+                                            </span>
+
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                class="form-control"
+                                                value="samuel@empresa.com.br"
+                                                required
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- TELEFONE -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Telefone
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="bi bi-telephone"></i>
+                                            </span>
+
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                class="form-control"
+                                                value="(43) 99999-9999"
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- USUÁRIO -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Nome de usuário
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="bi bi-at"></i>
+                                            </span>
+
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                value="samuel.godeguez"
+                                                disabled
+                                            >
+
+                                        </div>
+
+                                        <div class="form-text">
+                                            O nome de usuário não pode ser alterado.
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- MATRÍCULA -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Matrícula
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="bi bi-person-badge"></i>
+                                            </span>
+
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                value="TI-00128"
+                                                disabled
+                                            >
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- CARGO -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Cargo
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value="Usuário"
+                                            disabled
+                                        >
+
+                                    </div>
+
+
+                                    <!-- SETOR -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Setor
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            value="Tecnologia da Informação"
+                                            disabled
+                                        >
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <hr class="my-4">
+
+
+                                <div class="d-flex justify-content-end gap-2">
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary"
+                                        data-event-10=""
+                                    >
+                                        Cancelar
+                                    </button>
+
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+
+                                        <i class="bi bi-check-lg me-2"></i>
+
+                                        Salvar alterações
+
+                                    </button>
+
+                                </div>
+
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PREFERÊNCIAS -->
+                    <div class="card custom-card mt-4">
+
+                        <div class="card-header custom-card-header">
+
+                            <div>
+
+                                <h5 class="mb-1">
+                                    Preferências
+                                </h5>
+
+                                <span class="text-muted small">
+                                    Configure como deseja receber notificações
+                                </span>
+
+                            </div>
+
+                            <i class="bi bi-sliders fs-4 text-primary"></i>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+
+                            <!-- NOTIFICAÇÕES -->
+                            <div class="preference-item">
+
+                                <div class="preference-icon">
+
+                                    <i class="bi bi-bell-fill"></i>
+
+                                </div>
+
+
+                                <div class="preference-content">
+
+                                    <strong>
+                                        Notificações do sistema
+                                    </strong>
+
+                                    <small>
+                                        Receber notificações sobre atualizações dos chamados.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="form-check form-switch">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="systemNotifications"
+                                        checked
+                                        data-event-11=""
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <!-- SOM -->
+                            <div class="preference-item">
+
+                                <div class="preference-icon">
+
+                                    <i class="bi bi-volume-up-fill"></i>
+
+                                </div>
+
+
+                                <div class="preference-content">
+
+                                    <strong>
+                                        Som das notificações
+                                    </strong>
+
+                                    <small>
+                                        Reproduzir um som quando uma nova notificação chegar.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="form-check form-switch">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="notificationSound"
+                                        checked
+                                        data-event-12=""
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <!-- EMAIL -->
+                            <div class="preference-item">
+
+                                <div class="preference-icon">
+
+                                    <i class="bi bi-envelope-fill"></i>
+
+                                </div>
+
+
+                                <div class="preference-content">
+
+                                    <strong>
+                                        Notificações por e-mail
+                                    </strong>
+
+                                    <small>
+                                        Receber atualizações importantes por e-mail.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="form-check form-switch">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="emailNotifications"
+                                        checked
+                                        data-event-13=""
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <!-- SLA -->
+                            <div class="preference-item">
+
+                                <div class="preference-icon">
+
+                                    <i class="bi bi-clock-fill"></i>
+
+                                </div>
+
+
+                                <div class="preference-content">
+
+                                    <strong>
+                                        Alertas de SLA
+                                    </strong>
+
+                                    <small>
+                                        Receber alertas quando houver atualizações relacionadas ao SLA.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="form-check form-switch">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="slaNotifications"
+                                        checked
+                                        data-event-14=""
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRIVACIDADE -->
+                    <div class="card custom-card mt-4">
+
+                        <div class="card-header custom-card-header">
+
+                            <div>
+
+                                <h5 class="mb-1">
+                                    Privacidade e conta
+                                </h5>
+
+                                <span class="text-muted small">
+                                    Informações relacionadas à sua conta
+                                </span>
+
+                            </div>
+
+                            <i class="bi bi-shield-lock fs-4 text-primary"></i>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+
+                            <div id="atividades" class="privacy-item">
+
+                                <div>
+
+                                    <strong>
+                                        Histórico de atividades
+                                    </strong>
+
+                                    <small>
+                                        Consulte as ações realizadas na sua conta.
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-outline-secondary btn-sm"
+                                    data-event-15=""
+                                >
+
+                                    <i class="bi bi-clock-history me-2"></i>
+
+                                    Ver atividades
+
+                                </button>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="privacy-item">
+
+                                <div>
+
+                                    <strong>
+                                        Sessões ativas
+                                    </strong>
+
+                                    <small>
+                                        Gerencie os dispositivos conectados à sua conta.
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-outline-secondary btn-sm"
+                                    data-event-16=""
+                                >
+
+                                    <i class="bi bi-pc-display me-2"></i>
+
+                                    Ver sessões
+
+                                </button>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="privacy-item danger">
+
+                                <div>
+
+                                    <strong>
+                                        Sair de todos os dispositivos
+                                    </strong>
+
+                                    <small>
+                                        Encerra todas as sessões ativas da sua conta.
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    class="btn btn-outline-danger btn-sm"
+                                    data-event-17=""
+                                >
+
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+
+                                    Encerrar sessões
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- MODAL ALTERAR SENHA -->
+<div
+    class="modal fade"
+    id="passwordModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5 class="modal-title">
+                        Alterar senha
+                    </h5>
+
+                    <small class="text-muted">
+                        Defina uma nova senha para sua conta.
+                    </small>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <form data-event-18="">
+
+                <div class="modal-body">
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Senha atual
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                class="form-control"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-event-19=""
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Nova senha
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                class="form-control"
+                                required
+                                minlength="12"
+                                data-event-20=""
+                            >
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-event-21=""
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FORÇA -->
+                    <div class="password-strength">
+
+                        <div class="password-strength-bar">
+
+                            <span class="hd-inline-0"
+                                id="strengthBar"
+                               
+                            ></span>
+
+                        </div>
+
+                        <small id="strengthText">
+                            Digite uma senha.
+                        </small>
+
+                    </div>
+
+
+                    <div class="mt-3">
+
+                        <label class="form-label">
+                            Confirmar nova senha
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                class="form-control"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-event-22=""
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="alert alert-info mt-3 mb-0">
+
+                        <i class="bi bi-info-circle me-2"></i>
+
+                        A senha deve possuir pelo menos 12 caracteres.
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-shield-check me-2"></i>
+
+                        Alterar senha
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL MFA -->
+<div
+    class="modal fade"
+    id="mfaModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5 class="modal-title">
+                        Autenticação em dois fatores
+                    </h5>
+
+                    <small class="text-muted">
+                        Proteja sua conta com MFA.
+                    </small>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body text-center">
+
+                <div class="mb-4">
+
+                    <div class="security-icon success mx-auto">
+
+                        <i class="bi bi-shield-lock-fill"></i>
+
+                    </div>
+
+                </div>
+
+
+                <h5>
+                    Ative a autenticação em dois fatores
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Quando essa função estiver integrada ao backend,
+                    você poderá utilizar um aplicativo autenticador
+                    para gerar códigos de segurança.
+
+                </p>
+
+
+                <div class="alert alert-warning text-start">
+
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                    A configuração de MFA será conectada ao backend
+                    posteriormente.
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Fechar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-event-23=""
+                >
+
+                    <i class="bi bi-shield-check me-2"></i>
+
+                    Ativar MFA
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BOOTSTRAP -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+<!-- APP -->
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/perfil.js"></script>
+
+</body>
+
+</html>
