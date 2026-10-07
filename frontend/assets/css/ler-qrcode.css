@@ -1,0 +1,16 @@
+body { margin: 0px; min-height: 100vh; background: rgb(245, 246, 248); font-family: Arial, Helvetica, sans-serif; }
+.qr-reader-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.qr-reader-card { width: 100%; max-width: 460px; background: rgb(255, 255, 255); border-radius: 16px; padding: 30px; box-shadow: rgba(15, 23, 42, 0.1) 0px 15px 40px; border: 1px solid rgb(226, 232, 240); }
+.qr-logo { width: 60px; height: 60px; margin: 0px auto 18px; border-radius: 14px; background: rgb(166, 25, 46); color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.qr-reader-title { text-align: center; font-size: 25px; font-weight: 700; color: rgb(23, 32, 51); }
+.qr-reader-description { text-align: center; color: rgb(100, 116, 139); font-size: 14px; margin-bottom: 25px; }
+#reader { width: 100%; overflow: hidden; border-radius: 12px; }
+.location-box { background: rgb(253, 240, 242); border: 1px solid rgb(242, 200, 208); border-radius: 10px; padding: 15px; margin-top: 20px; }
+.location-box strong { color: rgb(166, 25, 46); }
+.location-box span { display: block; color: rgb(71, 85, 105); font-size: 14px; margin-top: 4px; }
+.btn-puc { width: 100%; min-height: 48px; background: rgb(166, 25, 46); border: 1px solid rgb(166, 25, 46); color: rgb(255, 255, 255); font-weight: 600; border-radius: 8px; }
+.btn-puc:hover { background: rgb(139, 20, 38); border-color: rgb(139, 20, 38); color: rgb(255, 255, 255); }
+.manual-link { text-align: center; margin-top: 18px; }
+.manual-link a { color: rgb(166, 25, 46); text-decoration: none; font-size: 14px; }
+.manual-link a:hover { text-decoration: underline; }
+.hidden { display: none !important; }

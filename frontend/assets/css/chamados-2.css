@@ -1,0 +1,14 @@
+.sla-indicator { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.sla-ok { color: rgb(22, 163, 74); }
+.sla-late { color: rgb(220, 38, 38); }
+.sla-finished { color: rgb(100, 116, 139); }
+.input-group-text { border-color: rgb(226, 232, 240); color: rgb(100, 116, 139); }
+#ticketsTable tbody tr { transition: background-color 0.15s; }
+#ticketsTable tbody tr:hover { background-color: rgb(248, 250, 252); }
+#ticketsTable th { white-space: nowrap; }
+#ticketsTable td { white-space: nowrap; }
+.pagination .page-link { color: rgb(37, 99, 235); }
+.pagination .active .page-link { background-color: rgb(37, 99, 235); border-color: rgb(37, 99, 235); }
+@media (max-width: 768px) {
+  #ticketsTable { min-width: 1250px; }
+}

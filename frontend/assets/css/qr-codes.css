@@ -1,0 +1,27 @@
+:root { --puc-red: #a6192e; --puc-red-dark: #8b1426; --sidebar: #111827; --background: #f5f7fb; --border: #e2e8f0; --text: #172033; --muted: #64748b; }
+.menu-item { min-height: 42px; display: flex; align-items: center; gap: 11px; padding: 10px 12px; margin-bottom: 4px; border-radius: 8px; color: rgb(209, 213, 219); text-decoration: none; font-size: 14px; transition: 0.2s; }
+.btn-puc { background: var(--puc-red); border: 1px solid var(--puc-red); color: rgb(255, 255, 255); font-weight: 600; }
+.btn-outline-puc { color: var(--puc-red); background: rgb(255, 255, 255); border: 1px solid var(--puc-red); font-weight: 600; }
+.btn-outline-puc:hover { color: rgb(255, 255, 255); background: var(--puc-red); }
+.qr-display { min-height: 330px; background: rgb(248, 250, 252); border: 1px dashed rgb(203, 213, 225); border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 25px; }
+#qrcode { background: rgb(255, 255, 255); padding: 15px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+#qrcode img, #qrcode canvas { display: block; max-width: 100%; height: auto; }
+.qr-list-item { border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 10px; background: rgb(255, 255, 255); }
+.qr-icon { width: 45px; height: 45px; border-radius: 8px; background: rgb(253, 240, 242); color: var(--puc-red); display: flex; align-items: center; justify-content: center; font-size: 23px; flex-shrink: 0; }
+.network-info { margin-top: 15px; padding: 12px 15px; background: rgb(240, 253, 244); border: 1px solid rgb(187, 247, 208); border-radius: 8px; font-size: 12px; color: rgb(22, 101, 52); overflow-wrap: anywhere; }
+.url-preview { font-size: 12px; overflow-wrap: anywhere; color: rgb(100, 116, 139); }
+@media (max-width: 991px) {
+  .sidebar { width: 70px !important; }
+  .sidebar-brand { justify-content: center; padding: 0px; }
+  .sidebar-brand span, .menu-title, .menu-item span { display: none; }
+  .menu-item { justify-content: center; }
+  .main-content { width: calc(100% - 70px); margin-left: 70px; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none !important; }
+  .main-content { width: 100%; margin-left: 0px; }
+  .page-content { padding: 20px 15px; }
+  .topbar { padding: 0px 18px; }
+}
+html[data-page="qr-codes"] :is(#hd-inline-specificity, .hd-inline-0) { font-size: 11px; }
+html[data-page="qr-codes"] :is(#hd-inline-specificity, .hd-inline-1) { font-size: 70px; color: rgb(203, 213, 225); }

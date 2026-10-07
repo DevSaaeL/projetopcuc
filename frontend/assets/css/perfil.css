@@ -1,0 +1,1 @@
+html[data-page="perfil"] :is(#hd-inline-specificity, .hd-inline-0) { width: 0%; }

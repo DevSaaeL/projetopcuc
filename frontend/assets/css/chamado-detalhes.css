@@ -1,0 +1,74 @@
+.page-content { padding: 28px; }
+.ticket-header { background: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.ticket-number { color: rgb(107, 114, 128); font-size: 14px; margin-bottom: 7px; }
+.ticket-title { font-size: 24px; font-weight: 700; color: rgb(17, 24, 39); margin-bottom: 15px; }
+.badge-status { padding: 7px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status-open { background: rgb(255, 247, 237); color: rgb(194, 65, 12); }
+.status-progress { background: rgb(253, 240, 242); color: rgb(139, 20, 38); }
+.status-finished { background: rgb(236, 253, 245); color: rgb(4, 120, 87); }
+.status-waiting { background: rgb(254, 252, 232); color: rgb(161, 98, 7); }
+.priority-high { background: rgb(254, 242, 242); color: rgb(220, 38, 38); }
+.priority-medium { background: rgb(255, 247, 237); color: rgb(234, 88, 12); }
+.priority-low { background: rgb(253, 240, 242); color: rgb(166, 25, 46); }
+.sla-card { border: 1px solid rgb(229, 231, 235); border-radius: 10px; background: rgb(255, 255, 255); padding: 17px; height: 100%; }
+.sla-label { font-size: 12px; color: rgb(107, 114, 128); margin-bottom: 5px; }
+.sla-value { font-size: 20px; font-weight: 700; color: rgb(17, 24, 39); }
+.sla-danger { color: rgb(220, 38, 38); }
+.sla-warning { color: rgb(217, 119, 6); }
+.sla-success { color: rgb(5, 150, 105); }
+.card-header-custom { padding: 17px 20px; border-bottom: 1px solid rgb(229, 231, 235); font-weight: 600; color: rgb(17, 24, 39); }
+.card-body-custom { padding: 20px; }
+.info-item { margin-bottom: 18px; }
+.info-label { color: rgb(107, 114, 128); font-size: 12px; margin-bottom: 4px; }
+.info-value { color: rgb(17, 24, 39); font-size: 14px; font-weight: 500; }
+.description-box { background: rgb(249, 250, 251); border: 1px solid rgb(229, 231, 235); border-radius: 8px; padding: 15px; line-height: 1.6; color: rgb(55, 65, 81); }
+.chat-container { height: 500px; display: flex; flex-direction: column; }
+.chat-messages { flex: 1 1 0%; overflow-y: auto; padding: 20px; background: rgb(249, 250, 251); }
+.message { display: flex; margin-bottom: 18px; }
+.message.me { justify-content: flex-end; }
+.message-avatar { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background: rgb(166, 25, 46); color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; margin-right: 10px; }
+.message.me .message-avatar { order: 2; margin-right: 0px; margin-left: 10px; }
+.message-content { max-width: 70%; }
+.message-name { font-size: 11px; color: rgb(107, 114, 128); margin-bottom: 4px; }
+.message-bubble { background: rgb(255, 255, 255); border: 1px solid rgb(229, 231, 235); padding: 10px 13px; border-radius: 10px; color: rgb(55, 65, 81); font-size: 14px; }
+.message.me .message-bubble { background: rgb(166, 25, 46); color: rgb(255, 255, 255); border-color: rgb(166, 25, 46); }
+.message-time { font-size: 10px; color: rgb(156, 163, 175); margin-top: 4px; }
+.chat-input { border-top: 1px solid rgb(229, 231, 235); padding: 14px; background: rgb(255, 255, 255); }
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before { content: ""; position: absolute; left: 9px; top: 0px; bottom: 0px; width: 2px; background: rgb(229, 231, 235); }
+.timeline-item { position: relative; padding-bottom: 22px; }
+.timeline-icon { position: absolute; left: -30px; top: 0px; width: 20px; height: 20px; border-radius: 50%; background: rgb(166, 25, 46); color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; font-size: 10px; border: 3px solid rgb(255, 255, 255); box-sizing: content-box; }
+.timeline-title { font-size: 13px; font-weight: 600; color: rgb(17, 24, 39); }
+.timeline-text { font-size: 12px; color: rgb(107, 114, 128); margin-top: 2px; }
+.timeline-time { font-size: 11px; color: rgb(156, 163, 175); margin-top: 3px; }
+.attachment-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid rgb(229, 231, 235); border-radius: 8px; margin-bottom: 8px; }
+.attachment-info { display: flex; align-items: center; gap: 10px; }
+.attachment-icon { width: 35px; height: 35px; border-radius: 7px; background: rgb(253, 240, 242); color: rgb(166, 25, 46); display: flex; align-items: center; justify-content: center; }
+@media (max-width: 992px) {
+  .sidebar { width: 70px; }
+  .sidebar-logo span, .sidebar-menu span, .sidebar-title { display: none; }
+  .sidebar-logo { justify-content: center; padding: 0px; }
+  .sidebar-logo i { margin: 0px; }
+  .sidebar-menu a { justify-content: center; }
+  .sidebar-menu a i { font-size: 20px; }
+  .main-content { margin-left: 70px; }
+}
+@media (max-width: 768px) {
+  .main-content { margin-left: 0px; }
+  .sidebar { display: none; }
+  .page-content { padding: 15px; }
+  .topbar { padding: 0px 15px; }
+  .ticket-title { font-size: 19px; }
+  .message-content { max-width: 85%; }
+}
+.btn-puc-primary { --bs-btn-color: #fff; --bs-btn-bg: #a6192e; --bs-btn-border-color: #a6192e; --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #8b1426; --bs-btn-hover-border-color: #8b1426; --bs-btn-active-bg: #8b1426; --bs-btn-active-border-color: #8b1426; color: rgb(255, 255, 255) !important; background-color: rgb(166, 25, 46) !important; border-color: rgb(166, 25, 46) !important; }
+.btn-puc-primary:hover, .btn-puc-primary:focus { background-color: rgb(139, 20, 38) !important; border-color: rgb(139, 20, 38) !important; }
+.btn-outline-puc { --bs-btn-color: #a6192e; --bs-btn-border-color: #a6192e; --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #a6192e; --bs-btn-hover-border-color: #a6192e; color: rgb(166, 25, 46) !important; border-color: rgb(166, 25, 46) !important; }
+.btn-outline-puc:hover, .btn-outline-puc:focus { color: rgb(255, 255, 255) !important; background-color: rgb(166, 25, 46) !important; border-color: rgb(166, 25, 46) !important; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-0) { font-size: 14px; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-1) { font-size: 11px; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-2) { height: 7px; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-3) { width: 74%; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-4) { height: 7px; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-5) { width: 83%; }
+html[data-page="chamado-detalhes"] :is(#hd-inline-specificity, .hd-inline-6) { font-size: 12px; }
