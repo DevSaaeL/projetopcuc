@@ -22,7 +22,7 @@ public class DeskService {
  @Value("${app.public-url}") private String publicUrl;
  @Value("${app.sla-response-minutes}") private int responseMinutes;
  @Value("${app.sla-resolution-minutes}") private int resolutionMinutes;
- private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.microsoft_object_id,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
+ private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.microsoft_object_id,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
  private static final String TICKETS="SELECT c.*,u.nome solicitante,u.email solicitante_email,u.telefone solicitante_telefone,f.nome filial_nome,t.nome tecnico FROM chamados c JOIN usuarios u ON u.id=c.solicitante_id JOIN filiais f ON f.id=c.filial_id LEFT JOIN usuarios t ON t.id=c.tecnico_id";
  public DeskService(DeskRepository r,PasswordEncoder encoder){this.r=r;this.encoder=encoder;}
  public static ResponseStatusException bad(String m){return new ResponseStatusException(HttpStatus.BAD_REQUEST,m);}
