@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: helpdesk-ti
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: helpdesk-ti-db
+          property: connectionString
+      - key: DATABASE_USER
+        fromDatabase:
+          name: helpdesk-ti-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: helpdesk-ti-db
+          property: password
+      - key: FRONTEND_ORIGINS
+        fromService:
+          name: helpdesk-ti
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: PUBLIC_FRONTEND_URL
+        fromService:
+          name: helpdesk-ti
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: SESSION_SECURE
+        value: "true"
+      - key: SESSION_SAME_SITE
+        value: lax
+      - key: BOOTSTRAP_EMAIL
+        sync: false
+      - key: BOOTSTRAP_PASSWORD
+        sync: false
+
+databases:
+  - name: helpdesk-ti-db
+    plan: free
