@@ -14,19 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:workflow;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1", "app.bootstrap-email=master@test.invalid", "app.bootstrap-password=OnlyForTests-123456", "app.public-url=https://helpdesk.example.org/projeto/frontend/pages/novo-chamado.html"})
 @AutoConfigureMockMvc
 class WorkflowTest {
+ @Autowired br.edu.helpdesk.repository.DeskRepository repo; @Autowired org.springframework.security.crypto.password.PasswordEncoder encoder;
  @Autowired MockMvc mvc; @Autowired ObjectMapper mapper;
  JsonNode body(MvcResult result)throws Exception{return mapper.readTree(result.getResponse().getContentAsString());}
  MockHttpSession login(String email)throws Exception{return login(email,"OnlyForTests-123456");}
  MockHttpSession login(String email,String password)throws Exception{return (MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"username\":\""+email+"\",\"password\":\""+password+"\"}")).andExpect(status().isOk()).andReturn().getRequest().getSession();}
- JsonNode create(MockHttpSession session,String url,String json)throws Exception{return body(mvc.perform(post(url).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andReturn());}
- @Test void publicUserCanRegisterWithoutFilial()throws Exception{
-  String email="public-register@test.invalid";
-  var created=body(mvc.perform(post("/api/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"email\":\""+email+"\",\"senha\":\"RegisterTest-123456\"}")).andExpect(status().isCreated()).andReturn());
-  assertEquals("USUARIO",created.get("perfil").asText());
-  var session=login(email,"RegisterTest-123456");
-  assertEquals("USUARIO",body(mvc.perform(get("/api/auth/me").session(session)).andExpect(status().isOk()).andReturn()).get("perfil").asText());
-  mvc.perform(post("/api/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"email\":\""+email+"\",\"senha\":\"RegisterTest-123456\"}")).andExpect(status().isConflict());
- } @Test void completeWorkflowAndIsolation()throws Exception{
+ JsonNode create(MockHttpSession session,String url,String json)throws Exception{var data=mapper.readTree(json);if(url.equals("/api/usuarios")){((com.fasterxml.jackson.databind.node.ObjectNode)data).remove("senha");json=mapper.writeValueAsString(data);}var result=body(mvc.perform(post(url).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andReturn());if(url.equals("/api/usuarios"))repo.update("UPDATE usuarios SET senha_hash=? WHERE id=?",encoder.encode("OnlyForTests-123456"),result.get("id").asLong());return result;}
+ @Test void selfRegistrationAndLocalPasswordChangesAreDisabled()throws Exception{
+  mvc.perform(post("/api/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"public@test.invalid\",\"senha\":\"RegisterTest-123456\"}")).andExpect(status().isGone());
+ }
+ @Test void completeWorkflowAndIsolation()throws Exception{
   mvc.perform(get("/api/chamados")).andExpect(status().isUnauthorized());
   mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isForbidden());
   mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"master@test.invalid\",\"password\":\"wrong\"}")).andExpect(status().isUnauthorized());
@@ -55,8 +52,8 @@ class WorkflowTest {
   assertEquals(1,body(mvc.perform(get("/api/chamados/"+id+"/mensagens").session(user)).andReturn()).size());
   var notifications=body(mvc.perform(get("/api/notificacoes").session(user)).andReturn());assertFalse(notifications.isEmpty());long nid=notifications.get(0).get("id").asLong();mvc.perform(put("/api/notificacoes/"+nid+"/lida").session(other).with(csrf())).andExpect(status().isNotFound());
   assertEquals(0,body(mvc.perform(get("/api/dashboard").session(foreign)).andReturn()).get("total").asInt());assertEquals(1,body(mvc.perform(get("/api/relatorios").param("status","FINALIZADO").session(master)).andReturn()).get("total").asInt());
-  mvc.perform(put("/api/auth/senha").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"atual\":\"wrong\",\"nova\":\"AnotherTest-123456\"}")).andExpect(status().isBadRequest());
-  var secondSession=login(emails[0]);mvc.perform(put("/api/auth/senha").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"atual\":\"OnlyForTests-123456\",\"nova\":\"AnotherTest-123456\"}")).andExpect(status().isOk());mvc.perform(get("/api/auth/me").session(secondSession)).andExpect(status().isUnauthorized());
+  mvc.perform(put("/api/auth/senha").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"atual\":\"OnlyForTests-123456\",\"nova\":\"AnotherTest-123456\"}")).andExpect(status().isGone());
+  var secondSession=login(emails[0]);mvc.perform(post("/api/auth/encerrar-sessoes").session(user).with(csrf())).andExpect(status().isOk());mvc.perform(get("/api/auth/me").session(secondSession)).andExpect(status().isUnauthorized());
  }
 }
 

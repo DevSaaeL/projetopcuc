@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:simple-ticket;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","app.bootstrap-email=admin@test.invalid","app.bootstrap-password=OnlyForTests-123456"})
 @AutoConfigureMockMvc
 class SimpleTicketTest {
+ @Autowired br.edu.helpdesk.repository.DeskRepository repo; @Autowired org.springframework.security.crypto.password.PasswordEncoder encoder;
  @Autowired MockMvc mvc;
  @Autowired ObjectMapper mapper;
  private MockHttpSession login(String email)throws Exception {
@@ -32,8 +33,9 @@ class SimpleTicketTest {
   long branch=create(admin,"/api/filiais","{\"nome\":\"Unidade A\",\"cidade\":\"Curitiba\",\"estado\":\"PR\",\"ativo\":true}").get("id").asLong();
   long other=create(admin,"/api/filiais","{\"nome\":\"Unidade B\",\"cidade\":\"Londrina\",\"estado\":\"PR\",\"ativo\":true}").get("id").asLong();
   for(var entry:java.util.Map.of("requester",branch,"technician",branch,"other-technician",other).entrySet()) {
-   create(admin,"/api/usuarios",mapper.writeValueAsString(java.util.Map.of("nome",entry.getKey(),"email",entry.getKey()+"@test.invalid","senha","OnlyForTests-123456","perfil",entry.getKey().equals("requester")?"USUARIO":"SUPORTE","filialId",entry.getValue(),"ativo",true)));
+   create(admin,"/api/usuarios",mapper.writeValueAsString(java.util.Map.of("nome",entry.getKey(),"email",entry.getKey()+"@test.invalid","perfil",entry.getKey().equals("requester")?"USUARIO":"SUPORTE","filialId",entry.getValue(),"ativo",true)));
   }
+  repo.update("UPDATE usuarios SET senha_hash=? WHERE email<>'admin@test.invalid'",encoder.encode("OnlyForTests-123456"));
   var requester=login("requester@test.invalid");var technician=login("technician@test.invalid");var foreign=login("other-technician@test.invalid");
   var ticket=create(requester,"/api/chamados","{\"titulo\":\"Não consigo imprimir\",\"descricao\":\"A impressora está sem conexão\",\"filialId\":"+branch+"}");
   assertEquals("MEDIA",ticket.get("prioridade").asText());
