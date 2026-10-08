@@ -120,8 +120,18 @@ window.App = (() => {
         const csv=[names,...rows.map(r=>fields.map(k=>r[k]))].map(row=>row.map(cell).join(';')).join('\r\n');saveFile(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),'chamados.csv');
     }
     function initials(name){return name.split(/\s+/).filter(Boolean).map(n=>n[0]).slice(0,2).join('').toUpperCase();}
+    function avatar(element,user){
+        if(!element)return;
+        element.textContent=initials(user.nome);
+        if(!user.foto_versao)return;
+        const image=document.createElement('img');
+        image.alt='Foto de '+user.nome;
+        image.src=(window.HELPDESK_CONFIG?.apiBase||'').replace(/\/$/,'')+'/api/auth/foto?v='+encodeURIComponent(user.foto_versao);
+        image.addEventListener('error',()=>{element.textContent=initials(user.nome);});
+        element.replaceChildren(image);
+    }
     start(async user=>{
-        document.querySelectorAll('.user-avatar').forEach(e=>e.textContent=initials(user.nome));
+        document.querySelectorAll('.user-avatar').forEach(e=>avatar(e,user));
         document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
         document.querySelectorAll('.topbar .user-role,.topbar .text-muted,.user-menu-info small,.sidebar-user .user-info small').forEach(e=>e.textContent=labels[user.perfil]);
         document.querySelectorAll('.sidebar a').forEach(a=>{if(['usuarios.html','filiais.html','qr-codes.html'].includes(a.getAttribute('href')))a.hidden=a.getAttribute('href')==='filiais.html'?user.perfil!=='MASTER_ADMIN':!Auth.admin();});
@@ -134,7 +144,7 @@ window.App = (() => {
         document.querySelectorAll('.notification-button').forEach(button=>button.addEventListener('click',()=>location.href='notificacoes.html'));
         document.querySelectorAll('.user-profile').forEach(button=>{button.tabIndex=0;button.setAttribute('role','link');button.addEventListener('click',()=>location.href='perfil.html');button.addEventListener('keydown',e=>{if(e.key==='Enter')location.href='perfil.html';});});
     });
-    return {$,esc,labels,statusClass,priorityClass,error,clearError,run,start,text,date,duration,options,saveFile,exportRows,initials};
+    return {$,esc,labels,statusClass,priorityClass,error,clearError,run,start,text,date,duration,options,saveFile,exportRows,initials,avatar};
 })();
 function toggleSidebar(){document.querySelector('.sidebar')?.classList.toggle('show');document.querySelector('.sidebar-overlay')?.classList.toggle('show');}
 function logout(){if(confirm('Deseja sair do sistema?'))return App.run(()=>Auth.logout());}

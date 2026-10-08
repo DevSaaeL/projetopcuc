@@ -23,14 +23,17 @@ function cancelarEdicao(){App.$('name').value=Auth.user.nome;App.$('email').valu
    FOTO
 ================================ */
 
-function alterarFoto() {
-
-    alert(
-        "O envio da foto será conectado ao backend posteriormente."
-    );
-
-}
-
+function alterarFoto(){App.$('profilePhotoInput').click();}
+App.$('profilePhotoInput').addEventListener('change',event=>{
+ const file=event.target.files[0];if(!file)return;
+ App.run(async()=>{
+  if(!['image/jpeg','image/png'].includes(file.type)||file.size>2*1024*1024)throw Error('Escolha uma foto JPG ou PNG de até 2 MB.');
+  const button=document.querySelector('.avatar-edit-button');button.disabled=true;
+  App.text('photoStatus','Salvando foto…');
+  try{const data=new FormData();data.append('arquivo',file);Object.assign(Auth.user,await API.post('/auth/foto',data));document.querySelectorAll('.user-avatar,#profileAvatar').forEach(e=>App.avatar(e,Auth.user));App.text('photoStatus','Foto salva com sucesso.');}
+  finally{button.disabled=false;event.target.value='';if(!Auth.user.foto_versao)App.text('photoStatus','JPG ou PNG • até 2 MB');}
+ });
+});
 
 /* ================================
    ALTERAR SENHA
@@ -71,7 +74,7 @@ function encerrarSessoes(){if(confirm('Encerrar todas as sessões da sua conta?'
 
 App.start(async user=>{
  if(user.microsoft_object_id)App.$('email').readOnly=true;
- cancelarEdicao();App.text('profileName',user.nome);App.text('profileAvatar',App.initials(user.nome));document.querySelector('.profile-role').textContent=App.labels[user.perfil];
+ cancelarEdicao();App.text('profileName',user.nome);App.avatar(App.$('profileAvatar'),user);document.querySelector('.profile-role').textContent=App.labels[user.perfil];
  const vals=[user.email,user.perfil==='MASTER_ADMIN'?'Todas as unidades':user.locais.map(f=>f.nome).join(', ')||'Sem local atribuído',user.setor||'—',App.date(user.criado_em)];document.querySelectorAll('.profile-info-item strong').forEach((e,i)=>e.textContent=vals[i]);
  const locked=document.querySelectorAll('#profileForm input:disabled');[user.email,String(user.id),App.labels[user.perfil],user.setor||'—'].forEach((v,i)=>{if(locked[i])locked[i].value=v;});
  const prefs=JSON.parse(user.preferencias||'{}');for(const [key,value] of Object.entries(prefs))if(App.$(key))App.$(key).checked=value;
