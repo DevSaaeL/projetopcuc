@@ -1,0 +1,2 @@
+ALTER TABLE usuarios ADD COLUMN foto BYTEA;
+ALTER TABLE usuarios ADD COLUMN foto_versao VARCHAR(36);
