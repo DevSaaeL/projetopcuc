@@ -12,13 +12,15 @@ import java.util.*;
 @RequestMapping("/api")
 public class ApiController {
  @org.springframework.beans.factory.annotation.Value("${app.microsoft.enabled}") private boolean microsoftEnabled;
- private final DeskService service;private final AuthService auth;
- public ApiController(DeskService service,AuthService auth){this.service=service;this.auth=auth;}
+ private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;
+ public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos){this.service=service;this.auth=auth;this.photos=photos;}
  @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",microsoftEnabled,"microsoftLoginUrl","/oauth2/authorization/microsoft","passwordResetUrl","https://passwordreset.microsoftonline.com","passwordChangeUrl","https://myaccount.microsoft.com","selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
  @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){auth.login(data,req);return Map.of("ok",true);}
  @PostMapping("/auth/register") ResponseEntity<?> register(@Valid @RequestBody Register data){return ResponseEntity.status(HttpStatus.CREATED).body(auth.register(data));}
  @PostMapping("/auth/logout") void logout(HttpServletRequest req){var s=req.getSession(false);if(s!=null)s.invalidate();}
+ @PostMapping("/auth/foto") Object photo(@RequestParam MultipartFile arquivo)throws Exception{return photos.save(arquivo);}
+ @GetMapping("/auth/foto") ResponseEntity<byte[]> photo(){return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).cacheControl(CacheControl.noStore()).header("X-Content-Type-Options","nosniff").body(photos.read());}
  @GetMapping("/auth/me") Object me(){return service.me();}
  @PutMapping("/auth/senha") void password(@Valid @RequestBody Password data,HttpServletRequest req){service.password(data);req.getSession().invalidate();}
  @PutMapping("/auth/perfil") Object profile(@Valid @RequestBody Profile data){return service.profile(data);}
