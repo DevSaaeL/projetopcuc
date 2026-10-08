@@ -372,6 +372,7 @@
                         <div class="card-body text-center">
 
 
+                            <input type="file" id="profilePhotoInput" accept="image/jpeg,image/png" hidden>
                             <div class="profile-avatar-wrapper">
 
                                 <div
@@ -385,7 +386,7 @@
                                 <button
                                     class="avatar-edit-button"
                                     data-event-6=""
-                                    title="Alterar foto"
+                                    type="button" aria-label="Alterar foto de perfil" title="Alterar foto"
                                 >
 
                                     <i class="bi bi-camera-fill"></i>
@@ -395,6 +396,7 @@
                             </div>
 
 
+                            <p id="photoStatus" class="photo-help" role="status">JPG ou PNG • até 2 MB</p>
                             <h4
                                 class="profile-name"
                                 id="profileName"
