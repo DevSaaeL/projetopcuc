@@ -1,0 +1,10 @@
+.git
+**/target
+**/.env
+**/.env.*
+**/data
+**/*.log
+**/*.db
+**/*.sqlite
+.idea
+.vscode
