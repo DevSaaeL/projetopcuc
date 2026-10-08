@@ -1912,3 +1912,6 @@ html body .sidebar a[hidden] { display:none !important; }
 .hd-live-alert a { margin-top: 8px; color: #a6192e; }
 .hd-live-alert button { position: absolute; top: 6px; right: 10px; border: 0; background: transparent; color: #374151; font-size: 24px; }
 .hd-enable-sound { flex-shrink: 0; margin-left: 12px; }
+
+.user-avatar { overflow: hidden; }
+.user-avatar img, .profile-avatar img { width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; }
