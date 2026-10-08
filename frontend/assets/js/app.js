@@ -1,7 +1,7 @@
 window.LiveUpdates = (() => {
     const refreshers = new Set();
     let user, timer, running = false, stopped = false, initialized = false, highWater = 0;
-    let audio, soundButton, pendingBell = false;
+    let audio, pendingBell = false;
     function preferences() { try { return JSON.parse(user.preferencias || '{}'); } catch { return {}; } }
     function storedId() { try { return Number(localStorage.getItem('helpdesk_notifications_' + user.id)) || 0; } catch { return 0; } }
     function remember(id) { highWater = id; try { localStorage.setItem('helpdesk_notifications_' + user.id, String(id)); } catch {} }
@@ -30,8 +30,7 @@ window.LiveUpdates = (() => {
             audio ||= new Audio();
             await audio.resume();
             if (audio.state === 'running') {
-                soundButton?.remove();
-                if (pendingBell || event.target.closest?.('[data-enable-sound]')) bell();
+                if (pendingBell) bell();
             }
         } catch { /* The popup remains available if sound is blocked. */ }
     }
@@ -87,10 +86,6 @@ window.LiveUpdates = (() => {
         if (user) return;
         user = account;
         if (Auth.support()) {
-            soundButton = document.createElement('button'); soundButton.type = 'button';
-            soundButton.className = 'btn btn-sm btn-outline-primary hd-enable-sound'; soundButton.dataset.enableSound = '';
-            soundButton.textContent = 'Ativar som'; soundButton.title = 'Ativar o sino para novos chamados';
-            if (preferences().notificationSound !== false) (document.querySelector('.topbar') || document.body).append(soundButton);
             document.addEventListener('pointerdown', enableSound);
             document.addEventListener('keydown', enableSound);
         }
