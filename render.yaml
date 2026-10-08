@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: helpdesk-ti
+    name: projetopcuc
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
@@ -10,10 +10,18 @@ services:
         value: prod
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
+      - key: DATABASE_HOST
         fromDatabase:
           name: helpdesk-ti-db
-          property: connectionString
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: helpdesk-ti-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: helpdesk-ti-db
+          property: database
       - key: DATABASE_USER
         fromDatabase:
           name: helpdesk-ti-db
@@ -24,14 +32,11 @@ services:
           property: password
       - key: FRONTEND_ORIGINS
         fromService:
-          name: helpdesk-ti
+          name: projetopcuc
           type: web
           envVarKey: RENDER_EXTERNAL_URL
       - key: PUBLIC_FRONTEND_URL
-        fromService:
-          name: helpdesk-ti
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false
       - key: SESSION_SECURE
         value: "true"
       - key: SESSION_SAME_SITE
@@ -44,3 +49,6 @@ services:
 databases:
   - name: helpdesk-ti-db
     plan: free
+
+
+
