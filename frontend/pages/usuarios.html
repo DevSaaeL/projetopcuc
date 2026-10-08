@@ -237,7 +237,10 @@
 
                             </div>
 
-                            <div class="mb-3"><label for="usuarioSenha" class="form-label">Senha inicial (mínimo 12 caracteres; deixe vazia para manter ao editar)</label><input id="usuarioSenha" type="password" class="form-control" minlength="12" maxlength="72" autocomplete="new-password" required></div><div class="mb-3"><label for="usuarioFilial" class="form-label">Filial / cidade</label><select id="usuarioFilial" class="form-select"></select></div><div class="form-check mb-3"><input id="usuarioAtivo" type="checkbox" class="form-check-input" checked><label for="usuarioAtivo" class="form-check-label">Usuário ativo</label></div>
+                            <p class="small text-muted">Credenciais e recuperação de senha são gerenciadas pela Microsoft.</p>
+                            <div class="mb-3"><label for="usuarioMicrosoftId" class="form-label">ID do objeto do usuário no Microsoft Entra</label><input id="usuarioMicrosoftId" class="form-control" maxlength="36" placeholder="00000000-0000-0000-0000-000000000000" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"><div class="form-text">Vincula a identidade institucional ao acesso cadastrado. Obrigatório para entrar com Microsoft.</div></div>
+                            <fieldset class="mb-3"><legend class="form-label fs-6">Locais de atuação</legend><div id="usuarioLocais"></div><div class="form-text">Selecione uma ou mais unidades. Técnicos recebem somente chamados desses locais. O administrador mestre tem acesso a todos.</div></fieldset>
+                            <div class="form-check mb-3"><input id="usuarioAtivo" type="checkbox" class="form-check-input" checked><label for="usuarioAtivo" class="form-check-label">Usuário ativo</label></div>
 <button
                                 type="submit"
                                 class="btn btn-puc w-100"

@@ -89,17 +89,14 @@
             </h2>
 
             <p class="login-subtitle">
-                Entre com suas credenciais para acessar o sistema.
+                Acesse com sua conta institucional.
             </p>
-            <div class="login-tabs" role="tablist" aria-label="Acesso ao sistema">
-                <button type="button" class="login-tab active" id="loginTab" role="tab" aria-selected="true">
-                    Entrar
-                </button>
-                <button type="button" class="login-tab" id="registerTab" role="tab" aria-selected="false">
-                    Criar conta
-                </button>
+            <div class="mb-4" id="microsoftAccess">
+                <a id="microsoftLogin" class="login-button d-none" href="/oauth2/authorization/microsoft">Entrar com Microsoft</a>
+                <p id="authStatus" class="small text-muted" role="status">Carregando opções de acesso...</p>
+                <p class="small">O administrador cadastra sua conta e seus locais de atuação.</p>
+                <a href="https://passwordreset.microsoftonline.com" target="_blank" rel="noopener noreferrer">Recuperar senha na Microsoft</a>
             </div>
-
             <form id="loginForm">
 
                 <div class="mb-3">
@@ -126,7 +123,8 @@
                         </label>
 
                         <a
-                            href="#"
+                            href="https://passwordreset.microsoftonline.com"
+                            target="_blank" rel="noopener noreferrer"
                             class="small text-primary"
                             id="forgotPassword"
                         >
@@ -209,31 +207,7 @@
             </div>
 
 
-            <form id="registerForm" class="d-none" novalidate>
-                <div class="mb-3">
-                    <label for="registerEmail" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="registerEmail" name="email" placeholder="voce@exemplo.com" autocomplete="email" maxlength="200" required>
-                </div>
-                <div class="mb-3">
-                    <label for="registerPassword" class="form-label">Senha</label>
-                    <div class="password-wrapper">
-                        <input type="password" class="form-control" id="registerPassword" name="senha" placeholder="Crie uma senha forte" autocomplete="new-password" minlength="12" maxlength="72" required>
-                        <button type="button" class="password-toggle" id="registerPasswordToggle" aria-label="Mostrar senha"><i class="bi bi-eye"></i></button>
-                    </div>
-                    <div class="form-text">Use pelo menos 12 caracteres.</div>
-                </div>
-                <div class="mb-4">
-                    <label for="registerPasswordConfirm" class="form-label">Confirmar senha</label>
-                    <div class="password-wrapper">
-                        <input type="password" class="form-control" id="registerPasswordConfirm" name="confirmacao" placeholder="Digite a senha novamente" autocomplete="new-password" minlength="12" maxlength="72" required>
-                        <button type="button" class="password-toggle" id="registerPasswordConfirmToggle" aria-label="Mostrar confirmação da senha"><i class="bi bi-eye"></i></button>
-                    </div>
-                </div>
-                <button type="submit" class="login-button" id="registerButton">
-                    <span id="registerButtonText">Cadastrar</span>
-                    <span id="registerLoading" class="d-none"><span class="spinner-border spinner-border-sm me-2" role="status"></span>Criando conta...</span>
-                </button>
-            </form>
+
 
             <div id="registerAlert" class="alert mt-3 d-none" role="alert">
                 <i class="bi bi-info-circle me-2"></i>
