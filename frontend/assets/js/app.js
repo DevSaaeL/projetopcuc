@@ -129,7 +129,8 @@ window.App = (() => {
         document.querySelectorAll('.user-avatar').forEach(e=>e.textContent=initials(user.nome));
         document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
         document.querySelectorAll('.topbar .user-role,.topbar .text-muted,.user-menu-info small,.sidebar-user .user-info small').forEach(e=>e.textContent=labels[user.perfil]);
-        document.querySelectorAll('.sidebar a').forEach(a=>{if(['usuarios.html','filiais.html','qr-codes.html'].includes(a.getAttribute('href')))a.hidden=!Auth.admin();});
+        document.querySelectorAll('.sidebar a').forEach(a=>{if(['usuarios.html','filiais.html','qr-codes.html'].includes(a.getAttribute('href')))a.hidden=a.getAttribute('href')==='filiais.html'?user.perfil!=='MASTER_ADMIN':!Auth.admin();});
+        if(user.perfil==='MASTER_ADMIN')API.get('/filiais').then(locais=>{if(!locais.length){const banner=document.createElement('div');banner.className='alert alert-info m-3';banner.innerHTML='Primeiro acesso: cadastre manualmente as faculdades e unidades antes de cadastrar os técnicos. <a href="filiais.html">Cadastrar locais</a>';document.querySelector('main, .main-content')?.prepend(banner);}}).catch(error=>App.error(error));
         LiveUpdates.start(user);
     });
     document.addEventListener('DOMContentLoaded',()=>{
