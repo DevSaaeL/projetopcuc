@@ -11,8 +11,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class ApiController {
+ @org.springframework.beans.factory.annotation.Value("${app.microsoft.enabled}") private boolean microsoftEnabled;
  private final DeskService service;private final AuthService auth;
  public ApiController(DeskService service,AuthService auth){this.service=service;this.auth=auth;}
+ @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",microsoftEnabled,"microsoftLoginUrl","/oauth2/authorization/microsoft","passwordResetUrl","https://passwordreset.microsoftonline.com","passwordChangeUrl","https://myaccount.microsoft.com","selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
  @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){auth.login(data,req);return Map.of("ok",true);}
  @PostMapping("/auth/register") ResponseEntity<?> register(@Valid @RequestBody Register data){return ResponseEntity.status(HttpStatus.CREATED).body(auth.register(data));}
