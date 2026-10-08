@@ -1905,3 +1905,10 @@ html body .sidebar a[hidden] { display:none !important; }
  html body .hd-menu-button {display:inline-flex; margin-right:10px; align-items:center;justify-content:center;}
  html body .sidebar-overlay.show {display:block;z-index:1055;}
 }
+/* Alerts stay visible until dismissed and do not interrupt typing. */
+.hd-live-alerts { position: fixed; right: 20px; bottom: 20px; z-index: 1090; display: grid; gap: 12px; width: min(360px, calc(100vw - 32px)); }
+.hd-live-alert { position: relative; padding: 18px 44px 18px 18px; border: 1px solid #a6192e; border-left: 5px solid #a6192e; border-radius: 12px; background: #fff; color: #111827; box-shadow: 0 6px 24px #0002; }
+.hd-live-alert strong, .hd-live-alert a { display: block; }
+.hd-live-alert a { margin-top: 8px; color: #a6192e; }
+.hd-live-alert button { position: absolute; top: 6px; right: 10px; border: 0; background: transparent; color: #374151; font-size: 24px; }
+.hd-enable-sound { flex-shrink: 0; margin-left: 12px; }
