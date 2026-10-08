@@ -1,34 +1,12 @@
-App.start(async function (usuario) {
-
-            const ticketForm = document.getElementById("ticketForm");
-
-            const titulo = document.getElementById("titulo");
-            const descricao = document.getElementById("descricao");
-
-            const tituloCounter =
-                document.getElementById("tituloCounter");
-
-            const descricaoCounter =
-                document.getElementById("descricaoCounter");
-
-            const categoria =
-                document.getElementById("categoria");
-
-            const cidade =
-                document.getElementById("cidade");
-
-            const filial =
-                document.getElementById("filial");
-
-            const bloco =
-                document.getElementById("bloco");
-
-            const sala =
-                document.getElementById("sala");
-
-            const setor =
-                document.getElementById("setor");
-
+App.start(async function () {
+    const ticketForm = document.getElementById("ticketForm");
+    const titulo = document.getElementById("titulo");
+    const descricao = document.getElementById("descricao");
+    const categoria = document.getElementById("categoria");
+    const cidade = document.getElementById("cidade");
+    const filial = document.getElementById("filial");
+    const bloco = document.getElementById("bloco");
+    const sala = document.getElementById("sala");
             const attachmentInput =
                 document.getElementById("attachments");
 
@@ -44,176 +22,8 @@ App.start(async function (usuario) {
             let arquivosSelecionados = [];
 
 
-            /*
-             * ==========================================
-             * CONTADORES
-             * ==========================================
-             */
-
-            titulo.addEventListener("input", function () {
-
-                tituloCounter.textContent =
-                    this.value.length;
-
-                document.getElementById(
-                    "summaryTitulo"
-                ).textContent =
-                    this.value.trim() || "Não informado";
-
-            });
-
-
-            descricao.addEventListener("input", function () {
-
-                descricaoCounter.textContent =
-                    this.value.length;
-
-            });
-
-
-            /*
-             * ==========================================
-             * CATEGORIA
-             * ==========================================
-             */
-
-            categoria.addEventListener("change", function () {
-
-                const texto =
-                    this.options[this.selectedIndex].text;
-
-                document.getElementById(
-                    "summaryCategoria"
-                ).textContent =
-                    this.value ? texto : "Não informado";
-
-            });
-
-
-            /*
-             * ==========================================
-             * PRIORIDADE
-             * ==========================================
-             */
-
-            const prioridadeInputs =
-                document.querySelectorAll(
-                    'input[name="prioridade"]'
-                );
-
-
-            prioridadeInputs.forEach(function (input) {
-
-                input.addEventListener("change", function () {
-
-                    const tituloPrioridade =
-                        this.nextElementSibling
-                            .querySelector(".priority-title")
-                            .textContent
-                            .trim();
-
-                    document.getElementById(
-                        "summaryPrioridade"
-                    ).textContent =
-                        tituloPrioridade;
-
-                });
-
-            });
-
-
-            /*
-             * ==========================================
-             * LOCALIZAÇÃO
-             * ==========================================
-             */
-
-            [
-                cidade,
-                filial,
-                bloco,
-                sala,
-                setor
-            ].forEach(function (element) {
-
-                element.addEventListener(
-                    "change",
-                    atualizarLocalizacao
-                );
-
-            });
-
-
-            function atualizarLocalizacao() {
-
-                const valores = [];
-
-                if (cidade.value) {
-
-                    valores.push(
-                        cidade.options[
-                            cidade.selectedIndex
-                        ].text
-                    );
-
-                }
-
-                if (filial.value) {
-
-                    valores.push(
-                        filial.options[
-                            filial.selectedIndex
-                        ].text
-                    );
-
-                }
-
-                if (bloco.value) {
-
-                    valores.push(
-                        bloco.options[
-                            bloco.selectedIndex
-                        ].text
-                    );
-
-                }
-
-                if (sala.value) {
-
-                    valores.push(
-                        sala.options[
-                            sala.selectedIndex
-                        ].text
-                    );
-
-                }
-
-                if (setor.value) {
-
-                    valores.push(
-                        setor.options[
-                            setor.selectedIndex
-                        ].text
-                    );
-
-                }
-
-                document.getElementById(
-                    "summaryLocalizacao"
-                ).textContent =
-                    valores.length
-                        ? valores.join(" / ")
-                        : "Não informado";
-
-            }
-
-
-            /*
-             * ==========================================
-             * ANEXOS
-             * ==========================================
-             */
-
+    titulo.addEventListener("input", () => { document.getElementById("tituloCounter").textContent = titulo.value.length; });
+    descricao.addEventListener("input", () => { document.getElementById("descricaoCounter").textContent = descricao.value.length; });
             attachmentArea.addEventListener(
                 "click",
                 function () {
@@ -395,8 +205,7 @@ App.start(async function (usuario) {
             if (!chamadoCriado) chamadoCriado = await API.post('/chamados', {
                 titulo: titulo.value.trim(), descricao: descricao.value.trim(), categoria: categoria.value,
                 tipoAtendimento: document.getElementById('tipoAtendimento').value,
-                prioridade: document.querySelector('[name="prioridade"]:checked').value.toUpperCase(),
-                filialId: Number(filial.value), bloco: bloco.value, sala: sala.value, setor: setor.value,
+                filialId: Number(filial.value), bloco: bloco.value, sala: sala.value,
                 qrId: new URLSearchParams(location.search).get('qr')
             });
             // Remove only files acknowledged by the API; a retry does not duplicate the ticket.
@@ -501,9 +310,8 @@ App.start(async function (usuario) {
             const filiais = (await API.get('/filiais')).filter(f=>f.ativo);
     App.options('filial',filiais,'id','nome');
     App.options('cidade',[...new Set(filiais.map(f=>f.cidade))].map(c=>({id:c,nome:c})),'id','nome');
-    filial.addEventListener('change',()=>{const f=filiais.find(f=>f.id===Number(filial.value));if(f){cidade.value=f.cidade;atualizarLocalizacao();}});
-    cidade.addEventListener('change',()=>{const f=filiais.find(f=>f.id===Number(filial.value));if(f&&f.cidade!==cidade.value)filial.value='';atualizarLocalizacao();});
-    document.querySelectorAll('.summary-item').forEach(item=>{if(item.querySelector('.summary-label')?.textContent.trim()==='Solicitante')item.querySelector('.summary-value').textContent=usuario.nome;});
+    filial.addEventListener('change',()=>{const f=filiais.find(f=>f.id===Number(filial.value));if(f){cidade.value=f.cidade;}});
+    cidade.addEventListener('change',()=>{const f=filiais.find(f=>f.id===Number(filial.value));if(f&&f.cidade!==cidade.value)filial.value='';});
     const qrId=new URLSearchParams(location.search).get('qr');
     if(qrId){
         ticketForm.querySelector('button[type="submit"]').disabled=true;
@@ -514,6 +322,6 @@ App.start(async function (usuario) {
         }
         const info=document.getElementById('qrLocationInfo');info.classList.add('qr-active');info.replaceChildren();
         const icon=document.createElement('i');icon.className='bi bi-qr-code-scan';info.append(icon,document.createTextNode('Localização identificada: '+qr.filial_nome+' — '+(qr.descricao||qr.nome)));
-        atualizarLocalizacao();ticketForm.querySelector('button[type="submit"]').disabled=false;
+        ticketForm.querySelector('button[type="submit"]').disabled=false;
     }
 });

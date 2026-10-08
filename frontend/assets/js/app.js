@@ -1,3 +1,106 @@
+window.LiveUpdates = (() => {
+    const refreshers = new Set();
+    let user, timer, running = false, stopped = false, initialized = false, highWater = 0;
+    let audio, soundButton, pendingBell = false;
+    function preferences() { try { return JSON.parse(user.preferencias || '{}'); } catch { return {}; } }
+    function storedId() { try { return Number(localStorage.getItem('helpdesk_notifications_' + user.id)) || 0; } catch { return 0; } }
+    function remember(id) { highWater = id; try { localStorage.setItem('helpdesk_notifications_' + user.id, String(id)); } catch {} }
+    function bell() {
+        if (preferences().notificationSound === false) return;
+        if (!audio || audio.state !== 'running') { pendingBell = true; return; }
+        pendingBell = false;
+        // Two decaying tones make a bell without downloading an audio file.
+        for (const [offset, frequency] of [[0, 880], [0.22, 1174]]) {
+            const gain = audio.createGain(), tone = audio.createOscillator();
+            const start = audio.currentTime + offset;
+            tone.type = 'sine'; tone.frequency.value = frequency;
+            gain.gain.setValueAtTime(0.001, start);
+            gain.gain.exponentialRampToValueAtTime(0.2, start + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.9);
+            tone.connect(gain); gain.connect(audio.destination);
+            tone.start(start); tone.stop(start + 0.95);
+            tone.onended = () => { tone.disconnect(); gain.disconnect(); };
+        }
+    }
+    async function enableSound(event) {
+        if (!event.isTrusted || preferences().notificationSound === false) return;
+        try {
+            const Audio = window.AudioContext || window.webkitAudioContext;
+            if (!Audio) return;
+            audio ||= new Audio();
+            await audio.resume();
+            if (audio.state === 'running') {
+                soundButton?.remove();
+                if (pendingBell || event.target.closest?.('[data-enable-sound]')) bell();
+            }
+        } catch { /* The popup remains available if sound is blocked. */ }
+    }
+    function popup(notifications) {
+        if (preferences().systemNotifications === false) return;
+        let container = document.getElementById('liveTicketAlerts');
+        if (!container) {
+            container = document.createElement('div'); container.id = 'liveTicketAlerts';
+            container.className = 'hd-live-alerts'; container.setAttribute('aria-live', 'assertive');
+            document.body.append(container);
+        }
+        const latest = notifications[0];
+        const alert = document.createElement('div'); alert.className = 'hd-live-alert'; alert.setAttribute('role', 'alert');
+        const title = document.createElement('strong');
+        title.textContent = notifications.length === 1 ? 'Novo chamado recebido' : notifications.length + ' novos chamados recebidos';
+        const link = document.createElement('a'); link.href = 'chamado-detalhes.html?id=' + encodeURIComponent(latest.chamado_id);
+        link.textContent = 'Ver chamado #' + String(latest.chamado_id).padStart(6, '0');
+        const close = document.createElement('button'); close.type = 'button'; close.textContent = '×';
+        close.setAttribute('aria-label', 'Fechar aviso de novo chamado'); close.addEventListener('click', () => alert.remove());
+        alert.append(title, link, close); container.append(alert);
+        while (container.children.length > 3) container.firstElementChild.remove();
+    }
+    function consume(notifications) {
+        const count = notifications.filter(n => !n.lida).length;
+        document.querySelectorAll('.notification-count,.notification-badge,.menu-item[href="notificacoes.html"] .menu-badge').forEach(e => e.textContent = count);
+        document.querySelectorAll('.notification-dot').forEach(e => e.hidden = !count);
+        const threshold = Math.max(highWater, storedId());
+        const max = Math.max(threshold, ...notifications.map(n => Number(n.id)));
+        const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && n.titulo === 'Novo chamado') : [];
+        remember(max); initialized = true;
+        document.dispatchEvent(new CustomEvent('helpdesk:notifications', {detail: notifications}));
+        if (Auth.support() && fresh.length) { popup(fresh); bell(); }
+    }
+    function expired(error) {
+        if (error?.status !== 401) return false;
+        stopped = true; clearTimeout(timer);
+        location.replace('login.html?returnTo=' + encodeURIComponent(location.pathname.split('/').pop() + location.search));
+        return true;
+    }
+    async function tick() {
+        if (running || stopped) return;
+        clearTimeout(timer); running = true;
+        try {
+            consume(await API.get('/notificacoes'));
+            if (!document.hidden) {
+                const results = await Promise.allSettled([...refreshers].map(fn => Promise.resolve().then(fn)));
+                results.forEach(result => { if (result.status === 'rejected') expired(result.reason); });
+            }
+        } catch (error) { expired(error); }
+        finally { running = false; if (!stopped) timer = setTimeout(tick, 5000); }
+    }
+    function start(account) {
+        if (user) return;
+        user = account;
+        if (Auth.support()) {
+            soundButton = document.createElement('button'); soundButton.type = 'button';
+            soundButton.className = 'btn btn-sm btn-outline-primary hd-enable-sound'; soundButton.dataset.enableSound = '';
+            soundButton.textContent = 'Ativar som'; soundButton.title = 'Ativar o sino para novos chamados';
+            if (preferences().notificationSound !== false) (document.querySelector('.topbar') || document.body).append(soundButton);
+            document.addEventListener('pointerdown', enableSound);
+            document.addEventListener('keydown', enableSound);
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+        window.addEventListener('online', tick);
+        tick();
+    }
+    return {start, subscribe(fn) { refreshers.add(fn); return () => refreshers.delete(fn); }};
+})();
+
 window.App = (() => {
     const $ = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -27,9 +130,7 @@ window.App = (() => {
         document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
         document.querySelectorAll('.topbar .user-role,.topbar .text-muted,.user-menu-info small,.sidebar-user .user-info small').forEach(e=>e.textContent=labels[user.perfil]);
         document.querySelectorAll('.sidebar a').forEach(a=>{if(['usuarios.html','filiais.html','qr-codes.html'].includes(a.getAttribute('href')))a.hidden=!Auth.admin();});
-        const ns=await API.get('/notificacoes');const count=ns.filter(n=>!n.lida).length;
-        document.querySelectorAll('.notification-count,.notification-badge,.menu-item[href="notificacoes.html"] .menu-badge').forEach(e=>e.textContent=count);
-        document.querySelectorAll('.notification-dot').forEach(e=>e.hidden=!count);
+        LiveUpdates.start(user);
     });
     document.addEventListener('DOMContentLoaded',()=>{
         document.querySelectorAll('.password-toggle').forEach(button=>button.addEventListener('click',()=>{const input=button.parentElement.querySelector('input');if(!input)return;input.type=input.type==='password'?'text':'password';button.innerHTML='<i class="bi bi-eye'+(input.type==='text'?'-slash':'')+'"></i>';button.setAttribute('aria-label',input.type==='text'?'Ocultar senha':'Mostrar senha');}));

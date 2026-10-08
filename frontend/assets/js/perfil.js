@@ -238,7 +238,7 @@ function ativarMFA() {
    PREFERÊNCIAS
 ================================ */
 
-function salvarPreferencia(){App.run(async()=>{const data={};for(const id of ['systemNotifications','notificationSound','emailNotifications','slaNotifications'])data[id]=App.$(id).checked;await API.put('/auth/preferencias',data);});}
+function salvarPreferencia(){App.run(async()=>{const data={};for(const id of ['systemNotifications','notificationSound','emailNotifications','slaNotifications'])data[id]=App.$(id).checked;await API.put('/auth/preferencias',data);Auth.user.preferencias=JSON.stringify(data);});}
 
 
 /* ================================
