@@ -8,7 +8,9 @@ window.Auth = (() => {
         if (value && allowed.some(name => value === name+'.html' || value.startsWith(name+'.html?'))) return value;
         return 'dashboard.html';
     }
-    const ready = page === 'login.html' ? Promise.resolve(null) : API.get('/auth/me').then(value => {
+    const qrEntry = page === 'novo-chamado.html' && new URLSearchParams(location.search).has('qr');
+    if(qrEntry) location.replace('solicitar.html?qr='+encodeURIComponent(new URLSearchParams(location.search).get('qr')));
+    const ready = (page === 'login.html' || qrEntry) ? Promise.resolve(null) : API.get('/auth/me').then(value => {
         user = value;
         if (['usuarios.html','filiais.html','qr-codes.html'].includes(page) && !['ADMIN','MASTER_ADMIN'].includes(user.perfil)) {
             location.replace('meus-chamados.html'); return null;
