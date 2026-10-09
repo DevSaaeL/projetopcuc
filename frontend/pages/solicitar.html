@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Abrir chamado | HelpDesk TI</title><link rel="stylesheet" href="../assets/css/solicitar.css"></head>
+<body><header><a class="brand" href="solicitar.html">HelpDesk <span>TI</span></a><a class="staff" href="login.html">Acesso da equipe</a></header>
+<main><div class="intro"><span class="eyebrow">SUPORTE DE TECNOLOGIA</span><h1>Como podemos ajudar?</h1><p>Informe seu nome e conte o que aconteceu. Não é preciso criar uma conta.</p></div>
+<section class="ticket-card" aria-labelledby="formTitle"><div class="location"><span class="location-icon" aria-hidden="true">⌖</span><div><small>LOCAL IDENTIFICADO PELO QR CODE</small><strong id="locationName">Verificando localização…</strong><span id="locationDetails"></span></div></div>
+<div id="error" role="alert" hidden></div>
+<form id="publicTicketForm" hidden><h2 id="formTitle">Abrir chamado</h2><label for="nome">Seu nome</label><input id="nome" name="nome" autocomplete="name" maxlength="160" required placeholder="Como você se chama?">
+<label for="descricao">O que está acontecendo?</label><textarea id="descricao" name="descricao" rows="5" maxlength="2000" required placeholder="Ex.: o computador da sala não liga."></textarea><div class="hint">Descreva o problema para ajudar o técnico no atendimento.</div><button id="send" type="submit">Enviar chamado <span aria-hidden="true">→</span></button><p class="footnote">Seu chamado será enviado à equipe de TI deste local.</p></form>
+<section id="success" hidden aria-live="polite"><div class="success-icon" aria-hidden="true">✓</div><h2>Chamado enviado!</h2><p>A equipe de TI foi avisada. Guarde o número do seu chamado:</p><strong id="protocol"></strong><p>Você já pode fechar esta página.</p></section></section><footer>HelpDesk TI · Atendimento da sua unidade</footer></main>
+<script src="../assets/js/config.js"></script><script src="../assets/js/api.js"></script><script src="../assets/js/solicitar.js"></script></body></html>
