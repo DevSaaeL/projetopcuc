@@ -21,10 +21,11 @@ public class MicrosoftLoginSuccess implements AuthenticationSuccessHandler {
   String oid=principal.getClaimAsString("oid");
   try{UUID.fromString(oid);}catch(Exception e){deny(req,res);return;}
   var user=repo.microsoftAccount(oid.toLowerCase(java.util.Locale.ROOT));
-  if(user==null||!user.ativo()||(!user.master()&&repo.branchIds(user.id()).isEmpty())){deny(req,res);return;}
+  if(user==null||!user.ativo()||"USUARIO".equals(user.perfil())||(!user.master()&&repo.branchIds(user.id()).isEmpty())){deny(req,res,"requester");return;}
   auth.establishSession(user,req);
   // Permissions come only from the local administrator's assignment, never email or token roles.
   res.sendRedirect("/pages/login.html?sso=success");
  }
- private void deny(HttpServletRequest req,HttpServletResponse res)throws IOException{SecurityContextHolder.clearContext();var session=req.getSession(false);if(session!=null)session.invalidate();res.sendRedirect("/pages/login.html?sso=unassigned");}
+ private void deny(HttpServletRequest req,HttpServletResponse res)throws IOException{deny(req,res,"unassigned");}
+ private void deny(HttpServletRequest req,HttpServletResponse res,String reason)throws IOException{SecurityContextHolder.clearContext();var session=req.getSession(false);if(session!=null)session.invalidate();res.sendRedirect("/pages/login.html?sso="+reason);}
 }
