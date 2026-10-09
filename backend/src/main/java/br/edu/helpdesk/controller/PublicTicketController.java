@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 public class PublicTicketController {
  private final PublicTicketService service;
  public PublicTicketController(PublicTicketService service){this.service=service;}
- public record Submission(@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String qrId,@NotBlank @Size(max=160) String nome,@NotBlank @Size(max=2000) String descricao,@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String requestId){}
+ public record Submission(@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String qrId,@NotBlank @Size(max=160) String nome,@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String requestId){}
  @GetMapping("/qrcodes/{id}") Object location(@PathVariable String id){return service.location(id);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Submission data,HttpServletRequest request){
   var session=request.getSession();
@@ -22,6 +22,6 @@ public class PublicTicketController {
    if(count>=10)throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"Aguarde alguns minutos antes de enviar outro chamado.");
    session.setAttribute("publicTicketCount",count+1);
   }
-  return service.create(data.qrId(),data.nome(),data.descricao(),data.requestId());
+  return service.create(data.qrId(),data.nome(),data.requestId());
  }
 }
