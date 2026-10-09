@@ -22,7 +22,7 @@ public class SecurityConfig {
   var cors=new CorsConfiguration();cors.setAllowedOrigins(Arrays.stream(origins.split(",")).map(String::trim).filter(s->!s.isEmpty()).toList());cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));cors.setAllowedHeaders(List.of("Content-Type","X-CSRF-TOKEN"));cors.setAllowCredentials(true);
   var source=new UrlBasedCorsConfigurationSource();source.registerCorsConfiguration("/api/**",cors);
   http.cors(c->c.configurationSource(source))
-   .authorizeHttpRequests(a->a.requestMatchers("/api/auth/csrf","/api/auth/login","/api/auth/register","/api/auth/providers").permitAll().requestMatchers("/api/**").authenticated().anyRequest().permitAll())
+   .authorizeHttpRequests(a->a.requestMatchers("/api/auth/csrf","/api/auth/login","/api/auth/register","/api/auth/providers").permitAll().requestMatchers(org.springframework.http.HttpMethod.GET,"/api/public/qrcodes/*").permitAll().requestMatchers(org.springframework.http.HttpMethod.POST,"/api/public/chamados").permitAll().requestMatchers("/api/**").authenticated().anyRequest().permitAll())
    .exceptionHandling(e->e.authenticationEntryPoint((req,res,x)->{res.setStatus(401);res.setContentType("application/json");res.getWriter().write("{\"message\":\"Autenticação necessária.\"}");}).accessDeniedHandler((req,res,x)->{res.setStatus(403);res.setContentType("application/json");res.getWriter().write("{\"message\":\"Acesso negado ou sessão expirada.\"}");}))
    .securityContext(c->c.securityContextRepository(new NullSecurityContextRepository()))
    .requestCache(c->c.requestCache(new NullRequestCache()))
