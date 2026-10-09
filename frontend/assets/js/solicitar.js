@@ -14,9 +14,11 @@
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(button.disabled)return;
   const nome=document.getElementById('nome').value.trim();
+  const descricao=document.getElementById('descricao').value.trim();
   if(!nome){showError('Informe seu nome para abrir o chamado.');return;}
+  if(!descricao){showError('Descreva o problema para abrir o chamado.');return;}
   error.hidden=true;button.disabled=true;button.textContent='Enviando…';
-  try{const result=await API.post('/public/chamados',{qrId,nome,requestId});document.getElementById('protocol').textContent=result.protocolo;form.hidden=true;document.getElementById('success').hidden=false;try{sessionStorage.removeItem('ticket-request-'+qrId);}catch{}}
+  try{const result=await API.post('/public/chamados',{qrId,nome,descricao,requestId});document.getElementById('protocol').textContent=result.protocolo;form.hidden=true;document.getElementById('success').hidden=false;try{sessionStorage.removeItem('ticket-request-'+qrId);}catch{}}
   catch(e){showError(e.message);button.disabled=false;button.textContent='Enviar chamado →';}
  });
 })();
