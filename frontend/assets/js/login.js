@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('authStatus').textContent=providers.microsoftEnabled?'Autenticação e senhas gerenciadas pela Microsoft.':'A integração Microsoft aguarda ativação pelo administrador. O acesso existente continua disponível.';
   const result=new URLSearchParams(location.search).get('sso');
   if(result==='success'){await API.get('/auth/me');const destination=sessionStorage.getItem('helpdesk_sso_destination');sessionStorage.removeItem('helpdesk_sso_destination');if(destination){const query=new URLSearchParams(location.search);query.set('returnTo',destination);history.replaceState(null,'',location.pathname+'?'+query.toString());}location.replace(Auth.destination());}
+  else if(result==='requester')show('Solicitantes abrem chamados lendo o QR Code. O acesso fica disponível para técnicos e administradores.');
   else if(result==='unassigned')show('Conta sem acesso. Solicite ao administrador o vínculo da conta Microsoft e dos locais de atuação.');
   else if(result==='failed')show('Não foi possível concluir o login Microsoft. Tente novamente ou contate o administrador.');
  }catch(error){show(error.message);}
