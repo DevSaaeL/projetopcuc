@@ -26,12 +26,12 @@ class PublicTicketTest {
   repo.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",tech,unit);repo.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",foreign,other);
   String qr=UUID.randomUUID().toString();repo.update("INSERT INTO qrcodes(id,nome,filial_id,bloco,sala) VALUES (?,'Laboratório',?,'B','12')",qr,unit);
   mvc.perform(get("/api/public/qrcodes/"+qr)).andExpect(status().isOk()).andExpect(jsonPath("$.filial_nome").value("Londrina")).andExpect(jsonPath("$.filial_id").doesNotExist());
-  var body=new HashMap<String,Object>(Map.of("qrId",qr,"nome","Maria Silva","requestId",UUID.randomUUID().toString(),"filialId",other,"sala","999"));
+  var body=new HashMap<String,Object>(Map.of("qrId",qr,"nome","Maria Silva","descricao","Computador não liga","requestId",UUID.randomUUID().toString(),"filialId",other,"sala","999"));
   String json=mapper.writeValueAsString(body);
   mvc.perform(post("/api/public/chamados").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isForbidden());
   var response=mvc.perform(post("/api/public/chamados").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andExpect(jsonPath("$.protocolo").isNotEmpty()).andExpect(jsonPath("$.descricao").doesNotExist()).andReturn().getResponse().getContentAsString();
   mvc.perform(post("/api/public/chamados").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andExpect(content().json(response));
-  var tickets=repo.rows("SELECT * FROM chamados");assertEquals(1,tickets.size());var ticket=tickets.getFirst();long id=((Number)ticket.get("id")).longValue();assertNull(ticket.get("solicitante_id"));assertEquals("Maria Silva",ticket.get("solicitante_nome"));assertEquals(unit,((Number)ticket.get("filial_id")).longValue());assertEquals("12",ticket.get("sala"));assertEquals("Solicitação via QR Code",ticket.get("titulo"));assertTrue(ticket.get("descricao").toString().contains("aguarda contato"));
+  var tickets=repo.rows("SELECT * FROM chamados");assertEquals(1,tickets.size());var ticket=tickets.getFirst();long id=((Number)ticket.get("id")).longValue();assertNull(ticket.get("solicitante_id"));assertEquals("Maria Silva",ticket.get("solicitante_nome"));assertEquals(unit,((Number)ticket.get("filial_id")).longValue());assertEquals("12",ticket.get("sala"));assertEquals("Solicitação via QR Code",ticket.get("titulo"));assertEquals("Computador não liga",ticket.get("descricao"));
   mvc.perform(get("/api/chamados")).andExpect(status().isUnauthorized());mvc.perform(get("/api/chamados/"+id)).andExpect(status().isUnauthorized());
   mvc.perform(get("/api/chamados/"+id).session(session(foreign))).andExpect(status().isNotFound());
   mvc.perform(get("/api/chamados/"+id).session(session(tech))).andExpect(status().isOk()).andExpect(jsonPath("$.solicitante").value("Maria Silva"));
