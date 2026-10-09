@@ -12,5 +12,6 @@ public final class Requests {
  public record Message(@NotBlank @Size(max=4000) String mensagem){}
  public record Action(@NotBlank String acao,@Size(max=2000) String solucao){}
  public record Password(@NotBlank @Size(max=72) String atual,@NotBlank @Size(min=12,max=72) String nova){}
+ public record InitialPassword(@NotBlank @Size(min=8,max=72) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s]).{8,72}$") String nova){}
  public record Profile(@NotBlank @Size(max=160) String nome,@Email @NotBlank @Size(max=200) String email,@Size(max=40) String telefone){}
 }

@@ -13,16 +13,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.*;
 import java.net.URI;
 import java.util.*;
+import java.security.SecureRandom;
 import java.util.stream.Collectors;
 @Service
 @Transactional
 public class DeskService {
+ private static final SecureRandom RANDOM=new SecureRandom();
+ private static final String LOWER="abcdefghjkmnpqrstuvwxyz",UPPER="ABCDEFGHJKMNPQRSTUVWXYZ",DIGITS="23456789",SPECIAL="!@#$%&*+-_";
  private final DeskRepository r; private final PasswordEncoder encoder;
  @Value("${app.microsoft.enabled}") private boolean microsoftEnabled;
  @Value("${app.public-url}") private String publicUrl;
  @Value("${app.sla-response-minutes}") private int responseMinutes;
  @Value("${app.sla-resolution-minutes}") private int resolutionMinutes;
- private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.microsoft_object_id,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
+ private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.microsoft_object_id,u.senha_local_ativa,u.senha_temporaria,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
  private static final String TICKETS="SELECT c.*,COALESCE(c.solicitante_nome,u.nome) solicitante,u.email solicitante_email,u.telefone solicitante_telefone,f.nome filial_nome,t.nome tecnico FROM chamados c LEFT JOIN usuarios u ON u.id=c.solicitante_id JOIN filiais f ON f.id=c.filial_id LEFT JOIN usuarios t ON t.id=c.tecnico_id";
  public DeskService(DeskRepository r,PasswordEncoder encoder){this.r=r;this.encoder=encoder;}
  public static ResponseStatusException bad(String m){return new ResponseStatusException(HttpStatus.BAD_REQUEST,m);}
@@ -34,7 +37,7 @@ public class DeskService {
  private Map<String,Object> branch(long id){branchScope(id);return exists(r.one("SELECT * FROM filiais WHERE id=?",id));}
  private void activeBranch(Map<String,Object> b){if(!Boolean.TRUE.equals(b.get("ativo")))throw bad("Filial inativa.");}
  private Map<String,Object> userLocations(Map<String,Object> user){long id=((Number)user.get("id")).longValue();user.put("filial_ids",r.branchIds(id));user.put("locais",r.rows("SELECT f.id,f.nome,f.cidade FROM filiais f JOIN usuario_filiais uf ON uf.filial_id=f.id WHERE uf.usuario_id=? ORDER BY f.nome",id));return user;}
- public Map<String,Object> me(){return userLocations(exists(r.one(USERS+" WHERE u.id=?",current().id())));}
+ public Map<String,Object> me(){var account=current();var user=exists(r.one(USERS+" WHERE u.id=?",account.id()));user.put("senha_temporaria",account.senhaTemporaria());user.put("senha_local_ativa",account.senhaLocalAtiva());return userLocations(user);}
  public List<Map<String,Object>> branches(){var u=current();if(u.master()||("USUARIO".equals(u.perfil())&&u.filialId()==null))return r.rows("SELECT * FROM filiais WHERE ativo=true ORDER BY nome");return r.rows("SELECT * FROM filiais WHERE id IN (SELECT filial_id FROM usuario_filiais WHERE usuario_id=?) AND ativo=true ORDER BY nome",u.id());}
  public Map<String,Object> saveBranch(Long id,Branch b){var u=current();require(u.master());if(id==null){id=r.insert("INSERT INTO filiais(nome,cidade,estado,endereco,responsavel,telefone,ativo) VALUES (?,?,?,?,?,?,?)",b.nome().trim(),b.cidade().trim(),b.estado(),text(b.endereco()),text(b.responsavel()),text(b.telefone()),b.ativo());}else{branch(id);r.update("UPDATE filiais SET nome=?,cidade=?,estado=?,endereco=?,responsavel=?,telefone=?,ativo=? WHERE id=?",b.nome().trim(),b.cidade().trim(),b.estado(),text(b.endereco()),text(b.responsavel()),text(b.telefone()),b.ativo(),id);}audit(null,"FILIAL","Filial atualizada: "+id);return branch(id);}
  public void deleteBranch(long id){require(current().master());branch(id);if(!r.rows("SELECT id FROM qrcodes WHERE filial_id=? AND ativo=true",id).isEmpty())throw bad("Esta filial possui QR Codes ativos.");r.update("UPDATE filiais SET ativo=false WHERE id=?",id);audit(null,"FILIAL_INATIVA","Filial: "+id);}
@@ -44,22 +47,24 @@ public class DeskService {
   var ids=new LinkedHashSet<Long>();if(b.filialIds()!=null)ids.addAll(b.filialIds());else if(b.filialId()!=null)ids.add(b.filialId());
   if(ids.isEmpty()&&!b.perfil().equals("MASTER_ADMIN"))throw bad("Selecione ao menos um local de atuação.");
   for(long branchId:ids)activeBranch(branch(branchId));
-  if(b.senha()!=null&&!b.senha().isBlank())throw bad("As senhas são gerenciadas exclusivamente pela Microsoft. Não envie uma senha.");
+  if(b.senha()!=null&&!b.senha().isBlank())throw bad("A senha temporária é gerada automaticamente para técnicos.");
   String objectId=b.microsoftObjectId()==null||b.microsoftObjectId().isBlank()?null:b.microsoftObjectId().toLowerCase(Locale.ROOT);
-  if(microsoftEnabled&&objectId==null)throw bad("Informe o ID do objeto Microsoft do usuário.");
-  Long primary=ids.isEmpty()?null:ids.iterator().next();
-  if(id==null){id=r.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id,ativo,microsoft_object_id) VALUES (?,?,?,?,?,?,?)",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),encoder.encode(UUID.randomUUID().toString()),b.perfil(),primary,b.ativo(),objectId);}
+  if(id!=null&&objectId==null&&"SUPORTE".equals(b.perfil())){var existing=r.account(id);if(existing!=null&&!existing.senhaLocalAtiva()){var old=(String)r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",id).get("microsoft_object_id");objectId=old;}}
+  if(microsoftEnabled&&objectId==null&&!"SUPORTE".equals(b.perfil()))throw bad("Informe o ID do objeto Microsoft do administrador.");
+  Long primary=ids.isEmpty()?null:ids.iterator().next();String temporary=id==null&&"SUPORTE".equals(b.perfil())?temporaryPassword():null;
+  if(id==null){id=r.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id,ativo,microsoft_object_id,senha_temporaria,senha_local_ativa) VALUES (?,?,?,?,?,?,?,?,?)",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),encoder.encode(temporary==null?UUID.randomUUID().toString():temporary),b.perfil(),primary,b.ativo(),objectId,temporary!=null,temporary!=null);}
   else{var old=r.account(id);if(old==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);manageableUser(actor,old);
    if(id==actor.id()&&(!b.ativo()||!b.perfil().equals(actor.perfil())||!new HashSet<>(r.branchIds(actor.id())).equals(ids)))throw bad("Não altere o próprio perfil, locais, vínculo Microsoft ou status.");
    if(old.master()&&(!b.ativo()||!b.perfil().equals("MASTER_ADMIN"))&&r.rows("SELECT id FROM usuarios WHERE perfil='MASTER_ADMIN' AND ativo=true").size()<=1)throw bad("Mantenha ao menos um administrador mestre ativo.");
    r.update("UPDATE usuarios SET nome=?,email=?,perfil=?,filial_id=?,ativo=?,microsoft_object_id=?,versao_sessao=versao_sessao+1 WHERE id=?",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),b.perfil(),primary,b.ativo(),objectId,id);
   }
   r.update("DELETE FROM usuario_filiais WHERE usuario_id=?",id);for(long branchId:ids)r.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",id,branchId);
-  audit(null,"USUARIO","Usuário atualizado: "+id);return userLocations(exists(r.one(USERS+" WHERE u.id=?",id)));
+  audit(null,"USUARIO","Usuário atualizado: "+id);var saved=userLocations(exists(r.one(USERS+" WHERE u.id=?",id)));if(temporary!=null)saved.put("senhaTemporaria",temporary);return saved;
  }
- public void deactivateUser(long id){var u=r.account(id);if(u==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);String oid=(String)r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",id).get("microsoft_object_id");saveUser(id,new User(u.nome(),u.email(),null,u.perfil(),u.filialId(),false,r.branchIds(id),oid));}
+ private String temporaryPassword(){char[] password=new char[16];password[0]=LOWER.charAt(RANDOM.nextInt(LOWER.length()));password[1]=UPPER.charAt(RANDOM.nextInt(UPPER.length()));password[2]=DIGITS.charAt(RANDOM.nextInt(DIGITS.length()));password[3]=SPECIAL.charAt(RANDOM.nextInt(SPECIAL.length()));String all=LOWER+UPPER+DIGITS+SPECIAL;for(int i=4;i<password.length;i++)password[i]=all.charAt(RANDOM.nextInt(all.length()));for(int i=password.length-1;i>0;i--){int j=RANDOM.nextInt(i+1);char c=password[i];password[i]=password[j];password[j]=c;}return new String(password);} public void deactivateUser(long id){var u=r.account(id);if(u==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);String oid=(String)r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",id).get("microsoft_object_id");saveUser(id,new User(u.nome(),u.email(),null,u.perfil(),u.filialId(),false,r.branchIds(id),oid));}
  public Map<String,Object> profile(Profile p){var u=current();if(r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",u.id()).get("microsoft_object_id")!=null&&!p.email().trim().equalsIgnoreCase(u.email()))throw bad("O e-mail da conta Microsoft é gerenciado pelo administrador.");r.update("UPDATE usuarios SET nome=?,email=?,telefone=? WHERE id=?",p.nome().trim(),p.email().trim().toLowerCase(Locale.ROOT),text(p.telefone()),u.id());return exists(r.one(USERS+" WHERE u.id=?",u.id()));}
  public void password(Password p){throw new ResponseStatusException(HttpStatus.GONE,"Alteração de senha disponível somente na Microsoft: https://passwordreset.microsoftonline.com");}
+ public void initialPassword(InitialPassword p){var user=current();require("SUPORTE".equals(user.perfil()));if(!user.senhaTemporaria())throw bad("A troca obrigatória da senha inicial já foi concluída.");if(p.nova().getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72)throw bad("A senha não pode ultrapassar 72 bytes UTF-8.");r.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=false WHERE id=?",encoder.encode(p.nova()),user.id());}
  public void endSessions(){var u=current();r.update("UPDATE usuarios SET versao_sessao=versao_sessao+1 WHERE id=?",u.id());}
  public String publicUrl(){
   try{URI uri=URI.create(publicUrl);String h=uri.getHost();if(!"https".equals(uri.getScheme())||h==null||uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null||h.equals("localhost")||h.endsWith(".localhost")||h.endsWith(".local")||!h.contains(".")||h.contains(":")||h.matches("[0-9.]+")||!uri.getPath().endsWith("novo-chamado.html"))throw new IllegalArgumentException();return uri.toString();}

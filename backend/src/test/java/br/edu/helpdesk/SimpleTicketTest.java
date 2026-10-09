@@ -20,6 +20,8 @@ class SimpleTicketTest {
  @Autowired MockMvc mvc;
  @Autowired ObjectMapper mapper;
  private MockHttpSession login(String email)throws Exception {
+  var account=repo.account(email);
+  if(account!=null&&"USUARIO".equals(account.perfil())) {var session=new MockHttpSession();session.setAttribute("uid",account.id());session.setAttribute("version",account.versaoSessao());return session;}
   return (MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON)
    .content(mapper.writeValueAsString(java.util.Map.of("username",email,"password","OnlyForTests-123456"))))
    .andExpect(status().isOk()).andReturn().getRequest().getSession();
@@ -35,7 +37,7 @@ class SimpleTicketTest {
   for(var entry:java.util.Map.of("requester",branch,"technician",branch,"other-technician",other).entrySet()) {
    create(admin,"/api/usuarios",mapper.writeValueAsString(java.util.Map.of("nome",entry.getKey(),"email",entry.getKey()+"@test.invalid","perfil",entry.getKey().equals("requester")?"USUARIO":"SUPORTE","filialId",entry.getValue(),"ativo",true)));
   }
-  repo.update("UPDATE usuarios SET senha_hash=? WHERE email<>'admin@test.invalid'",encoder.encode("OnlyForTests-123456"));
+  repo.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=false WHERE email<>'admin@test.invalid'",encoder.encode("OnlyForTests-123456"));
   var requester=login("requester@test.invalid");var technician=login("technician@test.invalid");var foreign=login("other-technician@test.invalid");
   var ticket=create(requester,"/api/chamados","{\"titulo\":\"Não consigo imprimir\",\"descricao\":\"A impressora está sem conexão\",\"filialId\":"+branch+"}");
   assertEquals("MEDIA",ticket.get("prioridade").asText());

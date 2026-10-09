@@ -17,8 +17,9 @@ public class SessionFilter extends OncePerRequestFilter {
    var user=repo.account(id);
    if(user!=null && user.ativo() && Integer.valueOf(user.versaoSessao()).equals(session.getAttribute("version"))){
     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.email(),null,List.of(new SimpleGrantedAuthority("ROLE_"+user.perfil()))));
-   }else session.invalidate();
+   }else {session.invalidate();session=null;}
   }
+  if(session!=null && session.getAttribute("uid") instanceof Long id){var user=repo.account(id);if(user!=null&&user.senhaTemporaria()&&req.getRequestURI().startsWith("/api/")&&!((req.getMethod().equals("GET")&&req.getRequestURI().equals("/api/auth/me"))||(req.getMethod().equals("PUT")&&req.getRequestURI().equals("/api/auth/primeira-senha"))||(req.getMethod().equals("POST")&&(req.getRequestURI().equals("/api/auth/logout")||req.getRequestURI().equals("/api/auth/csrf"))))){res.setStatus(403);res.setContentType("application/json");res.getWriter().write("{\"message\":\"Defina uma nova senha para continuar usando o sistema.\"}");return;}}
   chain.doFilter(req,res);
  }
 }

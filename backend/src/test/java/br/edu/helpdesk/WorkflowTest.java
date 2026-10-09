@@ -18,8 +18,8 @@ class WorkflowTest {
  @Autowired MockMvc mvc; @Autowired ObjectMapper mapper;
  JsonNode body(MvcResult result)throws Exception{return mapper.readTree(result.getResponse().getContentAsString());}
  MockHttpSession login(String email)throws Exception{return login(email,"OnlyForTests-123456");}
- MockHttpSession login(String email,String password)throws Exception{return (MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"username\":\""+email+"\",\"password\":\""+password+"\"}")).andExpect(status().isOk()).andReturn().getRequest().getSession();}
- JsonNode create(MockHttpSession session,String url,String json)throws Exception{var data=mapper.readTree(json);if(url.equals("/api/usuarios")){((com.fasterxml.jackson.databind.node.ObjectNode)data).remove("senha");json=mapper.writeValueAsString(data);}var result=body(mvc.perform(post(url).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andReturn());if(url.equals("/api/usuarios"))repo.update("UPDATE usuarios SET senha_hash=? WHERE id=?",encoder.encode("OnlyForTests-123456"),result.get("id").asLong());return result;}
+ MockHttpSession login(String email,String password)throws Exception{var account=repo.account(email);if(account!=null&&"USUARIO".equals(account.perfil())){var session=new MockHttpSession();session.setAttribute("uid",account.id());session.setAttribute("version",account.versaoSessao());return session;}return (MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"username\":\""+email+"\",\"password\":\""+password+"\"}")).andExpect(status().isOk()).andReturn().getRequest().getSession();}
+ JsonNode create(MockHttpSession session,String url,String json)throws Exception{var data=mapper.readTree(json);if(url.equals("/api/usuarios")){((com.fasterxml.jackson.databind.node.ObjectNode)data).remove("senha");json=mapper.writeValueAsString(data);}var result=body(mvc.perform(post(url).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andReturn());if(url.equals("/api/usuarios")){repo.update("UPDATE usuarios SET senha_hash=? WHERE id=?",encoder.encode("OnlyForTests-123456"),result.get("id").asLong());repo.update("UPDATE usuarios SET senha_temporaria=false WHERE id=?",result.get("id").asLong());}return result;}
  @Test void selfRegistrationAndLocalPasswordChangesAreDisabled()throws Exception{
   mvc.perform(post("/api/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"public@test.invalid\",\"senha\":\"RegisterTest-123456\"}")).andExpect(status().isGone());
  }
@@ -56,7 +56,6 @@ class WorkflowTest {
   var secondSession=login(emails[0]);mvc.perform(post("/api/auth/encerrar-sessoes").session(user).with(csrf())).andExpect(status().isOk());mvc.perform(get("/api/auth/me").session(secondSession)).andExpect(status().isUnauthorized());
  }
 }
-
 
 
 

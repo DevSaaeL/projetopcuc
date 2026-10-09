@@ -21,7 +21,7 @@ class MultipleLocationsTest {
  @Autowired MockMvc mvc;@Autowired ObjectMapper mapper;@Autowired DeskRepository repo;
  JsonNode body(MvcResult result)throws Exception{return mapper.readTree(result.getResponse().getContentAsString());}
  MockHttpSession session(long id){var session=new MockHttpSession();session.setAttribute("uid",id);session.setAttribute("version",repo.account(id).versaoSessao());return session;}
- JsonNode create(MockHttpSession session,String path,Object data)throws Exception{return body(mvc.perform(post(path).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data))).andExpect(status().isOk()).andReturn());}
+ JsonNode create(MockHttpSession session,String path,Object data)throws Exception{var result=body(mvc.perform(post(path).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data))).andExpect(status().isOk()).andReturn());if(path.equals("/api/usuarios"))repo.update("UPDATE usuarios SET senha_temporaria=false WHERE id=?",result.get("id").asLong());return result;}
  Map<String,Object> user(String name,String role,List<Long> locations){return Map.of("nome",name,"email",name+"@locations.test","perfil",role,"filialIds",locations,"ativo",true);}
  @Test void technicianWithTwoLocationsCannotAccessAThirdAndChangesRevokeSessions()throws Exception{
   var master=session(repo.account("master@locations.test").id());

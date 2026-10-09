@@ -12,6 +12,7 @@ window.Auth = (() => {
     if(qrEntry) location.replace('solicitar.html?qr='+encodeURIComponent(new URLSearchParams(location.search).get('qr')));
     const ready = (page === 'login.html' || qrEntry) ? Promise.resolve(null) : API.get('/auth/me').then(value => {
         user = value;
+        if (user.senha_temporaria && page !== 'primeira-senha.html') { location.replace('primeira-senha.html'); return null; }
         if (['usuarios.html','filiais.html','qr-codes.html'].includes(page) && !['ADMIN','MASTER_ADMIN'].includes(user.perfil)) {
             location.replace('meus-chamados.html'); return null;
         }

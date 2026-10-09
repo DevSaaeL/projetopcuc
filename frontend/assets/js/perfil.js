@@ -74,6 +74,7 @@ function encerrarSessoes(){if(confirm('Encerrar todas as sessões da sua conta?'
 
 App.start(async user=>{
  if(user.microsoft_object_id)App.$('email').readOnly=true;
+ if(user.perfil==='SUPORTE'&&user.senha_local_ativa){App.$('passwordManagement').textContent='Senha local definida no primeiro acesso';document.querySelector('[data-event-7]')?.setAttribute('hidden','');document.querySelector('[data-event-8]')?.setAttribute('hidden','');document.querySelector('[data-event-8]')?.closest('.security-item')?.querySelector('small')?.replaceChildren(document.createTextNode('Autenticação Microsoft não utilizada pelo técnico'));}
  cancelarEdicao();App.text('profileName',user.nome);App.avatar(App.$('profileAvatar'),user);document.querySelector('.profile-role').textContent=App.labels[user.perfil];
  const vals=[user.email,user.perfil==='MASTER_ADMIN'?'Todas as unidades':user.locais.map(f=>f.nome).join(', ')||'Sem local atribuído',user.setor||'—',App.date(user.criado_em)];document.querySelectorAll('.profile-info-item strong').forEach((e,i)=>e.textContent=vals[i]);
  const locked=document.querySelectorAll('#profileForm input:disabled');[user.email,String(user.id),App.labels[user.perfil],user.setor||'—'].forEach((v,i)=>{if(locked[i])locked[i].value=v;});

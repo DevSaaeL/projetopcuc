@@ -16,13 +16,14 @@ public class ApiController {
  public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos){this.service=service;this.auth=auth;this.photos=photos;}
  @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",microsoftEnabled,"microsoftLoginUrl","/oauth2/authorization/microsoft","passwordResetUrl","https://passwordreset.microsoftonline.com","passwordChangeUrl","https://myaccount.microsoft.com","selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
- @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){auth.login(data,req);return Map.of("ok",true);}
+ @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){return Map.of("ok",true,"mustChangePassword",auth.login(data,req));}
  @PostMapping("/auth/register") ResponseEntity<?> register(@Valid @RequestBody Register data){return ResponseEntity.status(HttpStatus.CREATED).body(auth.register(data));}
  @PostMapping("/auth/logout") void logout(HttpServletRequest req){var s=req.getSession(false);if(s!=null)s.invalidate();}
  @PostMapping("/auth/foto") Object photo(@RequestParam MultipartFile arquivo)throws Exception{return photos.save(arquivo);}
  @GetMapping("/auth/foto") ResponseEntity<byte[]> photo(){return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).cacheControl(CacheControl.noStore()).header("X-Content-Type-Options","nosniff").body(photos.read());}
  @GetMapping("/auth/me") Object me(){return service.me();}
  @PutMapping("/auth/senha") void password(@Valid @RequestBody Password data,HttpServletRequest req){service.password(data);req.getSession().invalidate();}
+ @PutMapping("/auth/primeira-senha") void firstPassword(@Valid @RequestBody InitialPassword data){service.initialPassword(data);}
  @PutMapping("/auth/perfil") Object profile(@Valid @RequestBody Profile data){return service.profile(data);}
  @PutMapping("/auth/preferencias") void prefs(@RequestBody Map<String,Boolean> data)throws Exception{service.preferences(data);}
  @PostMapping("/auth/encerrar-sessoes") void end(HttpServletRequest req){service.endSessions();req.getSession().invalidate();}

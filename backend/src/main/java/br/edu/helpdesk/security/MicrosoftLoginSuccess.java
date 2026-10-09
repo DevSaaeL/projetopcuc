@@ -21,7 +21,9 @@ public class MicrosoftLoginSuccess implements AuthenticationSuccessHandler {
   String oid=principal.getClaimAsString("oid");
   try{UUID.fromString(oid);}catch(Exception e){deny(req,res);return;}
   var user=repo.microsoftAccount(oid.toLowerCase(java.util.Locale.ROOT));
-  if(user==null||!user.ativo()||"USUARIO".equals(user.perfil())||(!user.master()&&repo.branchIds(user.id()).isEmpty())){deny(req,res,"requester");return;}
+  if(user==null||!user.ativo()||(!user.master()&&repo.branchIds(user.id()).isEmpty())){deny(req,res);return;}
+  if("USUARIO".equals(user.perfil())){deny(req,res,"requester");return;}
+  if("SUPORTE".equals(user.perfil())&&user.senhaLocalAtiva()){deny(req,res,"local");return;}
   auth.establishSession(user,req);
   // Permissions come only from the local administrator's assignment, never email or token roles.
   res.sendRedirect("/pages/login.html?sso=success");
