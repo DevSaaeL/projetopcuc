@@ -7,7 +7,7 @@ App.start(async user=>{
   if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,72}$/.test(password))throw Error('Use pelo menos 8 caracteres, com letra maiúscula, minúscula, número e caractere especial.');
   if(new TextEncoder().encode(password).length>72)throw Error('A senha não pode ultrapassar 72 bytes UTF-8.');
   const button=App.$('salvarNovaSenha');button.disabled=true;
-  try{await API.put('/auth/primeira-senha',{nova:password});API.reset();const destination=sessionStorage.getItem('helpdesk_after_password_change')||'dashboard.html';sessionStorage.removeItem('helpdesk_after_password_change');location.replace(destination);}
+  try{await API.put('/auth/primeira-senha',{nova:password,confirmacao:confirmation});API.reset();const destination=sessionStorage.getItem('helpdesk_after_password_change')||'dashboard.html';sessionStorage.removeItem('helpdesk_after_password_change');location.replace(destination);}
   finally{button.disabled=false;}
  });});
 });

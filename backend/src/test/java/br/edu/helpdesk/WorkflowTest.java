@@ -20,7 +20,7 @@ class WorkflowTest {
  MockHttpSession login(String email)throws Exception{return login(email,"OnlyForTests-123456");}
  MockHttpSession login(String email,String password)throws Exception{var account=repo.account(email);if(account!=null&&"USUARIO".equals(account.perfil())){var session=new MockHttpSession();session.setAttribute("uid",account.id());session.setAttribute("version",account.versaoSessao());return session;}return (MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"username\":\""+email+"\",\"password\":\""+password+"\"}")).andExpect(status().isOk()).andReturn().getRequest().getSession();}
  JsonNode create(MockHttpSession session,String url,String json)throws Exception{var data=mapper.readTree(json);if(url.equals("/api/usuarios")){((com.fasterxml.jackson.databind.node.ObjectNode)data).remove("senha");json=mapper.writeValueAsString(data);}var result=body(mvc.perform(post(url).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andReturn());if(url.equals("/api/usuarios")){repo.update("UPDATE usuarios SET senha_hash=? WHERE id=?",encoder.encode("OnlyForTests-123456"),result.get("id").asLong());repo.update("UPDATE usuarios SET senha_temporaria=false WHERE id=?",result.get("id").asLong());}return result;}
- @Test void selfRegistrationAndLocalPasswordChangesAreDisabled()throws Exception{
+ @Test void selfRegistrationIsDisabled()throws Exception{
   mvc.perform(post("/api/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"public@test.invalid\",\"senha\":\"RegisterTest-123456\"}")).andExpect(status().isGone());
  }
  @Test void completeWorkflowAndIsolation()throws Exception{
@@ -42,17 +42,15 @@ class WorkflowTest {
   mvc.perform(post("/api/chamados/"+id+"/acoes").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"assumir\"}")).andExpect(status().isForbidden());
   var taken=create(support,"/api/chamados/"+id+"/acoes","{\"acao\":\"assumir\"}");assertEquals("EM_ATENDIMENTO",taken.get("status").asText());assertFalse(taken.get("atendimento").isNull());
   mvc.perform(post("/api/chamados/"+id+"/acoes").session(support2).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"assumir\"}")).andExpect(status().isConflict());
-  mvc.perform(post("/api/chamados/"+id+"/mensagens").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"mensagem\":\"Ainda sem conexão <script>alert(1)</script>\"}")).andExpect(status().isOk());
+  mvc.perform(post("/api/chamados/"+id+"/mensagens").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"mensagem\":\"Ainda sem conexão <script>alert(1)</script>\"}")).andExpect(status().isNotFound());
   var file=new org.springframework.mock.web.MockMultipartFile("arquivo","evidencia.txt","text/plain","Teste".getBytes());
   mvc.perform(multipart("/api/chamados/"+id+"/anexos").file(file).session(user).with(csrf())).andExpect(status().isOk());
   var attachment=body(mvc.perform(get("/api/chamados/"+id+"/anexos").session(user)).andReturn()).get(0).get("id").asText();
   mvc.perform(get("/api/chamados/"+id+"/anexos/"+attachment).session(foreign)).andExpect(status().isNotFound());
   mvc.perform(get("/api/chamados/"+id+"/anexos/"+attachment).session(user)).andExpect(status().isOk()).andExpect(content().bytes("Teste".getBytes()));
   var ended=create(support2,"/api/chamados/"+id+"/acoes","{\"acao\":\"finalizar\",\"solucao\":\"Cabo substituído\"}");assertEquals("FINALIZADO",ended.get("status").asText());assertFalse(ended.get("finalizacao").isNull());
-  assertEquals(1,body(mvc.perform(get("/api/chamados/"+id+"/mensagens").session(user)).andReturn()).size());
   var notifications=body(mvc.perform(get("/api/notificacoes").session(user)).andReturn());assertFalse(notifications.isEmpty());long nid=notifications.get(0).get("id").asLong();mvc.perform(put("/api/notificacoes/"+nid+"/lida").session(other).with(csrf())).andExpect(status().isNotFound());
   assertEquals(0,body(mvc.perform(get("/api/dashboard").session(foreign)).andReturn()).get("total").asInt());assertEquals(1,body(mvc.perform(get("/api/relatorios").param("status","FINALIZADO").session(master)).andReturn()).get("total").asInt());
-  mvc.perform(put("/api/auth/senha").session(user).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"atual\":\"OnlyForTests-123456\",\"nova\":\"AnotherTest-123456\"}")).andExpect(status().isGone());
   var secondSession=login(emails[0]);mvc.perform(post("/api/auth/encerrar-sessoes").session(user).with(csrf())).andExpect(status().isOk());mvc.perform(get("/api/auth/me").session(secondSession)).andExpect(status().isUnauthorized());
  }
 }

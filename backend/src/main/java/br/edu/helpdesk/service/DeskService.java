@@ -21,11 +21,10 @@ public class DeskService {
  private static final SecureRandom RANDOM=new SecureRandom();
  private static final String LOWER="abcdefghjkmnpqrstuvwxyz",UPPER="ABCDEFGHJKMNPQRSTUVWXYZ",DIGITS="23456789",SPECIAL="!@#$%&*+-_";
  private final DeskRepository r; private final PasswordEncoder encoder;
- @Value("${app.microsoft.enabled}") private boolean microsoftEnabled;
  @Value("${app.public-url}") private String publicUrl;
  @Value("${app.sla-response-minutes}") private int responseMinutes;
  @Value("${app.sla-resolution-minutes}") private int resolutionMinutes;
- private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.microsoft_object_id,u.senha_local_ativa,u.senha_temporaria,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
+ private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.senha_local_ativa,u.senha_temporaria,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
  private static final String TICKETS="SELECT c.*,COALESCE(c.solicitante_nome,u.nome) solicitante,u.email solicitante_email,u.telefone solicitante_telefone,f.nome filial_nome,t.nome tecnico FROM chamados c LEFT JOIN usuarios u ON u.id=c.solicitante_id JOIN filiais f ON f.id=c.filial_id LEFT JOIN usuarios t ON t.id=c.tecnico_id";
  public DeskService(DeskRepository r,PasswordEncoder encoder){this.r=r;this.encoder=encoder;}
  public static ResponseStatusException bad(String m){return new ResponseStatusException(HttpStatus.BAD_REQUEST,m);}
@@ -47,24 +46,27 @@ public class DeskService {
   var ids=new LinkedHashSet<Long>();if(b.filialIds()!=null)ids.addAll(b.filialIds());else if(b.filialId()!=null)ids.add(b.filialId());
   if(ids.isEmpty()&&!b.perfil().equals("MASTER_ADMIN"))throw bad("Selecione ao menos um local de atuação.");
   for(long branchId:ids)activeBranch(branch(branchId));
-  if(b.senha()!=null&&!b.senha().isBlank())throw bad("A senha temporária é gerada automaticamente para técnicos.");
-  String objectId=b.microsoftObjectId()==null||b.microsoftObjectId().isBlank()?null:b.microsoftObjectId().toLowerCase(Locale.ROOT);
-  if(id!=null&&objectId==null&&"SUPORTE".equals(b.perfil())){var existing=r.account(id);if(existing!=null&&!existing.senhaLocalAtiva()){var old=(String)r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",id).get("microsoft_object_id");objectId=old;}}
-  if(microsoftEnabled&&objectId==null&&!"SUPORTE".equals(b.perfil()))throw bad("Informe o ID do objeto Microsoft do administrador.");
-  Long primary=ids.isEmpty()?null:ids.iterator().next();String temporary=id==null&&"SUPORTE".equals(b.perfil())?temporaryPassword():null;
-  if(id==null){id=r.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id,ativo,microsoft_object_id,senha_temporaria,senha_local_ativa) VALUES (?,?,?,?,?,?,?,?,?)",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),encoder.encode(temporary==null?UUID.randomUUID().toString():temporary),b.perfil(),primary,b.ativo(),objectId,temporary!=null,temporary!=null);}
+  String temporary=b.senha()==null||b.senha().isBlank()?null:b.senha();
+  if(temporary!=null)validatePassword(temporary);
+  if(id==null&&!"USUARIO".equals(b.perfil())&&temporary==null)temporary=temporaryPassword();
+  Long primary=ids.isEmpty()?null:ids.iterator().next();
+  if(id==null){id=r.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id,ativo,senha_temporaria,senha_local_ativa) VALUES (?,?,?,?,?,?,?,?)",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),encoder.encode(temporary==null?UUID.randomUUID().toString():temporary),b.perfil(),primary,b.ativo(),temporary!=null,temporary!=null);}
   else{var old=r.account(id);if(old==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);manageableUser(actor,old);
-   if(id==actor.id()&&(!b.ativo()||!b.perfil().equals(actor.perfil())||!new HashSet<>(r.branchIds(actor.id())).equals(ids)))throw bad("Não altere o próprio perfil, locais, vínculo Microsoft ou status.");
+   if(id==actor.id()&&(!b.ativo()||!b.perfil().equals(actor.perfil())||!new HashSet<>(r.branchIds(actor.id())).equals(ids)))throw bad("Não altere o próprio perfil, locais ou status.");
    if(old.master()&&(!b.ativo()||!b.perfil().equals("MASTER_ADMIN"))&&r.rows("SELECT id FROM usuarios WHERE perfil='MASTER_ADMIN' AND ativo=true").size()<=1)throw bad("Mantenha ao menos um administrador mestre ativo.");
-   r.update("UPDATE usuarios SET nome=?,email=?,perfil=?,filial_id=?,ativo=?,microsoft_object_id=?,versao_sessao=versao_sessao+1 WHERE id=?",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),b.perfil(),primary,b.ativo(),objectId,id);
+   r.update("UPDATE usuarios SET nome=?,email=?,perfil=?,filial_id=?,ativo=?,versao_sessao=versao_sessao+1 WHERE id=?",b.nome().trim(),b.email().trim().toLowerCase(Locale.ROOT),b.perfil(),primary,b.ativo(),id);
   }
+  if(temporary!=null&&id!=actor.id())r.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=true,senha_local_ativa=true WHERE id=?",encoder.encode(temporary),id);
+  else if(temporary!=null)throw bad("Altere sua própria senha pelo perfil.");
   r.update("DELETE FROM usuario_filiais WHERE usuario_id=?",id);for(long branchId:ids)r.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",id,branchId);
   audit(null,"USUARIO","Usuário atualizado: "+id);var saved=userLocations(exists(r.one(USERS+" WHERE u.id=?",id)));if(temporary!=null)saved.put("senhaTemporaria",temporary);return saved;
  }
- private String temporaryPassword(){char[] password=new char[16];password[0]=LOWER.charAt(RANDOM.nextInt(LOWER.length()));password[1]=UPPER.charAt(RANDOM.nextInt(UPPER.length()));password[2]=DIGITS.charAt(RANDOM.nextInt(DIGITS.length()));password[3]=SPECIAL.charAt(RANDOM.nextInt(SPECIAL.length()));String all=LOWER+UPPER+DIGITS+SPECIAL;for(int i=4;i<password.length;i++)password[i]=all.charAt(RANDOM.nextInt(all.length()));for(int i=password.length-1;i>0;i--){int j=RANDOM.nextInt(i+1);char c=password[i];password[i]=password[j];password[j]=c;}return new String(password);} public void deactivateUser(long id){var u=r.account(id);if(u==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);String oid=(String)r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",id).get("microsoft_object_id");saveUser(id,new User(u.nome(),u.email(),null,u.perfil(),u.filialId(),false,r.branchIds(id),oid));}
- public Map<String,Object> profile(Profile p){var u=current();if(r.one("SELECT microsoft_object_id FROM usuarios WHERE id=?",u.id()).get("microsoft_object_id")!=null&&!p.email().trim().equalsIgnoreCase(u.email()))throw bad("O e-mail da conta Microsoft é gerenciado pelo administrador.");r.update("UPDATE usuarios SET nome=?,email=?,telefone=? WHERE id=?",p.nome().trim(),p.email().trim().toLowerCase(Locale.ROOT),text(p.telefone()),u.id());return exists(r.one(USERS+" WHERE u.id=?",u.id()));}
- public void password(Password p){throw new ResponseStatusException(HttpStatus.GONE,"Alteração de senha disponível somente na Microsoft: https://passwordreset.microsoftonline.com");}
- public void initialPassword(InitialPassword p){var user=current();require("SUPORTE".equals(user.perfil()));if(!user.senhaTemporaria())throw bad("A troca obrigatória da senha inicial já foi concluída.");if(p.nova().getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72)throw bad("A senha não pode ultrapassar 72 bytes UTF-8.");r.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=false WHERE id=?",encoder.encode(p.nova()),user.id());}
+ private String temporaryPassword(){char[] password=new char[16];password[0]=LOWER.charAt(RANDOM.nextInt(LOWER.length()));password[1]=UPPER.charAt(RANDOM.nextInt(UPPER.length()));password[2]=DIGITS.charAt(RANDOM.nextInt(DIGITS.length()));password[3]=SPECIAL.charAt(RANDOM.nextInt(SPECIAL.length()));String all=LOWER+UPPER+DIGITS+SPECIAL;for(int i=4;i<password.length;i++)password[i]=all.charAt(RANDOM.nextInt(all.length()));for(int i=password.length-1;i>0;i--){int j=RANDOM.nextInt(i+1);char c=password[i];password[i]=password[j];password[j]=c;}return new String(password);} public void deactivateUser(long id){var u=r.account(id);if(u==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND);saveUser(id,new User(u.nome(),u.email(),null,u.perfil(),u.filialId(),false,r.branchIds(id)));}
+ public Map<String,Object> profile(Profile p){var u=current();r.update("UPDATE usuarios SET nome=?,email=?,telefone=? WHERE id=?",p.nome().trim(),p.email().trim().toLowerCase(Locale.ROOT),text(p.telefone()),u.id());return exists(r.one(USERS+" WHERE u.id=?",u.id()));}
+ public static void validatePassword(String password){if(password==null||!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s]).{8,72}$")||password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72)throw bad("Use pelo menos 8 caracteres com maiúscula, minúscula, número e caractere especial (máximo de 72 bytes).");}
+ public Map<String,String> generatePassword(){require(current().admin());return Map.of("senha",temporaryPassword());}
+ public void password(Password p){var u=current();validatePassword(p.nova());if(!p.nova().equals(p.confirmacao()))throw bad("As senhas não coincidem.");if(!encoder.matches(p.atual(),u.senhaHash()))throw bad("Senha atual incorreta.");if(encoder.matches(p.nova(),u.senhaHash()))throw bad("Escolha uma senha diferente da atual.");r.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=false,senha_local_ativa=true,versao_sessao=versao_sessao+1 WHERE id=?",encoder.encode(p.nova()),u.id());}
+ public void initialPassword(InitialPassword p){var user=current();require(user.support());if(!user.senhaTemporaria())throw bad("A troca obrigatória da senha inicial já foi concluída.");validatePassword(p.nova());if(!p.nova().equals(p.confirmacao()))throw bad("As senhas não coincidem.");if(encoder.matches(p.nova(),user.senhaHash()))throw bad("Escolha uma senha diferente da temporária.");r.update("UPDATE usuarios SET senha_hash=?,senha_temporaria=false,versao_sessao=versao_sessao+1 WHERE id=?",encoder.encode(p.nova()),user.id());}
  public void endSessions(){var u=current();r.update("UPDATE usuarios SET versao_sessao=versao_sessao+1 WHERE id=?",u.id());}
  public String publicUrl(){
   try{URI uri=URI.create(publicUrl);String h=uri.getHost();if(!"https".equals(uri.getScheme())||h==null||uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null||h.equals("localhost")||h.endsWith(".localhost")||h.endsWith(".local")||!h.contains(".")||h.contains(":")||h.matches("[0-9.]+")||!uri.getPath().endsWith("novo-chamado.html"))throw new IllegalArgumentException();return uri.toString();}
@@ -94,8 +96,6 @@ public class DeskService {
    default -> throw bad("Ação inválida.");
   }r.update("UPDATE chamados SET status=? WHERE id=?",next,id);audit(id,next,text(b.solucao()).isBlank()?"Status: "+old+" → "+next:text(b.solucao()));notify(id,"chamado","Chamado "+next.toLowerCase(Locale.ROOT).replace('_',' '));return ticket(id);
  }
- public List<Map<String,Object>> messages(long id){ticket(id);return r.rows("SELECT m.*,u.nome autor,u.perfil FROM mensagens m JOIN usuarios u ON u.id=m.autor_id WHERE m.chamado_id=? ORDER BY m.criado_em,m.id",id);}
- public void message(long id,Message b){var t=ticket(id);if(Set.of("FINALIZADO","CANCELADO").contains(t.get("status")))throw bad("Reabra o chamado antes de enviar novas mensagens.");r.insert("INSERT INTO mensagens(chamado_id,autor_id,mensagem) VALUES (?,?,?)",id,current().id(),b.mensagem().trim());audit(id,"MENSAGEM","Mensagem adicionada.");notify(id,"mensagem","Nova mensagem no chamado");}
  private void audit(Long id,String action,String description){r.update("INSERT INTO auditoria(autor_id,chamado_id,acao,descricao) VALUES (?,?,?,?)",current().id(),id,action,description);}
  public List<Map<String,Object>> history(long id){ticket(id);return r.rows("SELECT a.*,COALESCE(a.autor_nome,u.nome) autor FROM auditoria a LEFT JOIN usuarios u ON u.id=a.autor_id WHERE a.chamado_id=? ORDER BY a.id",id);}
  public List<Map<String,Object>> activities(){return r.rows("SELECT * FROM auditoria WHERE autor_id=? ORDER BY id DESC LIMIT 100",current().id());}

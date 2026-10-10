@@ -229,16 +229,12 @@
                                         Técnico de TI
                                     </option>
 
-                                    <option value="USUARIO">
-                                        Solicitante
-                                    </option>
-
                                 </select>
 
                             </div>
 
-                            <div id="usuarioMicrosoftField" class="mb-3"><label for="usuarioMicrosoftId" class="form-label">ID do objeto Microsoft Entra</label><input id="usuarioMicrosoftId" class="form-control" maxlength="36" placeholder="00000000-0000-0000-0000-000000000000" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"><div class="form-text">Vínculo usado pelos administradores para entrar com Microsoft.</div></div><div id="usuarioTecnicoInfo" class="alert alert-info small" hidden><strong>Acesso do técnico:</strong> ao cadastrar, o sistema vai gerar uma senha temporária. No primeiro acesso, o técnico deverá criar uma senha própria com pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.</div>
-                            <fieldset class="mb-3"><legend class="form-label fs-6">Locais de atuação</legend><div id="usuarioLocais"></div><div class="form-text">Selecione uma ou mais unidades. Técnicos recebem somente chamados desses locais. O administrador mestre tem acesso a todos.</div></fieldset>
+                            <div id="usuarioCredenciais" class="credential-panel mb-4"><label class="form-label" for="usuarioSenha">Senha temporária de acesso</label><div class="input-group mb-2"><input id="usuarioSenha" type="password" class="form-control" readonly autocomplete="off" placeholder="Clique em gerar senha"><button type="button" class="btn btn-outline-secondary" data-password-toggle="usuarioSenha" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></div><button type="button" id="gerarSenha" class="btn btn-outline-primary"><i class="bi bi-key me-2"></i>Gerar senha aleatória</button><p class="form-text mb-0">No primeiro acesso, será obrigatório criar e confirmar uma senha própria com pelo menos 8 caracteres, letra maiúscula, minúscula, número e caractere especial. Ao editar, gere uma senha apenas se quiser redefinir o acesso.</p></div>
+                            <fieldset class="location-selector mb-4"><legend class="form-label fs-6">Locais de atuação</legend><div id="usuarioLocais" class="location-options"></div><div class="form-text">Selecione uma ou mais unidades. Técnicos recebem somente chamados desses locais. O administrador mestre tem acesso a todos.</div></fieldset>
                             <div class="form-check mb-3"><input id="usuarioAtivo" type="checkbox" class="form-check-input" checked><label for="usuarioAtivo" class="form-check-label">Usuário ativo</label></div>
 <button
                                 type="submit"
@@ -305,8 +301,8 @@
 
 <div class="modal fade" id="senhaTemporariaModal" tabindex="-1" aria-labelledby="senhaTemporariaTitulo" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-  <div class="modal-header"><h2 class="modal-title fs-5" id="senhaTemporariaTitulo">Técnico cadastrado</h2></div>
-  <div class="modal-body"><p>Entregue esta senha ao técnico por um canal seguro. Ela aparece somente agora. No primeiro acesso, ele deverá criar uma senha com pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.</p><div class="rounded border bg-light p-3 text-center"><span id="senhaTemporariaEmail" class="d-block small text-muted mb-2"></span><code id="senhaTemporariaValor" class="fs-5 user-select-all"></code></div><div id="senhaTemporariaCopia" class="small text-success mt-2" role="status"></div></div>
+  <div class="modal-header"><h2 class="modal-title fs-5" id="senhaTemporariaTitulo">Credencial de acesso</h2></div>
+  <div class="modal-body"><p>Entregue esta senha ao usuário por um canal seguro. Ela aparece somente agora. No primeiro acesso, ele deverá criar uma senha com pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.</p><div class="rounded border bg-light p-3 text-center"><span id="senhaTemporariaEmail" class="d-block small text-muted mb-2"></span><code id="senhaTemporariaValor" class="fs-5 user-select-all"></code></div><div id="senhaTemporariaCopia" class="small text-success mt-2" role="status"></div></div>
   <div class="modal-footer"><button type="button" id="copiarSenhaTemporaria" class="btn btn-outline-secondary"><i class="bi bi-clipboard me-1"></i>Copiar senha</button><button type="button" class="btn btn-puc" data-bs-dismiss="modal">Concluir</button></div>
  </div></div>
 </div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -314,7 +310,7 @@
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/app.js"></script>
-<script src="../assets/js/usuarios.js"></script>
+<script src="../assets/js/password-toggle.js"></script><script src="../assets/js/usuarios.js"></script>
 
 </body>
 </html>

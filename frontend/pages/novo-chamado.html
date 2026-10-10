@@ -148,7 +148,7 @@
             </div>
 
 
-            <form id="ticketForm" novalidate>
+            <form id="ticketForm">
 
                 <div class="row g-4">
 
@@ -214,201 +214,8 @@
                         </div>
 
 
-                        <!-- LOCALIZAÇÃO -->
-                        <div class="card-custom">
-
-                            <div class="card-header-custom">
-                                <i class="bi bi-geo-alt me-2"></i>
-                                Localização do atendimento
-                            </div>
-
-                            <div class="card-body-custom">
-
-                                <div
-                                    class="location-box"
-                                    id="locationBox"
-                                >
-
-                                    <div
-                                        class="location-qr"
-                                        id="qrLocationInfo"
-                                    >
-
-                                        <i class="bi bi-qr-code"></i>
-
-                                        <span>
-                                            Localização informada manualmente.
-                                        </span>
-
-                                    </div>
-
-
-                                    <div class="row g-3">
-
-                                        <div class="col-md-6">
-
-                                            <label
-                                                class="form-label"
-                                                for="cidade"
-                                            >
-                                                Cidade
-                                                <span class="required">*</span>
-                                            </label>
-
-                                            <select
-                                                class="form-select"
-                                                id="cidade"
-                                                required
-                                            >
-
-                                                <option value="">
-                                                    Selecione
-                                                </option>
-
-                                                <option value="londrina">
-                                                    Londrina
-                                                </option>
-
-                                                <option value="cambe">
-                                                    Cambé
-                                                </option>
-
-                                                <option value="arapongas">
-                                                    Arapongas
-                                                </option>
-
-                                                <option value="outra">
-                                                    Outra
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div class="col-md-6">
-
-                                            <label
-                                                class="form-label"
-                                                for="filial"
-                                            >
-                                                Filial / Unidade
-                                                <span class="required">*</span>
-                                            </label>
-
-                                            <select
-                                                class="form-select"
-                                                id="filial"
-                                                required
-                                            >
-
-                                                <option value="">
-                                                    Selecione
-                                                </option>
-
-                                                <option value="matriz">
-                                                    Matriz
-                                                </option>
-
-                                                <option value="filial-01">
-                                                    Filial 01
-                                                </option>
-
-                                                <option value="filial-02">
-                                                    Filial 02
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div class="col-md-4">
-
-                                            <label
-                                                class="form-label"
-                                                for="bloco"
-                                            >
-                                                Bloco
-                                            </label>
-
-                                            <select
-                                                class="form-select"
-                                                id="bloco"
-                                            >
-
-                                                <option value="">
-                                                    Selecione
-                                                </option>
-
-                                                <option value="a">
-                                                    Bloco A
-                                                </option>
-
-                                                <option value="b">
-                                                    Bloco B
-                                                </option>
-
-                                                <option value="c">
-                                                    Bloco C
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div class="col-md-4">
-
-                                            <label
-                                                class="form-label"
-                                                for="sala"
-                                            >
-                                                Sala
-                                            </label>
-
-                                            <select
-                                                class="form-select"
-                                                id="sala"
-                                            >
-
-                                                <option value="">
-                                                    Selecione
-                                                </option>
-
-                                                <option value="101">
-                                                    Sala 101
-                                                </option>
-
-                                                <option value="102">
-                                                    Sala 102
-                                                </option>
-
-                                                <option value="201">
-                                                    Sala 201
-                                                </option>
-
-                                                <option value="202">
-                                                    Sala 202
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- BOTÕES -->
+                        <div class="qr-camera-panel"><h2 class="h5">Identifique o local pelo QR Code</h2><p>Aponte a câmera para o QR Code da sala. A unidade e o local serão preenchidos automaticamente.</p><button type="button" id="startCamera" class="btn btn-primary"><i class="bi bi-camera me-2" aria-hidden="true"></i>Ler QR Code com a câmera</button><button type="button" id="stopCamera" class="btn btn-outline-secondary" hidden>Fechar câmera</button><p id="cameraStatus" role="status" aria-live="polite"></p><video id="qrVideo" autoplay playsinline muted hidden></video><canvas id="qrCanvas" hidden></canvas><div id="qrLocationInfo" class="location-qr" hidden></div></div>
+<!-- BOTÕES -->
                         <div class="d-flex justify-content-end gap-2 mb-4">
 
                             <button
@@ -534,7 +341,7 @@
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/app.js"></script>
-<script src="../assets/js/novo-chamado.js"></script>
+<script src="../assets/vendor/jsQR-1.4.0.js"></script><script src="../assets/js/qr-camera.js"></script><script src="../assets/js/novo-chamado.js"></script>
 
 </body>
 

@@ -131,6 +131,7 @@ window.App = (() => {
         element.replaceChildren(image);
     }
     start(async user=>{
+        if(user.senha_temporaria)return;
         document.querySelectorAll('.user-avatar').forEach(e=>avatar(e,user));
         document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
         document.querySelectorAll('.topbar .user-role,.topbar .text-muted,.user-menu-info small,.sidebar-user .user-info small').forEach(e=>e.textContent=labels[user.perfil]);
@@ -139,7 +140,7 @@ window.App = (() => {
         LiveUpdates.start(user);
     });
     document.addEventListener('DOMContentLoaded',()=>{
-        document.querySelectorAll('.password-toggle').forEach(button=>button.addEventListener('click',()=>{const input=button.parentElement.querySelector('input');if(!input)return;input.type=input.type==='password'?'text':'password';button.innerHTML='<i class="bi bi-eye'+(input.type==='text'?'-slash':'')+'"></i>';button.setAttribute('aria-label',input.type==='text'?'Ocultar senha':'Mostrar senha');}));
+        document.querySelectorAll('.password-toggle:not([data-password-toggle])').forEach(button=>button.addEventListener('click',()=>{const input=button.parentElement.querySelector('input');if(!input)return;input.type=input.type==='password'?'text':'password';button.innerHTML='<i class="bi bi-eye'+(input.type==='text'?'-slash':'')+'"></i>';button.setAttribute('aria-label',input.type==='text'?'Ocultar senha':'Mostrar senha');}));
         document.querySelectorAll('.mobile-menu-button').forEach(button=>button.addEventListener('click',toggleSidebar));
         document.querySelectorAll('.notification-button').forEach(button=>button.addEventListener('click',()=>location.href='notificacoes.html'));
         document.querySelectorAll('.user-profile').forEach(button=>{button.tabIndex=0;button.setAttribute('role','link');button.addEventListener('click',()=>location.href='perfil.html');button.addEventListener('keydown',e=>{if(e.key==='Enter')location.href='perfil.html';});});

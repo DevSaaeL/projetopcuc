@@ -39,8 +39,8 @@ App.$('profilePhotoInput').addEventListener('change',event=>{
    ALTERAR SENHA
 ================================ */
 
-function abrirAlterarSenha(){window.open('https://myaccount.microsoft.com','_blank','noopener,noreferrer');}
-function configurarMFA(){window.open('https://mysignins.microsoft.com/security-info','_blank','noopener,noreferrer');}
+function abrirAlterarSenha(){App.$('alterarSenhaForm').reset();App.$('senhaErro').textContent='';bootstrap.Modal.getOrCreateInstance(App.$('alterarSenhaModal')).show();}
+App.$('alterarSenhaForm').addEventListener('submit',async event=>{event.preventDefault();const b={atual:App.$('senha-atual').value,nova:App.$('senha-nova').value,confirmacao:App.$('senha-confirmacao').value};const button=event.target.querySelector('[type="submit"]');button.disabled=true;try{if(b.nova!==b.confirmacao)throw Error('As senhas não coincidem.');await API.put('/auth/senha',b);API.reset();location.replace('login.html');}catch(e){App.$('senhaErro').textContent=e.message;}finally{button.disabled=false;}});
 
 function salvarPreferencia(){App.run(async()=>{const data={};for(const id of ['systemNotifications','notificationSound','emailNotifications','slaNotifications'])data[id]=App.$(id).checked;await API.put('/auth/preferencias',data);Auth.user.preferencias=JSON.stringify(data);});}
 
@@ -73,8 +73,6 @@ function encerrarSessoes(){if(confirm('Encerrar todas as sessões da sua conta?'
 
 
 App.start(async user=>{
- if(user.microsoft_object_id)App.$('email').readOnly=true;
- if(user.perfil==='SUPORTE'&&user.senha_local_ativa){App.$('passwordManagement').textContent='Senha local definida no primeiro acesso';document.querySelector('[data-event-7]')?.setAttribute('hidden','');document.querySelector('[data-event-8]')?.setAttribute('hidden','');document.querySelector('[data-event-8]')?.closest('.security-item')?.querySelector('small')?.replaceChildren(document.createTextNode('Autenticação Microsoft não utilizada pelo técnico'));}
  cancelarEdicao();App.text('profileName',user.nome);App.avatar(App.$('profileAvatar'),user);document.querySelector('.profile-role').textContent=App.labels[user.perfil];
  const vals=[user.email,user.perfil==='MASTER_ADMIN'?'Todas as unidades':user.locais.map(f=>f.nome).join(', ')||'Sem local atribuído',user.setor||'—',App.date(user.criado_em)];document.querySelectorAll('.profile-info-item strong').forEach((e,i)=>e.textContent=vals[i]);
  const locked=document.querySelectorAll('#profileForm input:disabled');[user.email,String(user.id),App.labels[user.perfil],user.setor||'—'].forEach((v,i)=>{if(locked[i])locked[i].value=v;});
@@ -90,7 +88,6 @@ document.querySelector('[data-event-4]')?.addEventListener('click', function(eve
 document.querySelector('[data-event-5]')?.addEventListener('click', function(event) { logout(); });
 document.querySelector('[data-event-6]')?.addEventListener('click', function(event) { alterarFoto(); });
 document.querySelector('[data-event-7]')?.addEventListener('click', function(event) { abrirAlterarSenha(); });
-document.querySelector('[data-event-8]')?.addEventListener('click', function(event) { configurarMFA(); });
 document.querySelector('[data-event-9]')?.addEventListener('submit', function(event) { salvarPerfil(event); });
 document.querySelector('[data-event-10]')?.addEventListener('click', function(event) { cancelarEdicao(); });
 document.querySelector('[data-event-11]')?.addEventListener('change', function(event) { salvarPreferencia('Notificações do sistema', this.checked); });

@@ -14,7 +14,7 @@ async function carregarDashboard(){
  document.querySelectorAll('[href="chamados.html"] .menu-badge').forEach(e=>e.textContent=data.total);
 }
 App.start(async user=>{
- document.querySelector('.page-content h2').textContent='Olá, '+user.nome+' 👋';
+ document.querySelector('.page-content h2').textContent='Olá, '+user.nome+' ';
  await carregarDashboard();LiveUpdates.subscribe(carregarDashboard);
 });
 

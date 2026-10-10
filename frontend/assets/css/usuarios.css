@@ -24,3 +24,14 @@ body { background: var(--background); color: var(--text); font-family: Arial, He
   .page-content { padding: 20px 15px; }
 }
 html[data-page="usuarios"] :is(#hd-inline-specificity, .hd-inline-0) { font-size: 11px; }
+.credential-panel,.location-selector{padding:20px;border:1px solid #e3e8f0;border-radius:14px;background:#f8fafc}
+.location-selector legend{float:none;width:auto;font-weight:700;padding:0 6px;color:#172b4d}
+.location-options{display:grid;gap:10px;max-height:310px;overflow:auto;padding:2px}
+.location-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #dce3ed;border-radius:10px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s}
+.location-option:hover{border-color:#ac1730;background:#fffafb}
+.location-option:has(input:checked){border-color:#ac1730;background:#fdf0f3;box-shadow:inset 3px 0 #ac1730}
+.location-option:focus-within{outline:3px solid #ac173030;outline-offset:2px}
+.location-option input{flex-shrink:0;margin:0;width:20px;height:20px;accent-color:#ac1730}
+.location-option strong,.location-option small{display:block;overflow-wrap:anywhere}
+.location-option strong{font-size:.9rem;color:#24324a}.location-option small{margin-top:3px;color:#68778c}
+.credential-panel .form-text,.location-selector .form-text{line-height:1.6;margin-top:12px}

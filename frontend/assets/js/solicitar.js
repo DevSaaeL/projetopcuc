@@ -5,11 +5,12 @@
  let requestId=crypto.randomUUID();
  try{requestId=sessionStorage.getItem('ticket-request-'+qrId)||requestId;sessionStorage.setItem('ticket-request-'+qrId,requestId);}catch{}
  try{
-  if(!qrId)throw Error('Leia o QR Code do local para abrir um chamado.');
+  QrCamera.mount(async id=>{await API.get('/public/qrcodes/'+encodeURIComponent(id));location.replace('solicitar.html?qr='+encodeURIComponent(id));});
+  if(!qrId){document.getElementById('locationName').textContent='Leia o QR Code da sala';return;}
   const local=await API.get('/public/qrcodes/'+encodeURIComponent(qrId));
   document.getElementById('locationName').textContent=local.filial_nome;
   document.getElementById('locationDetails').textContent=[local.cidade,'Bloco '+local.bloco,'Sala '+local.sala].join(' · ');
-  form.hidden=false;
+  form.hidden=false;document.querySelector('.qr-camera-panel').hidden=true;
  }catch(e){document.getElementById('locationName').textContent='Local não identificado';showError(e.message);return;}
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(button.disabled)return;

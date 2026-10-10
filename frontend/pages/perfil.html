@@ -547,7 +547,7 @@
                                         Senha
                                     </strong>
 
-                                    <small id="passwordManagement">Gerenciada pela Microsoft</small>
+                                    <small id="passwordManagement">Senha pessoal de acesso</small>
 
                                 </div>
 
@@ -557,41 +557,6 @@
                                     data-event-7=""
                                 >
                                     Alterar
-                                </button>
-
-                            </div>
-
-
-                            <hr>
-
-
-                            <div class="security-item">
-
-                                <div class="security-icon warning">
-
-                                    <i class="bi bi-shield-lock-fill"></i>
-
-                                </div>
-
-
-                                <div>
-
-                                    <strong>
-                                        Autenticação em dois fatores
-                                    </strong>
-
-                                    <small id="mfaStatus">
-                                        Gerenciada no Microsoft Entra
-                                    </small>
-
-                                </div>
-
-
-                                <button
-                                    class="btn btn-sm btn-outline-primary"
-                                    data-event-8=""
-                                >
-                                    Configurar
                                 </button>
 
                             </div>
@@ -1161,7 +1126,7 @@
 
         </div>
 
-    </main>
+    </main><div class="modal fade" id="alterarSenhaModal" tabindex="-1" aria-labelledby="alterarSenhaTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="alterarSenhaForm"><div class="modal-header"><h2 class="modal-title fs-5" id="alterarSenhaTitulo">Alterar senha</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div><div class="modal-body"><p>Use pelo menos 8 caracteres, com maiúscula, minúscula, número e caractere especial.</p><label for="senha-atual" class="form-label">Senha atual</label><div class="input-group mb-3"><input id="senha-atual" type="password" autocomplete="current-password" class="form-control" required maxlength="72"><button type="button" class="btn btn-outline-secondary" data-password-toggle="senha-atual" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye"></i></button></div><label for="senha-nova" class="form-label">Nova senha</label><div class="input-group mb-3"><input id="senha-nova" type="password" autocomplete="new-password" class="form-control" required maxlength="72"><button type="button" class="btn btn-outline-secondary" data-password-toggle="senha-nova" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye"></i></button></div><label for="senha-confirmacao" class="form-label">Confirme a nova senha</label><div class="input-group mb-3"><input id="senha-confirmacao" type="password" autocomplete="new-password" class="form-control" required maxlength="72"><button type="button" class="btn btn-outline-secondary" data-password-toggle="senha-confirmacao" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye"></i></button></div><p id="senhaErro" class="text-danger" role="alert"></p></div><div class="modal-footer"><button type="submit" class="btn btn-primary">Salvar senha</button></div></form></div></div></div>
 
 </div>
 
@@ -1176,7 +1141,7 @@
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/app.js"></script>
-<script src="../assets/js/perfil.js"></script>
+<script src="../assets/js/password-toggle.js"></script><script src="../assets/js/perfil.js"></script>
 
 </body>
 

@@ -89,14 +89,9 @@
             </h2>
 
             <p class="login-subtitle">
-                Técnicos entram com senha local. Administradores usam a conta Microsoft.
+                Acesso exclusivo para técnicos e administradores.
             </p>
-            <div class="mb-4" id="microsoftAccess">
-                <a id="microsoftLogin" class="login-button d-none" href="/oauth2/authorization/microsoft">Entrar com Microsoft</a>
-                <p id="authStatus" class="small text-muted" role="status">Carregando opções de acesso...</p>
-                <p class="small">O administrador cadastra sua conta e seus locais de atuação.</p>
-                <a href="https://passwordreset.microsoftonline.com" target="_blank" rel="noopener noreferrer">Recuperar senha na Microsoft</a>
-            </div>
+            <p class="small text-muted">Use seu e-mail e sua senha. No primeiro acesso, informe a senha temporária recebida do administrador.</p>
             <form id="loginForm">
 
                 <div class="mb-3">
@@ -122,14 +117,7 @@
                             Senha
                         </label>
 
-                        <a
-                            href="https://passwordreset.microsoftonline.com"
-                            target="_blank" rel="noopener noreferrer"
-                            class="small text-primary"
-                            id="forgotPassword"
-                        >
-                            Esqueci minha senha
-                        </a>
+                        <span class="small text-muted">Esqueceu a senha? Contate o administrador.</span>
                     </div>
 
                     <div class="password-wrapper">
@@ -147,7 +135,7 @@
                         <button
                             type="button"
                             class="password-toggle"
-                            id="passwordToggle"
+                            id="passwordToggle" data-password-toggle="password" aria-pressed="false"
                             aria-label="Mostrar senha"
                         >
                             <i class="bi bi-eye"></i>
@@ -205,14 +193,6 @@
                     Usuário ou senha inválidos.
                 </span>
             </div>
-
-
-
-
-            <div id="registerAlert" class="alert mt-3 d-none" role="alert">
-                <i class="bi bi-info-circle me-2"></i>
-                <span id="registerAlertMessage"></span>
-            </div>
             <div class="login-footer">
                 <small>
                     HelpDesk TI PUC
@@ -233,6 +213,7 @@
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/app.js"></script>
+<script src="../assets/js/password-toggle.js"></script>
 <script src="../assets/js/login.js"></script>
 
 </body>

@@ -6,9 +6,7 @@ function assumirChamado(){if(confirm('Deseja assumir este chamado?'))App.run(()=
 function cancelarChamado(){if(confirm('Deseja cancelar este chamado?'))App.run(()=>agir('cancelar'));}
 function aguardarUsuario(){if(confirm('Aguardar resposta do usuário?'))App.run(()=>agir('aguardar'));}
 function confirmarFinalizacao(){App.run(async()=>{const solucao=App.$('solucaoFinal').value.trim();if(!solucao)throw Error('Informe a solução aplicada.');await agir('finalizar',solucao);bootstrap.Modal.getInstance(App.$('modalFinalizar')).hide();});}
-function enviarMensagem(){App.run(async()=>{const input=App.$('messageInput'),mensagem=input.value.trim();if(!mensagem)return;input.disabled=true;try{await API.post('/chamados/'+chamadoId+'/mensagens',{mensagem});input.value='';await carregarConversa();}finally{input.disabled=false;}});}
-function handleMessageKey(event){if(event.key==='Enter'){event.preventDefault();enviarMensagem();}}
-async function carregarConversa(){const [messages,history]=await Promise.all([API.get('/chamados/'+chamadoId+'/mensagens'),API.get('/chamados/'+chamadoId+'/historico')]);App.$('chatMessages').innerHTML=messages.map(m=>`<div class="message ${m.perfil!=='USUARIO'?'me':''}"><div class="message-avatar">${App.esc(App.initials(m.autor))}</div><div class="message-content"><div class="message-name">${App.esc(m.autor)} · ${App.labels[m.perfil]}</div><div class="message-bubble">${App.esc(m.mensagem)}</div><div class="message-time">${App.date(m.criado_em)}</div></div></div>`).join('')||'<p class="text-muted">Nenhuma mensagem.</p>';App.$('chatMessages').scrollTop=App.$('chatMessages').scrollHeight;document.querySelector('.timeline').innerHTML=history.map(h=>`<div class="timeline-item"><div class="timeline-icon"><i class="bi bi-clock"></i></div><div class="timeline-title">${App.esc(App.labels[h.acao]||h.acao)}</div><div class="timeline-text">${App.esc(h.autor)}: ${App.esc(h.descricao)}</div><div class="timeline-time">${App.date(h.criado_em)}</div></div>`).join('');}
+async function carregarHistorico(){const history=await API.get('/chamados/'+chamadoId+'/historico');document.querySelector('.timeline').innerHTML=history.map(h=>`<div class="timeline-item"><div class="timeline-icon"><i class="bi bi-clock"></i></div><div class="timeline-title">${App.esc(App.labels[h.acao]||h.acao)}</div><div class="timeline-text">${App.esc(h.autor)}: ${App.esc(h.descricao)}</div><div class="timeline-time">${App.date(h.criado_em)}</div></div>`).join('');}
 async function carregarAnexos(){const rows=await API.get('/chamados/'+chamadoId+'/anexos');App.$('anexosLista').innerHTML=rows.map(a=>`<div class="attachment-item"><div class="attachment-info"><div class="attachment-icon"><i class="bi bi-file-earmark"></i></div><div>${App.esc(a.nome)}<br><small>${(a.tamanho/1024).toFixed(1)} KB</small></div></div><button class="btn btn-sm btn-outline-puc" data-download="${a.id}" data-name="${App.esc(a.nome)}" title="Baixar"><i class="bi bi-download"></i></button></div>`).join('')||'<p class="text-muted">Nenhum anexo.</p>';}
 async function carregarDetalhes(){
  chamadoAtual=await API.get('/chamados/'+chamadoId);const t=chamadoAtual;
@@ -19,9 +17,9 @@ async function carregarDetalhes(){
  const vals=[App.duration(t.tempo_resposta_segundos),App.duration(t.atendimento?t.tempo_total_segundos-t.tempo_resposta_segundos:0),t.fora_sla?'Fora do prazo':'Dentro do prazo',App.duration(t.tempo_total_segundos)];document.querySelectorAll('.sla-card .sla-value').forEach((e,i)=>e.textContent=vals[i]);
  const small=document.querySelectorAll('.sla-card small');small[0].textContent='SLA: '+t.sla_resposta+' minutos';small[1].textContent='SLA: '+t.sla_resolucao+' minutos';small[2].textContent=t.finalizacao?'Encerrado em '+App.date(t.finalizacao):App.duration(Math.max(0,t.sla_resolucao*60-t.tempo_total_segundos))+' restantes';
  const sla=document.querySelector('.col-lg-4 .card-custom:last-child');sla.querySelectorAll('strong').forEach((e,i)=>e.textContent=(i===0?t.sla_resposta:t.sla_resolucao)+' minutos');sla.querySelectorAll('.progress-bar').forEach((e,i)=>e.style.width=Math.min(100,(i===0?t.tempo_resposta_segundos/(t.sla_resposta*60):t.tempo_total_segundos/(t.sla_resolucao*60))*100)+'%');sla.querySelector('.alert').textContent=t.fora_sla?'Chamado fora do SLA.':'Chamado dentro do SLA.';
- const terminal=['FINALIZADO','CANCELADO'].includes(t.status);App.$('messageInput').disabled=terminal;
+ const terminal=['FINALIZADO','CANCELADO'].includes(t.status);
  document.querySelectorAll('[data-ticket-action]').forEach(b=>{b.hidden=!Auth.support();b.disabled=terminal;});
- await Promise.all([carregarConversa(),carregarAnexos()]);
+ await Promise.all([carregarHistorico(),carregarAnexos()]);
 }
 App.start(async()=>{
  if(!Number.isSafeInteger(chamadoId)||chamadoId<1)throw Error('Selecione um chamado na lista para visualizar os detalhes.');
@@ -35,8 +33,6 @@ App.start(async()=>{
 document.querySelector('[data-event-0]')?.addEventListener('click', function(event) { voltarChamados(); });
 document.querySelector('[data-event-1]')?.addEventListener('click', function(event) { finalizarChamado(); });
 document.querySelector('[data-event-2]')?.addEventListener('click', function(event) { cancelarChamado(); });
-document.querySelector('[data-event-3]')?.addEventListener('keydown', function(event) { handleMessageKey(event); });
-document.querySelector('[data-event-4]')?.addEventListener('click', function(event) { enviarMensagem(); });
 document.querySelector('[data-event-5]')?.addEventListener('click', function(event) { assumirChamado(); });
 document.querySelector('[data-event-6]')?.addEventListener('click', function(event) { finalizarChamado(); });
 document.querySelector('[data-event-7]')?.addEventListener('click', function(event) { aguardarUsuario(); });
