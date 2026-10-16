@@ -20,18 +20,19 @@ class PublicTicketTest {
  MockHttpSession session(long id){var s=new MockHttpSession();s.setAttribute("uid",id);s.setAttribute("version",0);return s;}
  @Test void anonymousQrKeepsLocationPrivateDataAndSupportScopeProtected()throws Exception {
   long unit=repo.insert("INSERT INTO filiais(nome,cidade,estado) VALUES ('Londrina','Londrina','PR')");
+  br.edu.helpdesk.service.TicketTopicService.seed(repo,unit);long topic=((Number)repo.one("SELECT id FROM assuntos_chamado WHERE filial_id=? AND nome='Impressora'",unit).get("id")).longValue();
   long other=repo.insert("INSERT INTO filiais(nome,cidade,estado) VALUES ('Curitiba','Curitiba','PR')");
   long tech=repo.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id) VALUES ('Técnico','tech@test.invalid','unused','SUPORTE',?)",unit);
   long foreign=repo.insert("INSERT INTO usuarios(nome,email,senha_hash,perfil,filial_id) VALUES ('Outro','other@test.invalid','unused','SUPORTE',?)",other);
   repo.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",tech,unit);repo.update("INSERT INTO usuario_filiais(usuario_id,filial_id) VALUES (?,?)",foreign,other);
   String qr=UUID.randomUUID().toString();repo.update("INSERT INTO qrcodes(id,nome,filial_id,bloco,sala) VALUES (?,'Laboratório',?,'B','12')",qr,unit);
   mvc.perform(get("/api/public/qrcodes/"+qr)).andExpect(status().isOk()).andExpect(jsonPath("$.filial_nome").value("Londrina")).andExpect(jsonPath("$.filial_id").doesNotExist());
-  var body=new HashMap<String,Object>(Map.of("qrId",qr,"nome","Maria Silva","descricao","Computador não liga","requestId",UUID.randomUUID().toString(),"filialId",other,"sala","999"));
+  var body=new HashMap<String,Object>(Map.of("qrId",qr,"nome","Maria Silva","assuntoId",topic,"requestId",UUID.randomUUID().toString(),"filialId",other,"sala","999"));
   String json=mapper.writeValueAsString(body);
   mvc.perform(post("/api/public/chamados").contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isForbidden());
   var response=mvc.perform(post("/api/public/chamados").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andExpect(jsonPath("$.protocolo").isNotEmpty()).andExpect(jsonPath("$.descricao").doesNotExist()).andReturn().getResponse().getContentAsString();
   mvc.perform(post("/api/public/chamados").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(status().isOk()).andExpect(content().json(response));
-  var tickets=repo.rows("SELECT * FROM chamados");assertEquals(1,tickets.size());var ticket=tickets.getFirst();long id=((Number)ticket.get("id")).longValue();assertNull(ticket.get("solicitante_id"));assertEquals("Maria Silva",ticket.get("solicitante_nome"));assertEquals(unit,((Number)ticket.get("filial_id")).longValue());assertEquals("12",ticket.get("sala"));assertEquals("Solicitação via QR Code",ticket.get("titulo"));assertEquals("Computador não liga",ticket.get("descricao"));
+  var tickets=repo.rows("SELECT * FROM chamados");assertEquals(1,tickets.size());var ticket=tickets.getFirst();long id=((Number)ticket.get("id")).longValue();assertNull(ticket.get("solicitante_id"));assertEquals("Maria Silva",ticket.get("solicitante_nome"));assertEquals(unit,((Number)ticket.get("filial_id")).longValue());assertEquals("12",ticket.get("sala"));assertEquals("Impressora",ticket.get("titulo"));assertEquals("Assunto selecionado: Impressora",ticket.get("descricao"));
   mvc.perform(get("/api/chamados")).andExpect(status().isUnauthorized());mvc.perform(get("/api/chamados/"+id)).andExpect(status().isUnauthorized());
   mvc.perform(get("/api/chamados/"+id).session(session(foreign))).andExpect(status().isNotFound());
   mvc.perform(get("/api/chamados/"+id).session(session(tech))).andExpect(status().isOk()).andExpect(jsonPath("$.solicitante").value("Maria Silva"));

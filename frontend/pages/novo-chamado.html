@@ -86,6 +86,7 @@
                 <span>Relatórios</span>
             </a>
 <a href="logs.html" class="menu-item"><i class="bi bi-journal-text"></i><span>Logs por usuário</span></a>
+<a href="assuntos.html" class="menu-item"><i class="bi bi-list-check"></i><span>Assuntos dos chamados</span></a>
 
             <div class="sidebar-title">
                 Conta
@@ -143,7 +144,7 @@
                 </div>
 
                 <div class="page-subtitle">
-                    Informe os detalhes do problema para que a equipe de TI possa realizar o atendimento.
+                    Leia o QR Code da sala e selecione o assunto para que a equipe de TI possa realizar o atendimento.
                 </div>
 
             </div>
@@ -156,66 +157,8 @@
                     <!-- COLUNA PRINCIPAL -->
                     <div class="col-12">
 
-                        <!-- INFORMAÇÕES -->
-                        <div class="card-custom">
-
-                            <div class="card-header-custom">
-                                <i class="bi bi-ticket-detailed me-2"></i>
-                                Informações do chamado
-                            </div>
-
-                            <div class="card-body-custom">
-
-                                <div class="mb-4">
-
-                                    <label class="form-label" for="titulo">
-                                        Título do chamado
-                                        <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="titulo"
-                                        maxlength="150"
-                                        placeholder="Ex.: Computador não liga"
-                                        required
-                                    >
-
-                                    <div class="char-counter">
-                                        <span id="tituloCounter">0</span>/150
-                                    </div>
-
-                                </div>
-
-
-                                <div class="mb-4">
-
-                                    <label class="form-label" for="descricao">
-                                        Descrição do problema
-                                        <span class="required">*</span>
-                                    </label>
-
-                                    <textarea
-                                        class="form-control"
-                                        id="descricao"
-                                        maxlength="2000"
-                                        placeholder="Descreva detalhadamente o que aconteceu..."
-                                        required
-                                    ></textarea>
-
-                                    <div class="char-counter">
-                                        <span id="descricaoCounter">0</span>/2000
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                        </div>
-
-
-                        <div class="qr-camera-panel"><h2 class="h5">Identifique o local pelo QR Code</h2><p>Aponte a câmera para o QR Code da sala. A unidade e o local serão preenchidos automaticamente.</p><button type="button" id="startCamera" class="btn btn-primary"><i class="bi bi-camera me-2" aria-hidden="true"></i>Ler QR Code com a câmera</button><button type="button" id="stopCamera" class="btn btn-outline-secondary" hidden>Fechar câmera</button><p id="cameraStatus" role="status" aria-live="polite"></p><video id="qrVideo" autoplay playsinline muted hidden></video><canvas id="qrCanvas" hidden></canvas><div id="qrLocationInfo" class="location-qr" hidden></div></div>
+                        <div class="card-custom"><div class="card-header-custom">Assunto do chamado</div><div class="card-body-custom"><label for="assunto" class="form-label">Selecione o problema <span class="required">*</span></label><select id="assunto" class="form-select" required disabled><option value="">Leia o QR Code para carregar os assuntos da unidade</option></select><div class="form-text">Os assuntos disponíveis dependem da unidade identificada pelo QR Code.</div></div></div>
+<div class="qr-camera-panel"><h2 class="h5">Identifique o local pelo QR Code</h2><p>Aponte a câmera para o QR Code da sala. A unidade e o local serão preenchidos automaticamente.</p><button type="button" id="startCamera" class="btn btn-primary"><i class="bi bi-camera me-2" aria-hidden="true"></i>Ler QR Code com a câmera</button><button type="button" id="stopCamera" class="btn btn-outline-secondary" hidden>Fechar câmera</button><p id="cameraStatus" role="status" aria-live="polite"></p><video id="qrVideo" autoplay playsinline muted hidden></video><canvas id="qrCanvas" hidden></canvas><div id="qrLocationInfo" class="location-qr" hidden></div></div>
 <!-- BOTÕES -->
                         <div class="d-flex justify-content-end gap-2 mb-4">
 

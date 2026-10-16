@@ -11,8 +11,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class ApiController {
- private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;private final ActivityLogService logs;
- public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos,ActivityLogService logs){this.service=service;this.auth=auth;this.photos=photos;this.logs=logs;}
+ private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;private final ActivityLogService logs;private final TicketTopicService topics;
+ public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos,ActivityLogService logs,TicketTopicService topics){this.service=service;this.auth=auth;this.photos=photos;this.logs=logs;this.topics=topics;}
  @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",false,"selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
  @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){return Map.of("ok",true,"mustChangePassword",auth.login(data,req));}
@@ -37,6 +37,9 @@ public class ApiController {
  @PostMapping("/usuarios") Object user(@Valid @RequestBody User data){return service.saveUser(null,data);}
  @PutMapping("/usuarios/{id}") Object user(@PathVariable long id,@Valid @RequestBody User data){return service.saveUser(id,data);}
  @DeleteMapping("/usuarios/{id}") void user(@PathVariable long id){service.deactivateUser(id);}
+ @GetMapping("/assuntos") Object topics(@RequestParam(required=false) Long filial_id){return topics.list(filial_id);}
+ @PostMapping("/assuntos") Object topic(@Valid @RequestBody Topic data){return topics.save(null,data.filialId(),data.nome(),data.ativo());}
+ @PutMapping("/assuntos/{id}") Object topic(@PathVariable long id,@Valid @RequestBody Topic data){return topics.save(id,data.filialId(),data.nome(),data.ativo());}
  @GetMapping("/qrcodes") Object qrs(){return service.qrs();}
  @GetMapping("/qrcodes/{id}") Object qr(@PathVariable String id){return service.qr(id);}
  @PostMapping("/qrcodes") Object qr(@Valid @RequestBody Qr data){return service.createQr(data);}

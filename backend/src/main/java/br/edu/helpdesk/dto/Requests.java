@@ -8,7 +8,8 @@ public final class Requests {
   public User(String nome,String email,String senha,String perfil,Long filialId,boolean ativo){this(nome,email,senha,perfil,filialId,ativo,null);}
  }
  public record Qr(@NotBlank @Size(max=160) String nome,@NotNull Long filialId,@NotBlank @Size(max=80) String bloco,@NotBlank @Size(max=80) String sala,@Size(max=300) String descricao){}
- public record Ticket(@NotBlank @Size(max=150) String titulo,@NotBlank @Size(max=2000) String descricao,Long filialId,@Size(max=80) String bloco,@Size(max=80) String sala,@Size(max=100) String setor,@Size(max=80) String categoria,@Size(max=40) String tipoAtendimento,@Pattern(regexp="BAIXA|MEDIA|ALTA|CRITICA") String prioridade,@Size(max=36) String qrId){}
+ public record Topic(@NotNull Long filialId,@NotBlank @Size(max=80) String nome,boolean ativo){}
+ public record Ticket(@Size(max=150) String titulo,@Size(max=2000) String descricao,Long filialId,@Size(max=80) String bloco,@Size(max=80) String sala,@Size(max=100) String setor,@Size(max=80) String categoria,@Size(max=40) String tipoAtendimento,@Pattern(regexp="BAIXA|MEDIA|ALTA|CRITICA") String prioridade,@Size(max=36) String qrId,Long assuntoId){}
  public record Message(@NotBlank @Size(max=4000) String mensagem){}
  public record Action(@NotBlank String acao,@Size(max=2000) String solucao){}
  public record Password(@NotBlank @Size(max=72) String atual,@NotBlank @Size(min=8,max=72) String nova,@NotBlank @Size(max=72) String confirmacao){}

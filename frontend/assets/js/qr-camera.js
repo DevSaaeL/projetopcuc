@@ -33,7 +33,7 @@ window.QrCamera = (() => {
       canvas.width=Math.min(640,video.videoWidth);canvas.height=Math.round(video.videoHeight*canvas.width/video.videoWidth);
       context.drawImage(video,0,0,canvas.width,canvas.height);
       const frame=context.getImageData(0,0,canvas.width,canvas.height),code=jsQR(frame.data,frame.width,frame.height);
-      if(code&&(code.data!==lastCode||Date.now()-lastRead>3000)){lastCode=code.data;lastRead=Date.now();await onRead(parse(code.data));if(attempt!==generation)return;stop();el('cameraStatus').textContent='Local identificado. Preencha a descrição do chamado.';return;}
+      if(code&&(code.data!==lastCode||Date.now()-lastRead>3000)){lastCode=code.data;lastRead=Date.now();await onRead(parse(code.data));if(attempt!==generation)return;stop();el('cameraStatus').textContent='Local identificado. Selecione o assunto do chamado.';return;}
      }
     }catch(error){el('cameraStatus').textContent=error.message;}
     if(attempt===generation)timer=setTimeout(scan,200);

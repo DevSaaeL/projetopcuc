@@ -12,7 +12,7 @@ Técnicos e administradores entram com e-mail e senha. O login Microsoft foi rem
 
 Para redefinir o acesso de outra conta, edite o usuário, gere uma nova senha e salve. A operação invalida as sessões anteriores e exige a troca no próximo acesso. O administrador só pode gerenciar usuários dentro das unidades autorizadas; apenas o mestre gerencia outros mestres. A própria senha é alterada em Meu perfil.
 
-As senhas locais existentes continuam funcionando. Uma conta anteriormente usada apenas via Microsoft precisa receber uma senha temporária pelo administrador. Não há autocadastro. Solicitantes leem o QR Code sem login e informam nome e descrição.
+As senhas locais existentes continuam funcionando. Uma conta anteriormente usada apenas via Microsoft precisa receber uma senha temporária pelo administrador. Não há autocadastro. Solicitantes leem o QR Code sem login e informam nome e escolhem o assunto.
 
 ## Câmera e chamados
 
@@ -29,3 +29,9 @@ Chamados abertos aparecem primeiro, do mais antigo para o mais novo; empates na 
 O prazo para assumir começa na abertura. O prazo para finalizar começa na primeira assunção. Os contadores atualizam a cada segundo, indicam atraso, continuam durante Aguardando usuário e param ao finalizar/cancelar. Reabrir preserva a abertura e a primeira assunção originais, sem renovar o SLA. O dashboard mantém Chamados recentes em ordem de abertura mais recente.
 
 A aba Logs por usuário permite filtrar usuário, ação e período no horário de Brasília, com 50 registros por página. Técnicos consultam suas próprias ações; administradores consultam chamados de suas unidades, e atividades de conta de usuários totalmente sob sua gestão; o mestre consulta todos. Aberturas sem conta aparecem com o nome do solicitante e podem ser filtradas como Solicitantes sem conta. Entradas, saídas e alterações de perfil/senha/sessões passam a ser registradas a partir desta versão, sem armazenar valores de senhas nos logs.
+
+## Assuntos por unidade
+
+O solicitante informa o nome e escolhe um dos assuntos disponíveis, sem escrever a descrição. O QR Code determina a unidade; o servidor valida que o assunto está ativo naquela unidade e registra seu nome no título e na descrição do chamado. A tela Novo chamado da equipe também usa a seleção de assunto após ler o QR Code.
+
+A aba Assuntos dos chamados é exclusiva de administradores. Ambos os perfis administrativos podem cadastrar, editar, desativar e reativar assuntos dentro do próprio escopo de unidades. Os nove assuntos iniciais são criados em todas as unidades existentes pela migração V9 e nas novas unidades no cadastro. A listagem usa ordenação alfabética em português. Alterações no catálogo preservam os títulos e descrições dos chamados antigos.
