@@ -4,7 +4,7 @@ window.Auth = (() => {
     function loginUrl() { return 'login.html?returnTo=' + encodeURIComponent(page + location.search); }
     function destination() {
         const value = new URLSearchParams(location.search).get('returnTo');
-        const allowed = ['dashboard','chamados','novo-chamado','chamado-detalhes','meus-chamados','notificacoes','usuarios','filiais','qr-codes','relatorios','perfil','ler-qrcode'];
+        const allowed = ['dashboard','chamados','novo-chamado','chamado-detalhes','meus-chamados','notificacoes','usuarios','filiais','qr-codes','relatorios','logs','perfil','ler-qrcode'];
         if (value && allowed.some(name => value === name+'.html' || value.startsWith(name+'.html?'))) return value;
         return 'dashboard.html';
     }

@@ -11,13 +11,13 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class ApiController {
- private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;
- public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos){this.service=service;this.auth=auth;this.photos=photos;}
+ private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;private final ActivityLogService logs;
+ public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos,ActivityLogService logs){this.service=service;this.auth=auth;this.photos=photos;this.logs=logs;}
  @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",false,"selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
  @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){return Map.of("ok",true,"mustChangePassword",auth.login(data,req));}
  @PostMapping("/auth/register") ResponseEntity<?> register(@Valid @RequestBody Register data){return ResponseEntity.status(HttpStatus.CREATED).body(auth.register(data));}
- @PostMapping("/auth/logout") void logout(HttpServletRequest req){var s=req.getSession(false);if(s!=null)s.invalidate();}
+ @PostMapping("/auth/logout") void logout(HttpServletRequest req){var s=req.getSession(false);if(s!=null){if(s.getAttribute("uid")!=null)service.recordActivity("LOGOUT","Saída do sistema.");s.invalidate();}}
  @PostMapping("/auth/foto") Object photo(@RequestParam MultipartFile arquivo)throws Exception{return photos.save(arquivo);}
  @GetMapping("/auth/foto") ResponseEntity<byte[]> photo(){return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).cacheControl(CacheControl.noStore()).header("X-Content-Type-Options","nosniff").body(photos.read());}
  @GetMapping("/auth/me") Object me(){return service.me();}
@@ -54,5 +54,6 @@ public class ApiController {
  @PutMapping("/notificacoes/{id}/lida") void read(@PathVariable long id){service.readNotification(id);}
  @DeleteMapping("/notificacoes") void clear(){service.clearNotifications();}
  @GetMapping("/dashboard") Object dashboard(){return service.metrics(Map.of());}
+ @GetMapping("/logs") Object logs(@RequestParam(required=false) String usuario_id,@RequestParam(required=false) String acao,@RequestParam(required=false) String inicio,@RequestParam(required=false) String fim,@RequestParam(defaultValue="1") int pagina){return logs.search(usuario_id,acao,inicio,fim,pagina);}
  @GetMapping("/relatorios") Object reports(@RequestParam Map<String,String> filters){return service.metrics(filters);}
 }

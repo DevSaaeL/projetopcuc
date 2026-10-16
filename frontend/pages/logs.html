@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-page="logs">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Logs por usuário | HelpDesk TI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="../assets/css/relatorios.css">
+    <link rel="stylesheet" href="../assets/css/logs.css">
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-icon">
+            <i class="bi bi-headset"></i>
+        </div>
+
+        <span class="fw-bold">
+            HelpDesk TI
+        </span>
+
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <div class="menu-title">Principal</div>
+
+        <a href="dashboard.html" class="menu-item">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="chamados.html" class="menu-item">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Chamados</span>
+        </a>
+
+        <a href="novo-chamado.html" class="menu-item">
+            <i class="bi bi-plus-circle"></i>
+            <span>Novo chamado</span>
+        </a>
+
+        <a href="meus-chamados.html" class="menu-item">
+            <i class="bi bi-person-lines-fill"></i>
+            <span>Meus chamados</span>
+        </a>
+
+        <div class="menu-title">Atendimento</div>
+
+        <a href="notificacoes.html" class="menu-item">
+            <i class="bi bi-bell"></i>
+            <span>Notificações</span>
+        </a>
+
+        <div class="menu-title">Administração</div>
+
+        <a href="usuarios.html" class="menu-item">
+            <i class="bi bi-people"></i>
+            <span>Usuários</span>
+        </a>
+
+        <a href="filiais.html" class="menu-item">
+            <i class="bi bi-building"></i>
+            <span>Filiais</span>
+        </a>
+
+        <a href="qr-codes.html" class="menu-item">
+            <i class="bi bi-qr-code"></i>
+            <span>QR Codes</span>
+        </a>
+
+        <a href="relatorios.html" class="menu-item">
+            <i class="bi bi-bar-chart"></i>
+            <span>Relatórios</span>
+        </a>
+<a href="logs.html" class="menu-item active"><i class="bi bi-journal-text"></i><span>Logs por usuário</span></a>
+
+        <div class="menu-title">Conta</div>
+
+        <a href="perfil.html" class="menu-item">
+            <i class="bi bi-person-circle"></i>
+            <span>Meu perfil</span>
+        </a>
+
+    </nav>
+
+</aside>
+
+<main class="main-content">
+
+    <header class="topbar">
+
+        <div>
+
+            <h1 class="page-title">
+                Logs por usuário
+            </h1>
+
+            <div class="page-subtitle">
+                Rastreie as atividades e os atendimentos de cada usuário.
+            </div>
+
+        </div>
+
+        <div class="user-area">
+
+            <div class="text-end d-none d-sm-block">
+
+                <div class="fw-semibold">
+                    Samuel
+                </div>
+
+                <div class="hd-inline-0 text-muted">
+                    Administrador
+                </div>
+
+            </div>
+
+            <div class="user-avatar">
+                SG
+            </div>
+
+        </div>
+
+    </header>
+
+    <section class="page-content logs-page">
+ <div class="logs-intro"><div><h2>Histórico de atividades</h2><p id="logsScope">Consulte quem realizou cada ação, quando aconteceu e qual chamado foi alterado.</p></div><button id="refreshLogs" type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-clockwise me-2"></i>Atualizar</button></div>
+ <form id="logsForm" class="logs-filters" aria-label="Filtrar logs">
+  <div class="logs-user-filter"><label for="logsUsuario" class="form-label">Usuário</label><select id="logsUsuario" class="form-select"><option value="">Todos os usuários permitidos</option></select></div>
+  <div><label for="logsAcao" class="form-label">Ação</label><select id="logsAcao" class="form-select"><option value="">Todas as ações</option><option value="LOGIN">Entrada no sistema</option><option value="LOGOUT">Saída do sistema</option><option value="ABERTO">Abertura de chamado</option><option value="EM_ATENDIMENTO">Assumir chamado</option><option value="AGUARDANDO_USUARIO">Aguardar usuário</option><option value="FINALIZADO">Finalizar chamado</option><option value="CANCELADO">Cancelar chamado</option><option value="ANEXO">Adicionar anexo</option><option value="USUARIO">Atualizar usuário</option><option value="SENHA_TEMPORARIA">Gerar ou redefinir acesso</option><option value="PRIMEIRA_SENHA">Definir primeira senha</option><option value="SENHA_ALTERADA">Alterar senha</option><option value="FOTO_PERFIL">Atualizar foto de perfil</option><option value="PREFERENCIAS">Atualizar preferências</option><option value="PERFIL">Atualizar perfil</option><option value="FILIAL">Cadastrar ou alterar unidade</option><option value="FILIAL_INATIVA">Desativar unidade</option><option value="QR_CRIADO">Criar QR Code</option><option value="QR_EXCLUIDO">Desativar QR Code</option><option value="SESSOES_ENCERRADAS">Encerrar sessões</option></select></div>
+  <div><label for="logsInicio" class="form-label">Data inicial</label><input id="logsInicio" type="date" class="form-control"></div>
+  <div><label for="logsFim" class="form-label">Data final</label><input id="logsFim" type="date" class="form-control"></div>
+  <div class="logs-filter-actions"><button type="submit" class="btn btn-primary">Aplicar filtros</button><button id="clearLogs" type="button" class="btn btn-outline-secondary">Limpar</button></div>
+ </form>
+ <div class="logs-results"><div class="logs-results-header"><h3>Registros de atividade</h3><span id="logsCount" role="status" aria-live="polite">Carregando…</span></div>
+  <div class="table-responsive"><table class="table align-middle mb-0"><caption class="visually-hidden">Atividades por usuário, da mais recente para a mais antiga</caption><thead><tr><th>Data e hora</th><th>Usuário</th><th>Ação</th><th>Chamado</th><th>Descrição</th></tr></thead><tbody id="logsRows"></tbody></table></div>
+  <div id="logsEmpty" class="logs-empty" hidden><i class="bi bi-journal-text" aria-hidden="true"></i><h4>Nenhuma atividade encontrada</h4><p>Escolha outro usuário ou ajuste os filtros de data e ação.</p></div>
+  <nav class="logs-pagination" aria-label="Paginação dos logs"><button id="logsPrevious" type="button" class="btn btn-outline-secondary btn-sm">Anterior</button><span id="logsPage">Página 1</span><button id="logsNext" type="button" class="btn btn-outline-secondary btn-sm">Próxima</button></nav>
+ </div>
+ <p class="logs-note">Datas exibidas no horário de Brasília. Entradas e saídas são registradas a partir desta atualização; atividades anteriores de chamados continuam disponíveis.</p>
+</section>
+
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/logs.js"></script>
+</body>
+</html>

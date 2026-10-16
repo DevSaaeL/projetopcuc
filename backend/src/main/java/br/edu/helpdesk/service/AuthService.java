@@ -20,6 +20,6 @@ public class AuthService {
  public synchronized boolean login(Login data,HttpServletRequest req){String email=data.username().trim().toLowerCase(Locale.ROOT);String key=req.getRemoteAddr()+":"+email;long now=System.currentTimeMillis();attempts.entrySet().removeIf(e->now-e.getValue().start()>900000);var attempt=attempts.getOrDefault(key,new Attempt(0,now));if(attempt.count()>=10)throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"Muitas tentativas. Aguarde 15 minutos.");
   var user=r.account(email);boolean valid=encoder.matches(data.password(),user==null?dummyHash:user.senhaHash());if(user==null||!valid||!user.ativo()){if(attempts.size()<10000)attempts.put(key,new Attempt(attempt.count()+1,attempt.start()));throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Usuário ou senha inválidos.");}
   if("USUARIO".equals(user.perfil()))throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solicitantes abrem chamados lendo o QR Code. O acesso fica disponível para técnicos e administradores.");
-  attempts.remove(key);establishSession(user,req);return user.senhaTemporaria();
+  attempts.remove(key);r.update("INSERT INTO auditoria(autor_id,acao,descricao) VALUES (?,'LOGIN','Acesso ao sistema.')",user.id());establishSession(user,req);return user.senhaTemporaria();
  }
 }

@@ -41,6 +41,7 @@ public class ProfilePhotoService {
   var output=new ByteArrayOutputStream();ImageIO.write(image,"png",output);
   String version=UUID.randomUUID().toString();
   repo.update("UPDATE usuarios SET foto=?,foto_versao=? WHERE id=?",output.toByteArray(),version,id);
+  desk.recordActivity("FOTO_PERFIL","Foto de perfil atualizada.");
   return Map.of("foto_versao",version);
  }
  public byte[] read(){var row=repo.one("SELECT foto FROM usuarios WHERE id=?",desk.current().id());if(row.get("foto")==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Conta sem foto.");return (byte[])row.get("foto");}

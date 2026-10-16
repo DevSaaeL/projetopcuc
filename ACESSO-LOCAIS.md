@@ -21,3 +21,11 @@ Novo chamado usa a câmera para identificar o local; o navegador pede permissão
 ## Banco
 
 Deploys não apagam chamados nem cadastros. Limpezas pontuais são operações administrativas separadas da aplicação e das migrações.
+
+## Fila, prazos e logs
+
+Chamados abertos aparecem primeiro, do mais antigo para o mais novo; empates na abertura usam o número do chamado. A posição considera todos os chamados abertos visíveis nas unidades da conta e permanece a mesma ao filtrar a lista. Chamados em atendimento/aguardando e encerrados ficam depois da fila de abertos. Assumir um chamado remove sua posição e aproxima o próximo da primeira posição. A ordem orienta o atendimento sem bloquear a seleção manual de um chamado.
+
+O prazo para assumir começa na abertura. O prazo para finalizar começa na primeira assunção. Os contadores atualizam a cada segundo, indicam atraso, continuam durante Aguardando usuário e param ao finalizar/cancelar. Reabrir preserva a abertura e a primeira assunção originais, sem renovar o SLA. O dashboard mantém Chamados recentes em ordem de abertura mais recente.
+
+A aba Logs por usuário permite filtrar usuário, ação e período no horário de Brasília, com 50 registros por página. Técnicos consultam suas próprias ações; administradores consultam chamados de suas unidades, e atividades de conta de usuários totalmente sob sua gestão; o mestre consulta todos. Aberturas sem conta aparecem com o nome do solicitante e podem ser filtradas como Solicitantes sem conta. Entradas, saídas e alterações de perfil/senha/sessões passam a ser registradas a partir desta versão, sem armazenar valores de senhas nos logs.
