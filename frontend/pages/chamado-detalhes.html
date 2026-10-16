@@ -35,7 +35,7 @@
 
         <a href="chamados.html" class="active">
             <i class="bi bi-ticket-detailed"></i>
-            <span>Chamados</span>
+            <span>Chamados ativos</span>
         </a>
 
         <a href="novo-chamado.html">
@@ -45,7 +45,7 @@
 
         <a href="meus-chamados.html">
             <i class="bi bi-person-lines-fill"></i>
-            <span>Meus chamados</span>
+            <span>Meus atendimentos</span>
         </a>
 
         <a href="notificacoes.html">
@@ -192,6 +192,7 @@
         </div>
 
 
+        <div id="attendanceNotice" class="alert alert-info mb-4" role="status" hidden></div>
         <!-- SLA -->
         <div class="row g-3 mb-4">
 
@@ -481,6 +482,7 @@
                 </div>
 
 
+                <div id="solutionCard" class="card-custom" hidden><div class="card-header-custom">Solução registrada</div><div class="card-body-custom"><p id="recordedSolution" class="description-box"></p><small id="closureBy" class="text-muted"></small></div></div>
                 <!-- ANEXOS -->
                 <div class="card-custom">
 
@@ -524,11 +526,11 @@
 
                     <div class="card-body-custom">
 
-                        <div class="d-grid gap-2">
+                        <div class="d-grid gap-2"><p id="readOnlyActions" class="small text-muted mb-1" hidden>Registro disponível somente para consulta.</p><a id="backToHistory" class="btn btn-outline-secondary" href="meus-chamados.html" hidden>Voltar ao histórico</a><button id="reopenTicket" type="button" class="btn btn-outline-primary" hidden>Reabrir chamado</button>
 
                             <button
                                 class="btn btn-puc-primary"
-                                data-ticket-action data-event-5="">
+                                data-ticket-action data-event-5="" aria-label="Assumir chamado">
 
                                 <i class="bi bi-person-check me-2"></i>
                                 Assumir chamado

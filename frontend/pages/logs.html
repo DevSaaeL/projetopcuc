@@ -52,7 +52,7 @@
 
         <a href="chamados.html" class="menu-item">
             <i class="bi bi-ticket-perforated"></i>
-            <span>Chamados</span>
+            <span>Chamados ativos</span>
         </a>
 
         <a href="novo-chamado.html" class="menu-item">
@@ -62,7 +62,7 @@
 
         <a href="meus-chamados.html" class="menu-item">
             <i class="bi bi-person-lines-fill"></i>
-            <span>Meus chamados</span>
+            <span>Meus atendimentos</span>
         </a>
 
         <div class="menu-title">Atendimento</div>
@@ -149,7 +149,7 @@
  <div class="logs-intro"><div><h2>Histórico de atividades</h2><p id="logsScope">Consulte quem realizou cada ação, quando aconteceu e qual chamado foi alterado.</p></div><button id="refreshLogs" type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-clockwise me-2"></i>Atualizar</button></div>
  <form id="logsForm" class="logs-filters" aria-label="Filtrar logs">
   <div class="logs-user-filter"><label for="logsUsuario" class="form-label">Usuário</label><select id="logsUsuario" class="form-select"><option value="">Todos os usuários permitidos</option></select></div>
-  <div><label for="logsAcao" class="form-label">Ação</label><select id="logsAcao" class="form-select"><option value="">Todas as ações</option><option value="ASSUNTO">Gerenciar assunto de chamado</option><option value="LOGIN">Entrada no sistema</option><option value="LOGOUT">Saída do sistema</option><option value="ABERTO">Abertura de chamado</option><option value="EM_ATENDIMENTO">Assumir chamado</option><option value="AGUARDANDO_USUARIO">Aguardar usuário</option><option value="FINALIZADO">Finalizar chamado</option><option value="CANCELADO">Cancelar chamado</option><option value="ANEXO">Adicionar anexo</option><option value="USUARIO">Atualizar usuário</option><option value="SENHA_TEMPORARIA">Gerar ou redefinir acesso</option><option value="PRIMEIRA_SENHA">Definir primeira senha</option><option value="SENHA_ALTERADA">Alterar senha</option><option value="FOTO_PERFIL">Atualizar foto de perfil</option><option value="PREFERENCIAS">Atualizar preferências</option><option value="PERFIL">Atualizar perfil</option><option value="FILIAL">Cadastrar ou alterar unidade</option><option value="FILIAL_INATIVA">Desativar unidade</option><option value="QR_CRIADO">Criar QR Code</option><option value="QR_EXCLUIDO">Desativar QR Code</option><option value="SESSOES_ENCERRADAS">Encerrar sessões</option></select></div>
+  <div><label for="logsAcao" class="form-label">Ação</label><select id="logsAcao" class="form-select"><option value="">Todas as ações</option><option value="ASSUNTO">Gerenciar assunto de chamado</option><option value="LOGIN">Entrada no sistema</option><option value="LOGOUT">Saída do sistema</option><option value="REABERTO">Reabrir chamado</option><option value="ABERTO">Abertura de chamado</option><option value="EM_ATENDIMENTO">Assumir chamado</option><option value="AGUARDANDO_USUARIO">Aguardar usuário</option><option value="FINALIZADO">Finalizar chamado</option><option value="CANCELADO">Cancelar chamado</option><option value="ANEXO">Adicionar anexo</option><option value="USUARIO">Atualizar usuário</option><option value="SENHA_TEMPORARIA">Gerar ou redefinir acesso</option><option value="PRIMEIRA_SENHA">Definir primeira senha</option><option value="SENHA_ALTERADA">Alterar senha</option><option value="FOTO_PERFIL">Atualizar foto de perfil</option><option value="PREFERENCIAS">Atualizar preferências</option><option value="PERFIL">Atualizar perfil</option><option value="FILIAL">Cadastrar ou alterar unidade</option><option value="FILIAL_INATIVA">Desativar unidade</option><option value="QR_CRIADO">Criar QR Code</option><option value="QR_EXCLUIDO">Desativar QR Code</option><option value="SESSOES_ENCERRADAS">Encerrar sessões</option></select></div>
   <div><label for="logsInicio" class="form-label">Data inicial</label><input id="logsInicio" type="date" class="form-control"></div>
   <div><label for="logsFim" class="form-label">Data final</label><input id="logsFim" type="date" class="form-control"></div>
   <div class="logs-filter-actions"><button type="submit" class="btn btn-primary">Aplicar filtros</button><button id="clearLogs" type="button" class="btn btn-outline-secondary">Limpar</button></div>

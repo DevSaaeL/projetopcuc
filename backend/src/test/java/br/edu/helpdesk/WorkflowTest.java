@@ -48,7 +48,8 @@ class WorkflowTest {
   var attachment=body(mvc.perform(get("/api/chamados/"+id+"/anexos").session(user)).andReturn()).get(0).get("id").asText();
   mvc.perform(get("/api/chamados/"+id+"/anexos/"+attachment).session(foreign)).andExpect(status().isNotFound());
   mvc.perform(get("/api/chamados/"+id+"/anexos/"+attachment).session(user)).andExpect(status().isOk()).andExpect(content().bytes("Teste".getBytes()));
-  var ended=create(support2,"/api/chamados/"+id+"/acoes","{\"acao\":\"finalizar\",\"solucao\":\"Cabo substituído\"}");assertEquals("FINALIZADO",ended.get("status").asText());assertFalse(ended.get("finalizacao").isNull());
+  mvc.perform(post("/api/chamados/"+id+"/acoes").session(support2).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"finalizar\",\"solucao\":\"Forjado\"}")).andExpect(status().isForbidden());
+  var ended=create(support,"/api/chamados/"+id+"/acoes","{\"acao\":\"finalizar\",\"solucao\":\"Cabo substituído\"}");assertEquals("FINALIZADO",ended.get("status").asText());assertFalse(ended.get("finalizacao").isNull());
   var notifications=body(mvc.perform(get("/api/notificacoes").session(user)).andReturn());assertFalse(notifications.isEmpty());long nid=notifications.get(0).get("id").asLong();mvc.perform(put("/api/notificacoes/"+nid+"/lida").session(other).with(csrf())).andExpect(status().isNotFound());
   assertEquals(0,body(mvc.perform(get("/api/dashboard").session(foreign)).andReturn()).get("total").asInt());assertEquals(1,body(mvc.perform(get("/api/relatorios").param("status","FINALIZADO").session(master)).andReturn()).get("total").asInt());
   var secondSession=login(emails[0]);mvc.perform(post("/api/auth/encerrar-sessoes").session(user).with(csrf())).andExpect(status().isOk());mvc.perform(get("/api/auth/me").session(secondSession)).andExpect(status().isUnauthorized());

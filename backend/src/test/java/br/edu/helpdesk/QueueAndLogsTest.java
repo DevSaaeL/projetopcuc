@@ -32,7 +32,7 @@ class QueueAndLogsTest {
   long first=ticket(a,"Primeiro",400,"ABERTO"),tie=ticket(b,"Segundo",400,"ABERTO"),newest=ticket(a,"Terceiro",1,"ABERTO"),active=ticket(b,"Em atendimento",600,"EM_ATENDIMENTO"),closed=ticket(a,"Encerrado",1000,"CANCELADO"),foreign=ticket(c,"Outra unidade",2000,"ABERTO");
   repo.update("UPDATE chamados SET abertura=(SELECT abertura FROM chamados WHERE id=?) WHERE id=?",first,tie);
   repo.update("UPDATE chamados SET prioridade='CRITICA' WHERE id=?",newest);
-  var rows=read("/api/chamados",session);assertEquals(List.of(first,tie,newest,active,closed),mapper.convertValue(rows,java.util.List.class).stream().map(row->((Number)((Map<?,?>)row).get("id")).longValue()).toList());
+  var rows=read("/api/chamados",session);assertEquals(List.of(first,tie,newest,active),mapper.convertValue(rows,java.util.List.class).stream().map(row->((Number)((Map<?,?>)row).get("id")).longValue()).toList());
   assertEquals(1,rows.get(0).get("posicao_fila").asInt());assertEquals(2,rows.get(1).get("posicao_fila").asInt());assertEquals(3,rows.get(2).get("posicao_fila").asInt());assertTrue(rows.get(3).get("posicao_fila").isNull());
   assertEquals(2,read("/api/chamados/"+tie,session).get("posicao_fila").asInt());
   assertEquals(newest,read("/api/dashboard",session).get("chamados").get(0).get("id").asLong());

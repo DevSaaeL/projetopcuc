@@ -26,7 +26,7 @@ Deploys não apagam chamados nem cadastros. Limpezas pontuais são operações a
 
 Chamados abertos aparecem primeiro, do mais antigo para o mais novo; empates na abertura usam o número do chamado. A posição considera todos os chamados abertos visíveis nas unidades da conta e permanece a mesma ao filtrar a lista. Chamados em atendimento/aguardando e encerrados ficam depois da fila de abertos. Assumir um chamado remove sua posição e aproxima o próximo da primeira posição. A ordem orienta o atendimento sem bloquear a seleção manual de um chamado.
 
-O prazo para assumir começa na abertura. O prazo para finalizar começa na primeira assunção. Os contadores atualizam a cada segundo, indicam atraso, continuam durante Aguardando usuário e param ao finalizar/cancelar. Reabrir preserva a abertura e a primeira assunção originais, sem renovar o SLA. O dashboard mantém Chamados recentes em ordem de abertura mais recente.
+O prazo para assumir começa na abertura. O prazo para finalizar começa na primeira assunção. Os contadores atualizam a cada segundo, indicam atraso, continuam durante Aguardando usuário e param ao finalizar/cancelar. Reabrir inicia um novo ciclo de SLA; a abertura original e os dados do atendimento anterior ficam preservados no histórico imutável. O dashboard mantém Chamados recentes em ordem de abertura mais recente.
 
 A aba Logs por usuário permite filtrar usuário, ação e período no horário de Brasília, com 50 registros por página. Técnicos consultam suas próprias ações; administradores consultam chamados de suas unidades, e atividades de conta de usuários totalmente sob sua gestão; o mestre consulta todos. Aberturas sem conta aparecem com o nome do solicitante e podem ser filtradas como Solicitantes sem conta. Entradas, saídas e alterações de perfil/senha/sessões passam a ser registradas a partir desta versão, sem armazenar valores de senhas nos logs.
 
@@ -35,3 +35,7 @@ A aba Logs por usuário permite filtrar usuário, ação e período no horário 
 O solicitante informa o nome e escolhe um dos assuntos disponíveis, sem escrever a descrição. O QR Code determina a unidade; o servidor valida que o assunto está ativo naquela unidade e registra seu nome no título e na descrição do chamado. A tela Novo chamado da equipe também usa a seleção de assunto após ler o QR Code.
 
 A aba Assuntos dos chamados é exclusiva de administradores. Ambos os perfis administrativos podem cadastrar, editar, desativar e reativar assuntos dentro do próprio escopo de unidades. Os nove assuntos iniciais são criados em todas as unidades existentes pela migração V9 e nas novas unidades no cadastro. A listagem usa ordenação alfabética em português. Alterações no catálogo preservam os títulos e descrições dos chamados antigos.
+
+## Histórico de atendimentos
+
+Chamados finalizados ou cancelados saem da fila ativa. Técnicos consultam seus próprios atendimentos, inclusive após mudança de unidade; administradores consultam o histórico das unidades permitidas, e o administrador mestre consulta todos. Cada encerramento preserva solução, responsável, datas, histórico e anexos em uma consulta somente leitura. Somente administradores podem reabrir, sem sobrescrever o registro anterior.

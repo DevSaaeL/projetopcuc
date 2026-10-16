@@ -12,7 +12,8 @@ public final class TicketTiming {
   Instant taken=ticket.get("atendimento")==null?null:Instant.parse(ticket.get("atendimento").toString());
   Instant finished=ticket.get("finalizacao")==null?null:Instant.parse(ticket.get("finalizacao").toString());
   Instant end=finished==null?now:finished;
-  long response=seconds(opened,taken==null?end:taken);
+  Instant cycle=ticket.get("inicio_ciclo")==null?opened:Instant.parse(ticket.get("inicio_ciclo").toString());
+  long response=seconds(cycle,taken==null?end:taken);
   long resolution=taken==null?0:seconds(taken,end);
   long responseBudget=((Number)ticket.get("sla_resposta")).longValue()*60;
   long resolutionBudget=((Number)ticket.get("sla_resolucao")).longValue()*60;
@@ -22,7 +23,7 @@ public final class TicketTiming {
   ticket.put("tempo_total_segundos",seconds(opened,end));
   ticket.put("resposta_restante_segundos",responseBudget-response);
   ticket.put("resolucao_restante_segundos",resolutionBudget-resolution);
-  ticket.put("prazo_assumir",opened.plusSeconds(responseBudget).toString());
+  ticket.put("prazo_assumir",cycle.plusSeconds(responseBudget).toString());
   ticket.put("prazo_finalizar",taken==null?null:taken.plusSeconds(resolutionBudget).toString());
   ticket.put("fora_sla",!"CANCELADO".equals(ticket.get("status"))&&(response>responseBudget||resolution>resolutionBudget));
  }

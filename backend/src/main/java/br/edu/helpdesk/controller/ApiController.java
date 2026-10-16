@@ -11,8 +11,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class ApiController {
- private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;private final ActivityLogService logs;private final TicketTopicService topics;
- public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos,ActivityLogService logs,TicketTopicService topics){this.service=service;this.auth=auth;this.photos=photos;this.logs=logs;this.topics=topics;}
+ private final DeskService service;private final AuthService auth;private final ProfilePhotoService photos;private final ActivityLogService logs;private final TicketTopicService topics;private final AttendanceArchive archive;
+ public ApiController(DeskService service,AuthService auth,ProfilePhotoService photos,ActivityLogService logs,TicketTopicService topics,AttendanceArchive archive){this.service=service;this.auth=auth;this.photos=photos;this.logs=logs;this.topics=topics;this.archive=archive;}
  @GetMapping("/auth/providers") Object providers(){return Map.of("microsoftEnabled",false,"selfRegistration",false);}
  @GetMapping("/auth/csrf") Object csrf(CsrfToken token){return Map.of("token",token.getToken(),"headerName",token.getHeaderName());}
  @PostMapping("/auth/login") Object login(@Valid @RequestBody Login data,HttpServletRequest req){return Map.of("ok",true,"mustChangePassword",auth.login(data,req));}
@@ -44,7 +44,12 @@ public class ApiController {
  @GetMapping("/qrcodes/{id}") Object qr(@PathVariable String id){return service.qr(id);}
  @PostMapping("/qrcodes") Object qr(@Valid @RequestBody Qr data){return service.createQr(data);}
  @DeleteMapping("/qrcodes/{id}") void deleteQr(@PathVariable String id){service.deleteQr(id);}
- @GetMapping("/chamados") Object tickets(@RequestParam(defaultValue="false") boolean meus){return service.tickets(meus);}
+ @GetMapping("/chamados") Object tickets(@RequestParam(defaultValue="false") boolean meus,@RequestParam(defaultValue="ativos") String visao){return meus?archive.list(service.current()):service.visibleTickets(visao);}
+ @GetMapping("/atendimentos") Object attendances(){return archive.list(service.current());}
+ @GetMapping("/atendimentos/{id}") Object attendance(@PathVariable long id){return archive.record(id,service.current());}
+ @GetMapping("/atendimentos/{id}/historico") Object attendanceHistory(@PathVariable long id){return archive.history(id,service.current());}
+ @GetMapping("/atendimentos/{id}/anexos") Object attendanceAttachments(@PathVariable long id){return archive.attachments(id,service.current());}
+ @GetMapping("/atendimentos/{id}/anexos/{aid}") ResponseEntity<byte[]> attendanceDownload(@PathVariable long id,@PathVariable String aid){var a=archive.download(id,aid,service.current());return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).header(HttpHeaders.CONTENT_DISPOSITION,ContentDisposition.attachment().filename(a.get("nome").toString(),java.nio.charset.StandardCharsets.UTF_8).build().toString()).body((byte[])a.get("conteudo"));}
  @GetMapping("/chamados/{id}") Object ticket(@PathVariable long id){return service.ticket(id);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Ticket data){return service.createTicket(data);}
  @PostMapping("/chamados/{id}/acoes") Object action(@PathVariable long id,@Valid @RequestBody Action data){return service.action(id,data);}
