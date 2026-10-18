@@ -5,8 +5,11 @@ window.API = (() => {
         const method = options.method || 'GET';
         const headers = { ...options.headers };
         if (!['GET', 'HEAD'].includes(method)) {
-            if (!csrf) csrf = await request('/auth/csrf');
-            headers[csrf.headerName] = csrf.token;
+            const initialization = csrf ||= request('/auth/csrf');
+            let token;
+            try { token = await initialization; }
+            catch (error) { if (csrf === initialization) csrf = null; throw error; }
+            headers[token.headerName] = token.token;
         }
         let body = options.body;
         if (body && !(body instanceof FormData)) { headers['Content-Type'] = 'application/json'; body = JSON.stringify(body); }

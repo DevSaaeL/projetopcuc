@@ -27,11 +27,13 @@ function alterarFoto(){App.$('profilePhotoInput').click();}
 App.$('profilePhotoInput').addEventListener('change',event=>{
  const file=event.target.files[0];if(!file)return;
  App.run(async()=>{
-  if(!['image/jpeg','image/png'].includes(file.type)||file.size>2*1024*1024)throw Error('Escolha uma foto JPG ou PNG de até 2 MB.');
   const button=document.querySelector('.avatar-edit-button');button.disabled=true;
-  App.text('photoStatus','Salvando foto…');
-  try{const data=new FormData();data.append('arquivo',file);Object.assign(Auth.user,await API.post('/auth/foto',data));document.querySelectorAll('.user-avatar,#profileAvatar').forEach(e=>App.avatar(e,Auth.user));App.text('photoStatus','Foto salva com sucesso.');}
-  finally{button.disabled=false;event.target.value='';if(!Auth.user.foto_versao)App.text('photoStatus','JPG ou PNG • até 2 MB');}
+  try{
+   if(!['image/jpeg','image/png'].includes(file.type)||file.size>2*1024*1024)throw Error('Escolha uma foto JPG ou PNG de até 2 MB.');
+   App.text('photoStatus','Salvando foto…');
+   const data=new FormData();data.append('arquivo',file);Object.assign(Auth.user,await API.post('/auth/foto',data));document.querySelectorAll('.user-avatar,#profileAvatar').forEach(e=>App.avatar(e,Auth.user));App.text('photoStatus','Foto salva com sucesso.');
+  }catch(error){App.text('photoStatus','Não foi possível salvar a foto. Tente novamente.');throw error;}
+  finally{button.disabled=false;event.target.value='';}
  });
 });
 

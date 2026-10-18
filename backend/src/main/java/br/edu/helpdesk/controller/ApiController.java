@@ -39,6 +39,7 @@ public class ApiController {
  @DeleteMapping("/usuarios/{id}") void user(@PathVariable long id){service.deactivateUser(id);}
  @GetMapping("/assuntos") Object topics(@RequestParam(required=false) Long filial_id){return topics.list(filial_id);}
  @PostMapping("/assuntos") Object topic(@Valid @RequestBody Topic data){return topics.save(null,data.filialId(),data.nome(),data.ativo());}
+ @PostMapping("/assuntos/lote") Object topics(@Valid @RequestBody Topics data){return topics.saveAll(data.filialIds(),data.nome(),data.ativo());}
  @PutMapping("/assuntos/{id}") Object topic(@PathVariable long id,@Valid @RequestBody Topic data){return topics.save(id,data.filialId(),data.nome(),data.ativo());}
  @GetMapping("/qrcodes") Object qrs(){return service.qrs();}
  @GetMapping("/qrcodes/{id}") Object qr(@PathVariable String id){return service.qr(id);}

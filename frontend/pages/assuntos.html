@@ -148,12 +148,13 @@
     <section class="page-content logs-page topics-admin">
 <div class="logs-intro"><div><h2>Assuntos disponíveis por unidade</h2><p>Os solicitantes escolhem um destes assuntos ao abrir o chamado. Cada unidade pode ter seus próprios assuntos.</p></div></div>
 <div class="topics-admin-grid"><div class="logs-results p-4"><h3 class="h5 mb-3" id="topicFormTitle">Cadastrar assunto</h3><form id="topicForm">
-<label for="topicBranch" class="form-label">Unidade</label><select id="topicBranch" class="form-select mb-3" required></select>
+<fieldset id="topicBranchesField" class="mb-3"><legend class="form-label fs-6">Filiais</legend><div class="d-flex gap-2 mb-2"><button id="selectAllTopicBranches" type="button" class="btn btn-sm btn-outline-secondary">Selecionar todas</button><button id="clearTopicBranches" type="button" class="btn btn-sm btn-outline-secondary">Limpar seleção</button></div><div id="topicBranches" class="border rounded p-3 overflow-auto" style="max-height: 240px"></div><p class="small text-muted mt-2 mb-0">Selecione as filiais que receberão o mesmo assunto.</p></fieldset>
+<p id="topicEditingBranch" class="small text-muted" hidden></p>
 <label for="topicName" class="form-label">Nome do assunto</label><input id="topicName" class="form-control mb-3" maxlength="80" required placeholder="Ex.: Impressora">
 <div class="form-check mb-3"><input id="topicActive" type="checkbox" class="form-check-input" checked><label for="topicActive" class="form-check-label">Disponível para solicitantes</label></div>
 <p class="small text-muted">Os assuntos são apresentados em ordem alfabética. Desativar um assunto preserva os chamados já registrados.</p>
 <div class="d-flex gap-2"><button id="saveTopic" type="submit" class="btn btn-primary">Cadastrar assunto</button><button id="cancelTopic" type="button" class="btn btn-outline-secondary" hidden>Cancelar edição</button></div></form></div>
-<div class="logs-results"><div class="logs-results-header"><h3>Assuntos desta unidade</h3><span id="topicCount" role="status" aria-live="polite">Carregando…</span></div><div id="topicList" class="topic-admin-list"></div></div></div>
+<div class="logs-results"><div class="p-3"><label for="topicBranch" class="form-label">Consultar assuntos da filial</label><select id="topicBranch" class="form-select"></select><p id="topicFeedback" class="small text-success mt-2 mb-0" role="status" aria-live="polite"></p></div><div class="logs-results-header"><h3>Assuntos desta unidade</h3><span id="topicCount" role="status" aria-live="polite">Carregando…</span></div><div id="topicList" class="topic-admin-list"></div></div></div>
 <p class="logs-note">Administrador mestre: gerencia todas as unidades. Administrador de filial: gerencia somente seus locais de atuação.</p></section>
 
 </main>

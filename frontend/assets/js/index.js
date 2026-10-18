@@ -1,1 +1,1 @@
-window.location.href = "pages/login.html";
+if (window.location.protocol !== 'file:') window.location.replace('pages/login.html');

@@ -29,4 +29,17 @@ public class TicketTopicService {
   else repo.update("UPDATE assuntos_chamado SET nome=?,nome_chave=?,ativo=? WHERE id=?",name,key,active,id);
   desk.recordActivity("ASSUNTO","Assunto "+id+" da unidade "+branchId+" atualizado.");return repo.one("SELECT id,nome,filial_id,ativo FROM assuntos_chamado WHERE id=?",id);
  }
+ public List<Map<String,Object>> saveAll(List<Long> branchIds,String name,boolean active){
+  var ids=new LinkedHashSet<>(branchIds);
+  String normalized=name.trim().replaceAll("\\s+"," ");
+  if(ids.isEmpty()||normalized.isBlank()||normalized.length()>80)throw DeskService.bad("Selecione ao menos uma filial e informe um assunto com até 80 caracteres.");
+  for(long id:ids){
+   branch(id);
+   if(repo.one("SELECT id FROM assuntos_chamado WHERE filial_id=? AND nome_chave=?",id,normalized.toLowerCase(Locale.ROOT))!=null)
+    throw DeskService.bad("Já existe um assunto com esse nome em uma das filiais selecionadas. Desmarque essa filial ou edite o assunto existente. Nenhum assunto foi cadastrado.");
+  }
+  var saved=new ArrayList<Map<String,Object>>();
+  for(long id:ids)saved.add(save(null,id,normalized,active));
+  return saved;
+ }
 }

@@ -38,6 +38,14 @@ class QueueAndLogsTest {
   assertEquals(newest,read("/api/dashboard",session).get("chamados").get(0).get("id").asLong());
   mvc.perform(get("/api/chamados/"+foreign).session(session)).andExpect(status().isNotFound());
  }
+ @Test void reportsRejectInvalidPeriodsEvenWithoutVisibleTickets()throws Exception{
+  long unit=branch("Relatórios"),tech=user("reports-tech","SUPORTE",unit);
+  var session=session(tech);
+  mvc.perform(get("/api/relatorios?inicio=invalid").session(session)).andExpect(status().isBadRequest());
+  mvc.perform(get("/api/relatorios?fim=2026-02-30").session(session)).andExpect(status().isBadRequest());
+  mvc.perform(get("/api/relatorios?inicio=2026-10-16&fim=2026-10-01").session(session)).andExpect(status().isBadRequest());
+  mvc.perform(get("/api/relatorios?inicio=2026-10-01&fim=2026-10-16").session(session)).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(0));
+ }
  void audit(Long actor,Long ticket,String name,String action,String description){repo.insert("INSERT INTO auditoria(autor_id,chamado_id,autor_nome,acao,descricao) VALUES (?,?,?,?,?)",actor,ticket,name,action,description);}
  @Test void logsFilterByUserDatesAndActionWithoutLeakingAnotherUnit()throws Exception{
   long a=branch("Londrina"),b=branch("Curitiba"),tech=user("shared-tech","SUPORTE",a,b),other=user("foreign-tech","SUPORTE",b),admin=user("local-admin","ADMIN",a);

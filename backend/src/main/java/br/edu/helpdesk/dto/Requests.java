@@ -9,6 +9,7 @@ public final class Requests {
  }
  public record Qr(@NotBlank @Size(max=160) String nome,@NotNull Long filialId,@NotBlank @Size(max=80) String bloco,@NotBlank @Size(max=80) String sala,@Size(max=300) String descricao){}
  public record Topic(@NotNull Long filialId,@NotBlank @Size(max=80) String nome,boolean ativo){}
+ public record Topics(@NotEmpty @Size(max=100) java.util.List<@NotNull Long> filialIds,@NotBlank @Size(max=80) String nome,boolean ativo){}
  public record Ticket(@Size(max=150) String titulo,@Size(max=2000) String descricao,Long filialId,@Size(max=80) String bloco,@Size(max=80) String sala,@Size(max=100) String setor,@Size(max=80) String categoria,@Size(max=40) String tipoAtendimento,@Pattern(regexp="BAIXA|MEDIA|ALTA|CRITICA") String prioridade,@Size(max=36) String qrId,Long assuntoId){}
  public record Message(@NotBlank @Size(max=4000) String mensagem){}
  public record Action(@NotBlank String acao,@Size(max=2000) String solucao){}

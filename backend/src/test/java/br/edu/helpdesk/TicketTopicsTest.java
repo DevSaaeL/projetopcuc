@@ -29,6 +29,26 @@ class TicketTopicsTest {
  String qr(long branch){String id=UUID.randomUUID().toString();repo.update("INSERT INTO qrcodes(id,nome,filial_id,bloco,sala) VALUES (?,'Sala',?,'A','10')",id,branch);return id;}
  long topic(long branch,String name){return ((Number)repo.one("SELECT id FROM assuntos_chamado WHERE filial_id=? AND nome=?",branch,name).get("id")).longValue();}
  String submission(String qr,long topic,String request)throws Exception{return mapper.writeValueAsString(Map.of("qrId",qr,"nome","Maria","assuntoId",topic,"requestId",request));}
+ @Test void bulkCreationIncludesEverySelectedBranchWithoutDuplicates()throws Exception{
+  long a=branch("Lote A"),b=branch("Lote B"),c=branch("Lote C");
+  mvc.perform(post("/api/assuntos/lote").session(master()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("filialIds",List.of(a,b,a),"nome","  Suporte   ao laboratório  ","ativo",true))))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2));
+  var saved=repo.rows("SELECT filial_id,nome,ativo FROM assuntos_chamado WHERE nome_chave='suporte ao laboratório'");
+  assertEquals(2,saved.size());assertEquals(Set.of(a,b),new HashSet<>(saved.stream().map(row->((Number)row.get("filial_id")).longValue()).toList()));
+  for(var row:saved){assertEquals("Suporte ao laboratório",row.get("nome"));assertEquals(true,row.get("ativo"));}
+  assertTrue(repo.rows("SELECT id FROM assuntos_chamado WHERE filial_id=? AND nome='Suporte ao laboratório'",c).isEmpty());
+ }
+ @Test void bulkCreationRejectsForeignBranchesDuplicatesAndEmptySelectionWithoutPartialWrites()throws Exception{
+  long a=branch("Permissão A"),b=branch("Permissão B"),admin=actor(a,"bulk-admin","ADMIN");
+  mvc.perform(post("/api/assuntos/lote").session(session(admin)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("filialIds",List.of(a,b),"nome","Assunto proibido","ativo",true)))).andExpect(status().isForbidden());
+  assertTrue(repo.rows("SELECT id FROM assuntos_chamado WHERE nome='Assunto proibido'").isEmpty());
+  repo.update("INSERT INTO assuntos_chamado(filial_id,nome,nome_chave) VALUES (?,'Duplicado','duplicado')",b);
+  mvc.perform(post("/api/assuntos/lote").session(master()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("filialIds",List.of(a,b),"nome","Duplicado","ativo",true)))).andExpect(status().isBadRequest());
+  assertEquals(1,repo.rows("SELECT id FROM assuntos_chamado WHERE nome='Duplicado'").size());
+  mvc.perform(post("/api/assuntos/lote").session(master()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("filialIds",List.of(),"nome","Sem filial","ativo",true)))).andExpect(status().isBadRequest());
+  long tech=actor(a,"bulk-tech","SUPORTE");
+  mvc.perform(post("/api/assuntos/lote").session(session(tech)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("filialIds",List.of(a),"nome","Sem permissão","ativo",true)))).andExpect(status().isForbidden());
+ }
  @Test void defaultsAndBranchAdministrationAreIsolated()throws Exception{
   long a=branch("Londrina"),b=branch("Curitiba"),admin=actor(a,"admin-local","ADMIN"),tech=actor(a,"tech-local","SUPORTE");
   var publicLocation=mapper.readTree(mvc.perform(get("/api/public/qrcodes/"+qr(a))).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
