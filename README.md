@@ -27,6 +27,8 @@ mvn test
 
 Conecte este repositorio ao servico existente e use a branch `main`, com **Root Directory `/`**. O `Dockerfile` na raiz compila o backend e inclui o frontend no mesmo JAR. O Spring Boot respeita a variavel `PORT` fornecida pela hospedagem.
 
+O `render.yaml` configura `branch: main` e `autoDeployTrigger: commit` para publicar automaticamente a cada push. Em serviços criados manualmente, configure no painel do Render: **Settings → Build & Deploy → Auto-Deploy → On Commit**, com a branch `main`. O repositório deve estar conectado pela integração do GitHub; serviços criados apenas com uma URL pública exigem publicação manual. Em serviços gerenciados por Blueprint, sincronize o `render.yaml` e mantenha o Auto Sync habilitado.
+
 Configure no Render as variaveis de `backend/.env.example`, incluindo:
 
 - `SPRING_PROFILES_ACTIVE=prod`
