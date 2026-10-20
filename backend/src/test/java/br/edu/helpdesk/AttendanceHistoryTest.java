@@ -61,7 +61,18 @@ class AttendanceHistoryTest {
   assertEquals(1,read("/api/atendimentos",session(one)).size());assertEquals("Serviço feito",read("/api/atendimentos/"+record,session(one)).get("solucao").asText());
   mvc.perform(get("/api/chamados/"+id).session(session(one))).andExpect(status().isNotFound());mvc.perform(get("/api/atendimentos/"+record).session(session(other))).andExpect(status().isNotFound());
  }
- @Test void cancellationBeforePickupIsArchivedForActingTechnician()throws Exception{
-  long a=branch("Cancelamento"),one=actor("cancel-tech","SUPORTE",a),id=ticket(a);var session=session(one);act(id,session,"cancelar","");assertEquals(0,read("/api/chamados",session).size());var history=read("/api/atendimentos",session);assertEquals(1,history.size());assertEquals("CANCELADO",history.get(0).get("status").asText());
+ @Test void onlyAdministratorsCanCancelAndCancellationIsArchived()throws Exception{
+  long a=branch("Cancelamento"),one=actor("cancel-tech","SUPORTE",a),admin=actor("cancel-admin","ADMIN",a),id=ticket(a);var session=session(one);
+  mvc.perform(post("/api/chamados/"+id+"/acoes").session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"cancelar\"}")).andExpect(status().isForbidden());
+  assertEquals("ABERTO",read("/api/chamados/"+id,session).get("status").asText());assertEquals(0,read("/api/atendimentos",master()).size());
+  act(id,session,"assumir","");
+  mvc.perform(post("/api/chamados/"+id+"/acoes").session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"cancelar\"}")).andExpect(status().isForbidden());
+  assertEquals("EM_ATENDIMENTO",read("/api/chamados/"+id,session).get("status").asText());
+  act(id,session(admin),"cancelar","");assertEquals(0,read("/api/chamados",session).size());var history=read("/api/atendimentos",session);assertEquals(1,history.size());assertEquals("CANCELADO",history.get(0).get("status").asText());
+ }
+ @Test void masterCanCancelButUnitAdministratorCannotCancelOutsideTheirUnits()throws Exception{
+  long a=branch("Permitida"),b=branch("Outra"),admin=actor("scoped-cancel-admin","ADMIN",a),id=ticket(b);
+  mvc.perform(post("/api/chamados/"+id+"/acoes").session(session(admin)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"cancelar\"}")).andExpect(status().isNotFound());
+  assertEquals("CANCELADO",act(id,master(),"cancelar","").get("status").asText());
  }
 }
