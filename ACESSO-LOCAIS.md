@@ -38,4 +38,8 @@ A aba Assuntos dos chamados é exclusiva de administradores. Ambos os perfis adm
 
 ## Histórico de atendimentos
 
+Nos novos chamados públicos, o solicitante pode cancelar com motivo obrigatório pela confirmação de envio ou ao retornar ao QR Code no mesmo navegador. O acesso depende de uma chave aleatória exclusiva, armazenada no navegador; o banco guarda somente o hash dessa chave. O protocolo sozinho não autoriza cancelamento. Chamados finalizados não podem ser cancelados. A reabertura por administrador invalida a chave do ciclo anterior. Chamados antigos, criados sem essa chave, continuam dependendo de um administrador para cancelamento.
+
+O cancelamento do solicitante registra o nome, o motivo e a ação `CANCELADO_SOLICITANTE` na auditoria, notifica a equipe da unidade e preserva o encerramento no histórico. Técnicos continuam sem permissão para cancelar pela API da equipe.
+
 Chamados finalizados ou cancelados saem da fila ativa. Técnicos consultam seus próprios atendimentos, inclusive após mudança de unidade; administradores consultam o histórico das unidades permitidas, e o administrador mestre consulta todos. Cada encerramento preserva solução, responsável, datas, histórico e anexos em uma consulta somente leitura. Somente administradores podem reabrir, sem sobrescrever o registro anterior.

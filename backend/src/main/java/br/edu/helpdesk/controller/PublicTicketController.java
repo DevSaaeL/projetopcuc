@@ -11,7 +11,11 @@ import org.springframework.http.HttpStatus;
 public class PublicTicketController {
  private final PublicTicketService service;
  public PublicTicketController(PublicTicketService service){this.service=service;}
- public record Submission(@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String qrId,@NotBlank @Size(max=160) String nome,@NotNull @Positive Long assuntoId,@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String requestId){}
+ public record Submission(@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String qrId,@NotBlank @Size(max=160) String nome,@NotNull @Positive Long assuntoId,@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String requestId,@Pattern(regexp="[a-f0-9]{64}") String chave){}
+ public record Access(@NotBlank @Pattern(regexp="[a-f0-9]{64}") String chave){}
+ public record Cancellation(@NotBlank @Pattern(regexp="[a-f0-9]{64}") String chave,@NotBlank @Size(max=1000) String motivo){}
+ @PostMapping("/chamados/{id}/consultar") Object status(@PathVariable long id,@Valid @RequestBody Access data){return service.status(id,data.chave());}
+ @PostMapping("/chamados/{id}/cancelar") Object cancel(@PathVariable long id,@Valid @RequestBody Cancellation data){return service.cancel(id,data.chave(),data.motivo());}
  @GetMapping("/qrcodes/{id}") Object location(@PathVariable String id){return service.location(id);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Submission data,HttpServletRequest request){
   var session=request.getSession();
@@ -22,6 +26,6 @@ public class PublicTicketController {
    if(count>=10)throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"Aguarde alguns minutos antes de enviar outro chamado.");
    session.setAttribute("publicTicketCount",count+1);
   }
-  return service.create(data.qrId(),data.nome(),data.assuntoId(),data.requestId());
+  return service.create(data.qrId(),data.nome(),data.assuntoId(),data.requestId(),data.chave());
  }
 }

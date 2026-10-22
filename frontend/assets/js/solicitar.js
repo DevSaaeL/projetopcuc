@@ -2,8 +2,9 @@
  const form=document.getElementById('publicTicketForm'),error=document.getElementById('error'),button=document.getElementById('send');
  const qrId=new URLSearchParams(location.search).get('qr');
  const showError=message=>{error.textContent=message;error.hidden=false;};
- let requestId=crypto.randomUUID();
- try{requestId=sessionStorage.getItem('ticket-request-'+qrId)||requestId;sessionStorage.setItem('ticket-request-'+qrId,requestId);}catch{}
+ let pending;try{pending=JSON.parse(sessionStorage.getItem('ticket-pending-'+qrId));}catch{}
+ if(!pending||!/^[a-f0-9]{64}$/.test(pending.chave)){pending={requestId:crypto.randomUUID(),chave:Array.from(crypto.getRandomValues(new Uint8Array(32)),v=>v.toString(16).padStart(2,'0')).join('')};try{sessionStorage.setItem('ticket-pending-'+qrId,JSON.stringify(pending));}catch{}}
+ const {requestId,chave}=pending;RequesterTickets.show(qrId);
  try{
   QrCamera.mount(async id=>{await API.get('/public/qrcodes/'+encodeURIComponent(id));location.replace('solicitar.html?qr='+encodeURIComponent(id));});
   if(!qrId){document.getElementById('locationName').textContent='Leia o QR Code da sala';return;}
@@ -22,7 +23,7 @@
   if(!nome){showError('Informe seu nome para abrir o chamado.');return;}
   if(!assuntoId){showError('Selecione o assunto do chamado.');return;}
   error.hidden=true;button.disabled=true;button.textContent='Enviando…';
-  try{const result=await API.post('/public/chamados',{qrId,nome,assuntoId,requestId});document.getElementById('protocol').textContent=result.protocolo;form.hidden=true;document.getElementById('success').hidden=false;try{sessionStorage.removeItem('ticket-request-'+qrId);}catch{}}
+  try{const result=await API.post('/public/chamados',{qrId,nome,assuntoId,requestId,chave});document.getElementById('protocol').textContent=result.protocolo;form.hidden=true;document.getElementById('success').hidden=false;await RequesterTickets.remember(result,qrId,chave);try{sessionStorage.removeItem('ticket-pending-'+qrId);}catch{}}
   catch(e){showError(e.message);button.disabled=false;button.textContent='Enviar chamado →';}
  });
 })();

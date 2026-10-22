@@ -25,6 +25,7 @@ async function carregarDetalhes(){
  const values={Solicitante:t.solicitante,'E-mail':t.solicitante_email,Telefone:t.solicitante_telefone,Cidade:t.cidade,Filial:t.filial_nome,Setor:t.setor,Bloco:t.bloco,Sala:t.sala,'Técnico responsável':t.tecnico||'Não atribuído'};
  document.querySelectorAll('.info-item').forEach(e=>e.querySelector('.info-value').textContent=values[e.querySelector('.info-label').textContent.trim()]||'—');document.querySelector('.description-box').textContent=t.descricao;
  atualizarTemporizadores();
+ const cancellation=App.$('requesterCancellationNotice');cancellation.hidden=!t.cancelado_por_solicitante;cancellation.textContent=t.cancelado_por_solicitante?'Chamado cancelado pelo solicitante '+t.solicitante+'. Motivo: '+t.motivo_cancelamento:'';
  const terminal=['FINALIZADO','CANCELADO'].includes(t.status);
  const readOnly=historyView||terminal||t.somente_leitura,canAct=Auth.support()&&(Auth.admin()||t.status==='ABERTO'||t.tecnico_id===Auth.user.id);
  document.querySelectorAll('[data-ticket-action]').forEach(b=>{const event=(Object.keys(b.dataset).find(key=>key.startsWith('event'))||'').replaceAll('-','');b.hidden=readOnly||!canAct||(['event2','event8'].includes(event)&&!Auth.admin());b.disabled=terminal||(['event1','event6'].includes(event)&&!['EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status))||(event==='event5'&&!['ABERTO','AGUARDANDO_USUARIO'].includes(t.status))||(event==='event7'&&t.status!=='EM_ATENDIMENTO');});

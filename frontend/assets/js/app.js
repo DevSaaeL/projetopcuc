@@ -99,7 +99,7 @@ window.LiveUpdates = (() => {
 window.App = (() => {
     const $ = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    const labels = {MASTER_ADMIN:'Administrador mestre',ADMIN:'Administrador',SUPORTE:'Técnico de TI',USUARIO:'Usuário',REABERTO:'Reaberto',ABERTO:'Aberto',EM_ATENDIMENTO:'Em atendimento',AGUARDANDO_USUARIO:'Aguardando usuário',FINALIZADO:'Finalizado',CANCELADO:'Cancelado',BAIXA:'Baixa',MEDIA:'Média',ALTA:'Alta',CRITICA:'Crítica'};
+    const labels = {MASTER_ADMIN:'Administrador mestre',ADMIN:'Administrador',SUPORTE:'Técnico de TI',USUARIO:'Usuário',REABERTO:'Reaberto',ABERTO:'Aberto',EM_ATENDIMENTO:'Em atendimento',AGUARDANDO_USUARIO:'Aguardando usuário',FINALIZADO:'Finalizado',CANCELADO_SOLICITANTE:'Cancelado pelo solicitante',CANCELADO:'Cancelado',BAIXA:'Baixa',MEDIA:'Média',ALTA:'Alta',CRITICA:'Crítica'};
     const statusClass = {ABERTO:'open',EM_ATENDIMENTO:'progress',AGUARDANDO_USUARIO:'waiting',FINALIZADO:'finished',CANCELADO:'cancelled'};
     const priorityClass = {BAIXA:'low',MEDIA:'medium',ALTA:'high',CRITICA:'critical'};
     function error(e) { let box=$('apiError'); if(!box){box=document.createElement('div');box.id='apiError';box.className='alert alert-danger m-3';box.setAttribute('role','alert');(document.querySelector('main')||document.body).prepend(box);}box.textContent=e.message||String(e);box.hidden=false; }

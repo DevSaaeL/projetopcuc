@@ -11,17 +11,19 @@ import java.util.*;
 @Service
 public class AttendanceArchive {
  private final DeskRepository repo;
- private static final List<String> COLUMNS=List.of("chamado_id","tecnico_id","tecnico_nome","finalizado_por_id","finalizado_por_nome","filial_id","filial_nome","titulo","descricao","solicitante_nome","solicitante_email","solicitante_telefone","cidade","bloco","sala","setor","categoria","prioridade","status","abertura","inicio_ciclo","atendimento","finalizacao","sla_resposta","sla_resolucao","solucao","ultimo_evento_id","encerramento_estimado");
+ private static final List<String> COLUMNS=List.of("chamado_id","tecnico_id","tecnico_nome","finalizado_por_id","finalizado_por_nome","filial_id","filial_nome","titulo","descricao","solicitante_nome","solicitante_email","solicitante_telefone","cidade","bloco","sala","setor","categoria","prioridade","status","abertura","inicio_ciclo","atendimento","finalizacao","sla_resposta","sla_resolucao","solucao","ultimo_evento_id","encerramento_estimado","cancelado_por_solicitante","motivo_cancelamento");
  private static final String SELECT="SELECT a.*,a.id registro_id,a.chamado_id id,a.solicitante_nome solicitante,a.tecnico_nome tecnico,(SELECT c.status FROM chamados c WHERE c.id=a.chamado_id) status_atual FROM atendimentos_chamado a";
  public AttendanceArchive(DeskRepository repo){this.repo=repo;}
  private String scope(Account actor){
   if(!actor.support())throw new ResponseStatusException(HttpStatus.FORBIDDEN,"O histórico de atendimentos é exclusivo da equipe de TI.");
   return actor.master()?"1=1":actor.admin()?"a.filial_id IN (SELECT filial_id FROM usuario_filiais WHERE usuario_id="+actor.id()+")":"a.tecnico_id="+actor.id();
  }
- public void capture(long ticketId,Account actor){
+ public void capture(long ticketId,Account actor){capture(ticketId,actor.id(),actor.nome(),!actor.admin());}
+ public void captureRequester(long ticketId,String name){capture(ticketId,null,name,false);}
+ private void capture(long ticketId,Long actorId,String actorName,boolean assign){
   var row=repo.one("SELECT c.*,c.id chamado_id,COALESCE(c.solicitante_nome,u.nome) solicitante_nome,u.email solicitante_email,u.telefone solicitante_telefone,f.nome filial_nome,t.nome tecnico_nome FROM chamados c LEFT JOIN usuarios u ON u.id=c.solicitante_id LEFT JOIN usuarios t ON t.id=c.tecnico_id JOIN filiais f ON f.id=c.filial_id WHERE c.id=?",ticketId);
-  if(row.get("tecnico_id")==null&&!actor.admin()){row.put("tecnico_id",actor.id());row.put("tecnico_nome",actor.nome());}
-  row.put("finalizado_por_id",actor.id());row.put("finalizado_por_nome",actor.nome());row.put("encerramento_estimado",false);
+  if(row.get("tecnico_id")==null&&assign){row.put("tecnico_id",actorId);row.put("tecnico_nome",actorName);}
+  row.put("finalizado_por_id",actorId);row.put("finalizado_por_nome",actorName);row.put("encerramento_estimado",false);
   row.put("ultimo_evento_id",repo.one("SELECT COALESCE(MAX(id),0) last_id FROM auditoria WHERE chamado_id=?",ticketId).get("last_id"));
   // Rebind normalized timestamp strings as temporal values for PostgreSQL.
   for(String field:List.of("abertura","inicio_ciclo","atendimento","finalizacao"))if(row.get(field)!=null)row.put(field,java.time.OffsetDateTime.parse(row.get(field).toString()));
