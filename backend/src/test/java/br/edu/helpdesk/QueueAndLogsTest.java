@@ -27,6 +27,13 @@ class QueueAndLogsTest {
  MockHttpSession session(long id){var session=new MockHttpSession();session.setAttribute("uid",id);session.setAttribute("version",repo.account(id).versaoSessao());return session;}
  long ticket(long branch,String name,int age,String status){return repo.insert("INSERT INTO chamados(titulo,descricao,solicitante_nome,filial_id,cidade,prioridade,status,sla_resposta,sla_resolucao,origem,abertura) VALUES (?,?,'Solicitante',?,'Curitiba','MEDIA',?,5,10,'QR',?)",name,"Descrição",branch,status,OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(age).withNano(0));}
  JsonNode read(String path,MockHttpSession session)throws Exception{return mapper.readTree(mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(path).session(session)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());}
+ @Test void compactDashboardKeepsTotalsAndReportsCompleteWhileActiveListExcludesClosedTickets()throws Exception{
+  long unit=branch("Resumo"),other=branch("Oculta"),admin=user("summary-admin","ADMIN",unit),latest=0;var actor=session(admin);
+  for(int i=0;i<8;i++)latest=ticket(unit,"Aberto "+i,100-i,"ABERTO");
+  ticket(unit,"Cancelado",300,"CANCELADO");ticket(other,"Outra unidade",1,"ABERTO");
+  var dashboard=read("/api/dashboard",actor);assertEquals(9,dashboard.get("total").asInt());assertEquals(5,dashboard.get("chamados").size());assertEquals(latest,dashboard.get("chamados").get(0).get("id").asLong());assertEquals(8,dashboard.get("por_status").get("ABERTO").asInt());
+  assertEquals(9,read("/api/relatorios",actor).get("chamados").size());assertEquals(8,read("/api/chamados?visao=ativos",actor).size());assertEquals(9,read("/api/chamados?visao=todos",actor).size());
+ }
  @Test void fifoUsesOpeningThenIdAndKeepsOtherUnitsOut()throws Exception{
   long a=branch("A"),b=branch("B"),c=branch("C"),tech=user("tech-fifo","SUPORTE",a,b);var session=session(tech);
   long first=ticket(a,"Primeiro",400,"ABERTO"),tie=ticket(b,"Segundo",400,"ABERTO"),newest=ticket(a,"Terceiro",1,"ABERTO"),active=ticket(b,"Em atendimento",600,"EM_ATENDIMENTO"),closed=ticket(a,"Encerrado",1000,"CANCELADO"),foreign=ticket(c,"Outra unidade",2000,"ABERTO");

@@ -38,6 +38,8 @@ A aba Assuntos dos chamados é exclusiva de administradores. Ambos os perfis adm
 
 ## Histórico de atendimentos
 
+O painel consulta atualizações a cada 3 segundos, aguardando a conclusão do ciclo anterior para evitar sobreposição. Temporizadores visíveis continuam atualizando a cada segundo. Requisições GET simultâneas para o mesmo endereço compartilham a consulta em andamento, sem manter cache entre ciclos. Listas idênticas não são reconstruídas apenas pela passagem do tempo. O dashboard retorna os cinco chamados recentes exibidos na tela, preservando os totais e os relatórios completos.
+
 Nos novos chamados públicos, o solicitante pode cancelar com motivo obrigatório pela confirmação de envio ou ao retornar ao QR Code no mesmo navegador. O acesso depende de uma chave aleatória exclusiva, armazenada no navegador; o banco guarda somente o hash dessa chave. O protocolo sozinho não autoriza cancelamento. Chamados finalizados não podem ser cancelados. A reabertura por administrador invalida a chave do ciclo anterior. Chamados antigos, criados sem essa chave, continuam dependendo de um administrador para cancelamento.
 
 O cancelamento do solicitante registra o nome, o motivo e a ação `CANCELADO_SOLICITANTE` na auditoria, notifica a equipe da unidade e preserva o encerramento no histórico. Técnicos continuam sem permissão para cancelar pela API da equipe.

@@ -1,4 +1,5 @@
 let attendanceRows=[],attendanceFiltered=[],attendancePage=1,attendanceLoading=false;
+let attendanceSignature;
 const attendanceSize=10;
 const historyValue=id=>App.$(id).value;
 const historyDate=value=>new Date(value).toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
@@ -16,7 +17,7 @@ function filterAttendance(reset=true){
 }
 async function loadAttendance(reset=false){
  if(attendanceLoading)return;attendanceLoading=true;App.$('refreshAttendance').disabled=true;
- try{attendanceRows=await API.get('/atendimentos');for(const [id,key,label] of [['historyUnit','filial_id','filial_nome'],['historyTechnician','tecnico_id','tecnico']]){const old=historyValue(id),options=[...new Map(attendanceRows.filter(row=>row[key]!=null).map(row=>[row[key],row])).values()];App.options(id,options,key,label,'Todos');App.$(id).value=old;}filterAttendance(reset);}
+ try{attendanceRows=await API.get('/atendimentos');const signature=App.signature(attendanceRows);if(signature===attendanceSignature){if(reset)filterAttendance();return;}attendanceSignature=signature;for(const [id,key,label] of [['historyUnit','filial_id','filial_nome'],['historyTechnician','tecnico_id','tecnico']]){const old=historyValue(id),options=[...new Map(attendanceRows.filter(row=>row[key]!=null).map(row=>[row[key],row])).values()];App.options(id,options,key,label,'Todos');App.$(id).value=old;}filterAttendance(reset);}
  finally{attendanceLoading=false;App.$('refreshAttendance').disabled=false;}
 }
 App.start(async()=>{

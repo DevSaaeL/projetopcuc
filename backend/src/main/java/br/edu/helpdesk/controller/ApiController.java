@@ -62,7 +62,7 @@ public class ApiController {
  @PutMapping("/notificacoes/lidas") void read(){service.readNotification(null);}
  @PutMapping("/notificacoes/{id}/lida") void read(@PathVariable long id){service.readNotification(id);}
  @DeleteMapping("/notificacoes") void clear(){service.clearNotifications();}
- @GetMapping("/dashboard") Object dashboard(){return service.metrics(Map.of());}
+ @GetMapping("/dashboard") Object dashboard(){return service.dashboard();}
  @GetMapping("/logs") Object logs(@RequestParam(required=false) String usuario_id,@RequestParam(required=false) String acao,@RequestParam(required=false) String inicio,@RequestParam(required=false) String fim,@RequestParam(defaultValue="1") int pagina){return logs.search(usuario_id,acao,inicio,fim,pagina);}
  @GetMapping("/relatorios") Object reports(@RequestParam Map<String,String> filters){return service.metrics(filters);}
 }

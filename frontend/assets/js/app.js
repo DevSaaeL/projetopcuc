@@ -1,7 +1,7 @@
 window.LiveUpdates = (() => {
     const refreshers = new Set();
     let user, timer, running = false, stopped = false, initialized = false, highWater = 0;
-    let audio, pendingBell = false;
+    let audio, pendingBell = false, notificationSignature;
     function preferences() { try { return JSON.parse(user.preferencias || '{}'); } catch { return {}; } }
     function storedId() { try { return Number(localStorage.getItem('helpdesk_notifications_' + user.id)) || 0; } catch { return 0; } }
     function remember(id) { highWater = id; try { localStorage.setItem('helpdesk_notifications_' + user.id, String(id)); } catch {} }
@@ -54,6 +54,7 @@ window.LiveUpdates = (() => {
         while (container.children.length > 3) container.firstElementChild.remove();
     }
     function consume(notifications) {
+        const signature=JSON.stringify(notifications);if(signature===notificationSignature)return;notificationSignature=signature;
         const count = notifications.filter(n => !n.lida).length;
         document.querySelectorAll('.notification-count,.notification-badge,.menu-item[href="notificacoes.html"] .menu-badge').forEach(e => e.textContent = count);
         document.querySelectorAll('.notification-dot').forEach(e => e.hidden = !count);
@@ -80,7 +81,7 @@ window.LiveUpdates = (() => {
                 results.forEach(result => { if (result.status === 'rejected') expired(result.reason); });
             }
         } catch (error) { expired(error); }
-        finally { running = false; if (!stopped) timer = setTimeout(tick, 5000); }
+        finally { running = false; if (!stopped) timer = setTimeout(tick, 3000); }
     }
     function start(account) {
         if (user) return;
@@ -107,6 +108,7 @@ window.App = (() => {
     async function run(fn){clearError();try{return await fn();}catch(e){error(e);}}
     function start(fn){const go=()=>run(async()=>{const user=await Auth.ready;if(user)await fn(user);});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();}
     function text(id,value){if($(id))$(id).textContent=value??'';}
+    function signature(value){return JSON.stringify(value,(key,v)=>['servidor_agora','tempo_resposta_segundos','tempo_atendimento_segundos','tempo_total_segundos','resposta_restante_segundos','resolucao_restante_segundos'].includes(key)?undefined:v);}
     function date(value){return value?new Date(value).toLocaleString('pt-BR'):'—';}
     function duration(s){s=Math.max(0,Math.floor(s||0));return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor(s/60)%60<10?'0':''}${Math.floor(s/60)%60}:${(s%60).toString().padStart(2,'0')}`;}
     function options(id,items,valueKey,labelKey,placeholder='Selecione'){const select=$(id);if(!select)return;select.replaceChildren(new Option(placeholder,''),...items.map(v=>new Option(v[labelKey],v[valueKey])));}
@@ -146,7 +148,7 @@ window.App = (() => {
         document.querySelectorAll('.notification-button').forEach(button=>button.addEventListener('click',()=>location.href='notificacoes.html'));
         document.querySelectorAll('.user-profile').forEach(button=>{button.tabIndex=0;button.setAttribute('role','link');button.addEventListener('click',()=>location.href='perfil.html');button.addEventListener('keydown',e=>{if(e.key==='Enter')location.href='perfil.html';});});
     });
-    return {$,esc,labels,statusClass,priorityClass,error,clearError,run,start,text,date,duration,options,saveFile,exportRows,initials,avatar};
+    return {$,esc,signature,labels,statusClass,priorityClass,error,clearError,run,start,text,date,duration,options,saveFile,exportRows,initials,avatar};
 })();
 function toggleSidebar(){document.querySelector('.sidebar')?.classList.toggle('show');document.querySelector('.sidebar-overlay')?.classList.toggle('show');}
 function logout(){if(confirm('Deseja sair do sistema?'))return App.run(()=>Auth.logout());}

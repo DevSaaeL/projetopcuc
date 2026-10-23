@@ -41,7 +41,7 @@ App.start(async()=>{
  App.$('anexoInput').addEventListener('change',()=>App.run(async()=>{for(const file of App.$('anexoInput').files){const data=new FormData();data.append('arquivo',file);await API.post('/chamados/'+chamadoId+'/anexos',data);}App.$('anexoInput').value='';await carregarAnexos();}));
  document.querySelectorAll('[data-anexar]').forEach(b=>b.addEventListener('click',()=>App.$('anexoInput').click()));
  App.$('anexosLista').addEventListener('click',event=>{const b=event.target.closest('[data-download]');if(b)App.run(async()=>App.saveFile(await API.request(detailResource()+'/anexos/'+b.dataset.download,{blob:true}),b.dataset.name));});
- await carregarDetalhes();const clockTimer=setInterval(()=>{if(!document.hidden)atualizarTemporizadores();},1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){atualizarTemporizadores();App.run(carregarDetalhes);}});window.addEventListener('pagehide',()=>clearInterval(clockTimer));const timer=setInterval(()=>{if(!document.hidden)App.run(carregarDetalhes);},15000);window.addEventListener('pagehide',()=>clearInterval(timer));
+ await carregarDetalhes();const clockTimer=setInterval(()=>{if(!document.hidden)atualizarTemporizadores();},1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){atualizarTemporizadores();App.run(carregarDetalhes);}});window.addEventListener('pagehide',()=>clearInterval(clockTimer));const unsubscribe=LiveUpdates.subscribe(carregarDetalhes);window.addEventListener('pagehide',unsubscribe);
 });
 
 // Eventos da estrutura HTML, registrados sem atributos executáveis.

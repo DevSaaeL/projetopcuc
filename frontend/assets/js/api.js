@@ -1,6 +1,8 @@
 window.API = (() => {
     const base = (window.HELPDESK_CONFIG?.apiBase || '').replace(/\/$/, '') + '/api';
     let csrf;
+    const pendingGets=new Map();
+    function get(path){if(pendingGets.has(path))return pendingGets.get(path);const pending=request(path).finally(()=>{if(pendingGets.get(path)===pending)pendingGets.delete(path);});pendingGets.set(path,pending);return pending;}
     async function request(path, options = {}) {
         const method = options.method || 'GET';
         const headers = { ...options.headers };
@@ -25,5 +27,5 @@ window.API = (() => {
         if (options.blob) return response.blob();
         const text = await response.text(); return text ? JSON.parse(text) : null;
     }
-    return { request, get: path => request(path), post: (path, body) => request(path, {method:'POST',body}), put: (path,body) => request(path,{method:'PUT',body}), delete: path => request(path,{method:'DELETE'}), reset: () => {csrf=null;} };
+    return { request, get, post: (path, body) => request(path, {method:'POST',body}), put: (path,body) => request(path,{method:'PUT',body}), delete: path => request(path,{method:'DELETE'}), reset: () => {csrf=null;pendingGets.clear();} };
 })();

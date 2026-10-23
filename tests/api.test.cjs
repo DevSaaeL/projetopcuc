@@ -29,3 +29,6 @@ test('a failed CSRF initialization can be retried', async () => {
  await assert.rejects(api.post('/first', {}), /conectar/);
  await api.post('/first', {}); assert.equal(reads, 2);
 });
+
+test('concurrent GETs share one request but subsequent reads fetch fresh data',async()=>{let release,calls=0;const wait=new Promise(r=>release=r);const api=setup(async()=>{calls++;await wait;return response({version:calls});});const a=api.get('/chamados'),b=api.get('/chamados');assert.equal(calls,1);release();assert.deepEqual(await a,await b);await api.get('/chamados');assert.equal(calls,2);});
+test('failed GET is not cached and can be retried',async()=>{let calls=0;const api=setup(async()=>{if(++calls===1)throw Error('offline');return response([]);});await assert.rejects(api.get('/chamados'));await api.get('/chamados');assert.equal(calls,2);});

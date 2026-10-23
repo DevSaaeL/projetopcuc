@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const code = fs.readFileSync(require('node:path').join(__dirname, '../frontend/assets/js/app.js'), 'utf8');
 const flush = () => new Promise(resolve => setImmediate(resolve));
 function setup({support = true, preferences = '{}'} = {}) {
- const elements = new Map(), listeners = new Map(), timers = new Map(), storage = new Map(), events = [], redirects = [];
+ const delays=[],elements = new Map(), listeners = new Map(), timers = new Map(), storage = new Map(), events = [], redirects = [];
  let sequence = 0, response = [], requests = 0, tones = 0;
  class Element {
   constructor() { this.children = []; this.dataset = {}; this.parent = null; }
@@ -26,9 +26,9 @@ function setup({support = true, preferences = '{}'} = {}) {
  }
  const context = {document, console, CustomEvent:class {constructor(type,options){this.type=type;this.detail=options.detail;}}, location:{pathname:'/pages/chamados.html',search:'',replace:url=>redirects.push(url)}, localStorage:{getItem:key=>storage.get(key),setItem:(key,value)=>storage.set(key,value)}, Auth:{support:()=>support},
   API:{get:async()=>{requests++;if(response instanceof Error)throw response;return await response;}},
-  setTimeout:fn=>{const id=++sequence;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id),addEventListener:()=>{},AudioContext:Audio};
+  setTimeout:(fn,delay)=>{delays.push(delay);const id=++sequence;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id),addEventListener:()=>{},AudioContext:Audio};
  context.window=context;vm.createContext(context);vm.runInContext(code,context);
- return {live:context.LiveUpdates,document,elements,timers,events,redirects,setResponse:v=>response=v,get requests(){return requests;},get tones(){return tones;},
+ return {delays,app:context.App,live:context.LiveUpdates,document,elements,timers,events,redirects,setResponse:v=>response=v,get requests(){return requests;},get tones(){return tones;},
   start:()=>context.LiveUpdates.start({id:7,preferencias:preferences}),
   poll:async()=>{const [id,fn]=timers.entries().next().value;timers.delete(id);await fn();await flush();}};
 }
@@ -62,3 +62,6 @@ test('background tabs receive alerts and refresh their list as soon as they beco
  s.document.hidden=false;s.document.dispatchEvent({type:'visibilitychange'});await flush();assert.equal(refreshes,2);
 });
 
+
+test('refresh is scheduled every three seconds and identical notifications do not redraw',async()=>{const s=setup();s.start();await flush();assert.equal(s.delays.at(-1),3000);const count=s.events.length;await s.poll();assert.equal(s.events.length,count);assert.equal(s.delays.at(-1),3000);});
+test('render signature ignores ticking clocks but preserves status and SLA changes',()=>{const s=setup();const a={id:1,status:'ABERTO',servidor_agora:'a',tempo_resposta_segundos:1,fora_sla:false};assert.equal(s.app.signature(a),s.app.signature({...a,servidor_agora:'b',tempo_resposta_segundos:4}));assert.notEqual(s.app.signature(a),s.app.signature({...a,status:'EM_ATENDIMENTO'}));assert.notEqual(s.app.signature(a),s.app.signature({...a,fora_sla:true}));});

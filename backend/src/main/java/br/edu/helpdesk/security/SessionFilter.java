@@ -12,14 +12,14 @@ public class SessionFilter extends OncePerRequestFilter {
  private final DeskRepository repo;
  public SessionFilter(DeskRepository repo){this.repo=repo;}
  protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain)throws ServletException,IOException{
-  var session=req.getSession(false);
+  var session=req.getSession(false);br.edu.helpdesk.entity.Account user=null;
   if(session!=null && session.getAttribute("uid") instanceof Long id){
-   var user=repo.account(id);
+   user=repo.account(id);
    if(user!=null && user.ativo() && Integer.valueOf(user.versaoSessao()).equals(session.getAttribute("version"))){
     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.email(),null,List.of(new SimpleGrantedAuthority("ROLE_"+user.perfil()))));
    }else {session.invalidate();session=null;}
   }
-  if(session!=null && session.getAttribute("uid") instanceof Long id){var user=repo.account(id);if(user!=null&&user.senhaTemporaria()&&req.getRequestURI().startsWith("/api/")&&!((req.getMethod().equals("GET")&&(req.getRequestURI().equals("/api/auth/me")||req.getRequestURI().equals("/api/auth/csrf")))||(req.getMethod().equals("PUT")&&req.getRequestURI().equals("/api/auth/primeira-senha"))||(req.getMethod().equals("POST")&&(req.getRequestURI().equals("/api/auth/logout")||req.getRequestURI().equals("/api/auth/csrf"))))){res.setStatus(403);res.setContentType("application/json");res.getWriter().write("{\"message\":\"Defina uma nova senha para continuar usando o sistema.\"}");return;}}
+  if(session!=null){if(user!=null&&user.senhaTemporaria()&&req.getRequestURI().startsWith("/api/")&&!((req.getMethod().equals("GET")&&(req.getRequestURI().equals("/api/auth/me")||req.getRequestURI().equals("/api/auth/csrf")))||(req.getMethod().equals("PUT")&&req.getRequestURI().equals("/api/auth/primeira-senha"))||(req.getMethod().equals("POST")&&(req.getRequestURI().equals("/api/auth/logout")||req.getRequestURI().equals("/api/auth/csrf"))))){res.setStatus(403);res.setContentType("application/json");res.getWriter().write("{\"message\":\"Defina uma nova senha para continuar usando o sistema.\"}");return;}}
   chain.doFilter(req,res);
  }
 }
