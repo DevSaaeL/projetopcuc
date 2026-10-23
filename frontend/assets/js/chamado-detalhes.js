@@ -1,4 +1,4 @@
-const detailQuery=new URLSearchParams(location.search),historyView=detailQuery.has('atendimento'),attendanceId=Number(detailQuery.get('atendimento')),chamadoId=Number(detailQuery.get('id'));const detailResource=()=>historyView?'/atendimentos/'+attendanceId:'/chamados/'+chamadoId;let chamadoAtual,receivedAt=0,loadingDetails=false;
+const detailQuery=new URLSearchParams(location.search),historyView=detailQuery.has('atendimento'),attendanceId=Number(detailQuery.get('atendimento')),chamadoId=Number(detailQuery.get('id'));const detailResource=()=>historyView?'/atendimentos/'+attendanceId:'/chamados/'+chamadoId;let chamadoAtual,receivedAt=0,loadingDetails=false,transferSourceId=null,transferLoading=false;
 function voltarChamados(){location.href=historyView?'meus-chamados.html':'chamados.html';}
 function finalizarChamado(){bootstrap.Modal.getOrCreateInstance(App.$('modalFinalizar')).show();}
 async function agir(acao,solucao=''){const result=await API.post('/chamados/'+chamadoId+'/acoes',{acao,solucao});if(result.registro_atendimento){location.replace('chamado-detalhes.html?atendimento='+result.registro_atendimento);return;}await carregarDetalhes();}
@@ -26,6 +26,7 @@ async function carregarDetalhes(){
  document.querySelectorAll('.info-item').forEach(e=>e.querySelector('.info-value').textContent=values[e.querySelector('.info-label').textContent.trim()]||'—');document.querySelector('.description-box').textContent=t.descricao;
  atualizarTemporizadores();
  const cancellation=App.$('requesterCancellationNotice');cancellation.hidden=!t.cancelado_por_solicitante;cancellation.textContent=t.cancelado_por_solicitante?'Chamado cancelado pelo solicitante '+t.solicitante+'. Motivo: '+t.motivo_cancelamento:'';
+ App.$('transferTicket').hidden=historyView||t.somente_leitura||!['EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status)||!t.tecnico_id||!(Auth.admin()||t.tecnico_id===Auth.user.id);
  const terminal=['FINALIZADO','CANCELADO'].includes(t.status);
  const readOnly=historyView||terminal||t.somente_leitura,canAct=Auth.support()&&(Auth.admin()||t.status==='ABERTO'||t.tecnico_id===Auth.user.id);
  document.querySelectorAll('[data-ticket-action]').forEach(b=>{const event=(Object.keys(b.dataset).find(key=>key.startsWith('event'))||'').replaceAll('-','');b.hidden=readOnly||!canAct||(['event2','event8'].includes(event)&&!Auth.admin());b.disabled=terminal||(['event1','event6'].includes(event)&&!['EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status))||(event==='event5'&&!['ABERTO','AGUARDANDO_USUARIO'].includes(t.status))||(event==='event7'&&t.status!=='EM_ATENDIMENTO');});
@@ -37,6 +38,20 @@ async function carregarDetalhes(){
 }
 App.start(async()=>{
  if(!Number.isSafeInteger(historyView?attendanceId:chamadoId)||(historyView?attendanceId:chamadoId)<1)throw Error('Selecione um chamado na lista para visualizar os detalhes.');
+ App.$('transferTicket').addEventListener('click',async()=>{
+  if(transferLoading)return;transferSourceId=chamadoAtual.tecnico_id;App.$('transferForm').reset();App.$('transferError').hidden=true;App.$('confirmTransfer').disabled=true;App.options('transferTechnician',[],'id','nome','Carregando técnicos…');bootstrap.Modal.getOrCreateInstance(App.$('transferModal')).show();
+  transferLoading=true;
+  try{const options=await API.get('/chamados/'+chamadoId+'/tecnicos-transferencia');App.options('transferTechnician',options,'id','nome',options.length?'Selecione o técnico':'Nenhum outro técnico disponível nesta unidade');App.$('confirmTransfer').disabled=!options.length;}
+  catch(e){App.$('transferError').textContent=e.message;App.$('transferError').hidden=false;}
+  finally{transferLoading=false;}
+ });
+ App.$('transferForm').addEventListener('submit',async event=>{
+  event.preventDefault();if(transferLoading)return;const motivo=App.$('transferReason').value.trim();if(!motivo){App.$('transferError').textContent='Informe o motivo da transferência.';App.$('transferError').hidden=false;return;}
+  transferLoading=true;App.$('confirmTransfer').disabled=true;App.$('transferError').hidden=true;
+  try{await API.post('/chamados/'+chamadoId+'/transferir',{tecnicoId:Number(App.$('transferTechnician').value),tecnicoAtualId:transferSourceId,motivo});bootstrap.Modal.getInstance(App.$('transferModal')).hide();App.text('transferFeedback','Chamado transferido com sucesso. O novo técnico foi notificado.');App.$('transferFeedback').hidden=false;await carregarDetalhes();}
+  catch(e){App.$('transferError').textContent=e.message;App.$('transferError').hidden=false;}
+  finally{transferLoading=false;App.$('confirmTransfer').disabled=false;}
+ });
  App.$('reopenTicket').addEventListener('click',()=>{if(confirm('Reabrir este chamado? O registro anterior continuará preservado.'))App.run(async()=>{await API.post('/chamados/'+chamadoAtual.id+'/acoes',{acao:'reabrir'});location.replace('chamado-detalhes.html?id='+chamadoAtual.id);});});
  App.$('anexoInput').addEventListener('change',()=>App.run(async()=>{for(const file of App.$('anexoInput').files){const data=new FormData();data.append('arquivo',file);await API.post('/chamados/'+chamadoId+'/anexos',data);}App.$('anexoInput').value='';await carregarAnexos();}));
  document.querySelectorAll('[data-anexar]').forEach(b=>b.addEventListener('click',()=>App.$('anexoInput').click()));

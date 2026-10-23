@@ -45,7 +45,7 @@ window.LiveUpdates = (() => {
         const latest = notifications[0];
         const alert = document.createElement('div'); alert.className = 'hd-live-alert'; alert.setAttribute('role', 'alert');
         const title = document.createElement('strong');
-        title.textContent = notifications.length === 1 ? 'Novo chamado recebido' : notifications.length + ' novos chamados recebidos';
+        title.textContent = notifications.some(n=>n.titulo==='Chamado transferido para você') ? (notifications.length===1?'Chamado transferido para você':notifications.length+' atualizações de chamados') : notifications.length === 1 ? 'Novo chamado recebido' : notifications.length + ' novos chamados recebidos';
         const link = document.createElement('a'); link.href = 'chamado-detalhes.html?id=' + encodeURIComponent(latest.chamado_id);
         link.textContent = 'Ver chamado #' + String(latest.chamado_id).padStart(6, '0');
         const close = document.createElement('button'); close.type = 'button'; close.textContent = '×';
@@ -60,7 +60,7 @@ window.LiveUpdates = (() => {
         document.querySelectorAll('.notification-dot').forEach(e => e.hidden = !count);
         const threshold = Math.max(highWater, storedId());
         const max = Math.max(threshold, ...notifications.map(n => Number(n.id)));
-        const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && n.titulo === 'Novo chamado') : [];
+        const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && ['Novo chamado','Chamado transferido para você'].includes(n.titulo)) : [];
         remember(max); initialized = true;
         document.dispatchEvent(new CustomEvent('helpdesk:notifications', {detail: notifications}));
         if (Auth.support() && fresh.length) { popup(fresh); bell(); }
@@ -100,7 +100,7 @@ window.LiveUpdates = (() => {
 window.App = (() => {
     const $ = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    const labels = {MASTER_ADMIN:'Administrador mestre',ADMIN:'Administrador',SUPORTE:'Técnico de TI',USUARIO:'Usuário',REABERTO:'Reaberto',ABERTO:'Aberto',EM_ATENDIMENTO:'Em atendimento',AGUARDANDO_USUARIO:'Aguardando usuário',FINALIZADO:'Finalizado',CANCELADO_SOLICITANTE:'Cancelado pelo solicitante',CANCELADO:'Cancelado',BAIXA:'Baixa',MEDIA:'Média',ALTA:'Alta',CRITICA:'Crítica'};
+    const labels = {MASTER_ADMIN:'Administrador mestre',ADMIN:'Administrador',SUPORTE:'Técnico de TI',USUARIO:'Usuário',TRANSFERIDO:'Chamado transferido',REABERTO:'Reaberto',ABERTO:'Aberto',EM_ATENDIMENTO:'Em atendimento',AGUARDANDO_USUARIO:'Aguardando usuário',FINALIZADO:'Finalizado',CANCELADO_SOLICITANTE:'Cancelado pelo solicitante',CANCELADO:'Cancelado',BAIXA:'Baixa',MEDIA:'Média',ALTA:'Alta',CRITICA:'Crítica'};
     const statusClass = {ABERTO:'open',EM_ATENDIMENTO:'progress',AGUARDANDO_USUARIO:'waiting',FINALIZADO:'finished',CANCELADO:'cancelled'};
     const priorityClass = {BAIXA:'low',MEDIA:'medium',ALTA:'high',CRITICA:'critical'};
     function error(e) { let box=$('apiError'); if(!box){box=document.createElement('div');box.id='apiError';box.className='alert alert-danger m-3';box.setAttribute('role','alert');(document.querySelector('main')||document.body).prepend(box);}box.textContent=e.message||String(e);box.hidden=false; }

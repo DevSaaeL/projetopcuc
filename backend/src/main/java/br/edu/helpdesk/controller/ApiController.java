@@ -54,6 +54,8 @@ public class ApiController {
  @GetMapping("/chamados/{id}") Object ticket(@PathVariable long id){return service.ticket(id);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Ticket data){return service.createTicket(data);}
  @PostMapping("/chamados/{id}/acoes") Object action(@PathVariable long id,@Valid @RequestBody Action data){return service.action(id,data);}
+ @GetMapping("/chamados/{id}/tecnicos-transferencia") Object transferCandidates(@PathVariable long id){return service.transferCandidates(id);}
+ @PostMapping("/chamados/{id}/transferir") Object transfer(@PathVariable long id,@Valid @RequestBody Transfer data){return service.transfer(id,data);}
  @GetMapping("/chamados/{id}/historico") Object history(@PathVariable long id){return service.history(id);}
  @GetMapping("/chamados/{id}/anexos") Object attachments(@PathVariable long id){return service.attachments(id);}
  @PostMapping("/chamados/{id}/anexos") void upload(@PathVariable long id,@RequestParam MultipartFile arquivo)throws Exception{service.upload(id,arquivo);}

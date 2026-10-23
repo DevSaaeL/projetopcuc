@@ -13,6 +13,7 @@ public final class Requests {
  public record Ticket(@Size(max=150) String titulo,@Size(max=2000) String descricao,Long filialId,@Size(max=80) String bloco,@Size(max=80) String sala,@Size(max=100) String setor,@Size(max=80) String categoria,@Size(max=40) String tipoAtendimento,@Pattern(regexp="BAIXA|MEDIA|ALTA|CRITICA") String prioridade,@Size(max=36) String qrId,Long assuntoId){}
  public record Message(@NotBlank @Size(max=4000) String mensagem){}
  public record Action(@NotBlank String acao,@Size(max=2000) String solucao){}
+ public record Transfer(@NotNull @Positive Long tecnicoId,@NotNull @Positive Long tecnicoAtualId,@NotBlank @Size(max=1000) String motivo){}
  public record Password(@NotBlank @Size(max=72) String atual,@NotBlank @Size(min=8,max=72) String nova,@NotBlank @Size(max=72) String confirmacao){}
  public record InitialPassword(@NotBlank @Size(min=8,max=72) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s]).{8,72}$") String nova,@NotBlank @Size(max=72) String confirmacao){}
  public record Profile(@NotBlank @Size(max=160) String nome,@Email @NotBlank @Size(max=200) String email,@Size(max=40) String telefone){}

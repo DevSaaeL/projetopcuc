@@ -101,6 +101,27 @@ public class DeskService {
   }r.update("UPDATE chamados SET status=? WHERE id=?",next,id);audit(id,b.acao().equals("reabrir")?"REABERTO":next,text(b.solucao()).isBlank()?"Status: "+old+" → "+next:text(b.solucao()));if(Set.of("FINALIZADO","CANCELADO").contains(next))archive.capture(id,u);notify(id,"chamado","Chamado "+next.toLowerCase(Locale.ROOT).replace('_',' '));return ticket(id);
  }
  public void recordActivity(String action,String description){audit(null,action,description);}
+ private void mayTransfer(Map<String,Object> ticket,Account actor){
+  require(actor.support());require(actor.admin()||Objects.equals(ticket.get("tecnico_id"),actor.id()));
+  if(!Set.of("EM_ATENDIMENTO","AGUARDANDO_USUARIO").contains(ticket.get("status")))throw bad("Somente chamados em atendimento ou aguardando usuário podem ser transferidos.");
+  if(ticket.get("tecnico_id")==null)throw bad("Assuma o chamado antes de transferir.");
+ }
+ public List<Map<String,Object>> transferCandidates(long id){var t=ticket(id);mayTransfer(t,current());return r.rows("SELECT u.id,u.nome FROM usuarios u WHERE u.ativo=true AND u.perfil='SUPORTE' AND u.id<>? AND EXISTS (SELECT 1 FROM usuario_filiais uf WHERE uf.usuario_id=u.id AND uf.filial_id=?) ORDER BY u.nome,u.id",t.get("tecnico_id"),t.get("filial_id"));}
+ public Map<String,Object> transfer(long id,Transfer data){
+  ticket(id);var actor=current();var t=exists(r.one("SELECT * FROM chamados WHERE id=? FOR UPDATE",id));mayTransfer(t,actor);
+  long previous=((Number)t.get("tecnico_id")).longValue();
+  if(previous!=data.tecnicoAtualId())throw new ResponseStatusException(HttpStatus.CONFLICT,"O responsável pelo chamado mudou. Atualize os dados antes de transferir.");
+  if(previous==data.tecnicoId())throw bad("Escolha um técnico diferente do responsável atual.");
+  var destination=r.one("SELECT id,nome FROM usuarios WHERE id=? AND ativo=true AND perfil='SUPORTE' AND EXISTS (SELECT 1 FROM usuario_filiais uf WHERE uf.usuario_id=usuarios.id AND uf.filial_id=?) FOR UPDATE",data.tecnicoId(),t.get("filial_id"));
+  if(destination==null)throw bad("O destino deve ser um técnico ativo vinculado à unidade do chamado.");
+  String reason=text(data.motivo());if(reason.isBlank()||reason.length()>1000)throw bad("Informe o motivo da transferência, com até 1000 caracteres.");
+  String previousName=Objects.toString(r.one("SELECT nome FROM usuarios WHERE id=?",previous).get("nome"));
+  r.update("UPDATE chamados SET tecnico_id=? WHERE id=?",data.tecnicoId(),id);
+  audit(id,"TRANSFERIDO","Transferido de "+previousName+" (ID "+previous+") para "+destination.get("nome")+" (ID "+data.tecnicoId()+"). Motivo: "+reason);
+  r.update("INSERT INTO notificacoes(usuario_id,chamado_id,tipo,titulo) VALUES (?,?,'chamado','Chamado transferido para você')",data.tecnicoId(),id);
+  if(previous!=actor.id())r.update("INSERT INTO notificacoes(usuario_id,chamado_id,tipo,titulo) VALUES (?,?,'chamado','Chamado transferido para outro técnico')",previous,id);
+  return ticket(id);
+ }
  private void audit(Long id,String action,String description){var actor=current();r.update("INSERT INTO auditoria(autor_id,autor_nome,chamado_id,acao,descricao) VALUES (?,?,?,?,?)",actor.id(),actor.nome(),id,action,description);}
  public List<Map<String,Object>> history(long id){ticket(id);return r.rows("SELECT a.*,COALESCE(a.autor_nome,u.nome) autor FROM auditoria a LEFT JOIN usuarios u ON u.id=a.autor_id WHERE a.chamado_id=? ORDER BY a.id",id);}
  public List<Map<String,Object>> activities(){return r.rows("SELECT * FROM auditoria WHERE autor_id=? ORDER BY id DESC LIMIT 100",current().id());}

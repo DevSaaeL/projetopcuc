@@ -45,3 +45,9 @@ Nos novos chamados públicos, o solicitante pode cancelar com motivo obrigatóri
 O cancelamento do solicitante registra o nome, o motivo e a ação `CANCELADO_SOLICITANTE` na auditoria, notifica a equipe da unidade e preserva o encerramento no histórico. Técnicos continuam sem permissão para cancelar pela API da equipe.
 
 Chamados finalizados ou cancelados saem da fila ativa. Técnicos consultam seus próprios atendimentos, inclusive após mudança de unidade; administradores consultam o histórico das unidades permitidas, e o administrador mestre consulta todos. Cada encerramento preserva solução, responsável, datas, histórico e anexos em uma consulta somente leitura. Somente administradores podem reabrir, sem sobrescrever o registro anterior.
+
+## Transferência entre técnicos
+
+O técnico responsável e os administradores podem transferir chamados em atendimento ou aguardando usuário. O destino deve ser outro técnico ativo vinculado à unidade do chamado. O motivo é obrigatório e fica registrado no histórico e nos logs, junto dos responsáveis anterior e novo e de quem realizou a transferência. O novo responsável recebe uma notificação com alerta conforme suas preferências.
+
+A transferência preserva o status e os prazos originais. O responsável anterior perde a permissão de alterar o atendimento; a conclusão é registrada no histórico do novo responsável. Formulários com responsável desatualizado são rejeitados para evitar sobrescrever outra transferência. Chamados abertos sem responsável ou encerrados não podem ser transferidos.
