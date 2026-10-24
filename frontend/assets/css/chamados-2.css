@@ -2,6 +2,22 @@
 .sla-ok { color: rgb(22, 163, 74); }
 .sla-late { color: rgb(220, 38, 38); }
 .sla-finished { color: rgb(100, 116, 139); }
+.mobile-accept-ticket { display: none; }
+@media (max-width: 767px) {
+  table.responsive-ticket-list { display: block; min-width: 0 !important; width: 100%; }
+  .responsive-ticket-list thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .responsive-ticket-list tbody { display: grid; gap: 14px; padding: 12px; }
+  .responsive-ticket-list tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid #dce3ed; border-radius: 14px; padding: 14px; background: #fff; box-shadow: 0 3px 12px #172b4d08; }
+  .responsive-ticket-list tbody td { display: block; min-width: 0; padding: 8px !important; border: 0; white-space: normal !important; overflow-wrap: anywhere; }
+  .responsive-ticket-list tbody td::before { content: attr(data-label); display: block; color: #64748b; font-size: 11px; font-weight: 600; margin-bottom: 5px; }
+  .responsive-ticket-list tbody td:nth-child(1), .responsive-ticket-list tbody td:nth-child(2), .responsive-ticket-list tbody td:nth-child(4), .responsive-ticket-list tbody td:last-child { grid-column: 1 / -1; }
+  .responsive-ticket-list tbody td:nth-child(5), .responsive-ticket-list tbody td:nth-child(6) { display: none; }
+  .responsive-ticket-list tbody td:last-child { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left !important; border-top: 1px solid #edf0f5; margin-top: 8px; }
+  .responsive-ticket-list tbody td:last-child::before { display: none; }
+  .responsive-ticket-list .mobile-accept-ticket { display: block; flex: 1; min-height: 48px; font-weight: 600; }
+  .responsive-ticket-list .btn-icon { min-width: 46px; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+  .responsive-ticket-list .ticket-title { white-space: normal; }
+}
 .input-group-text { border-color: rgb(226, 232, 240); color: rgb(100, 116, 139); }
 #ticketsTable tbody tr { transition: background-color 0.15s; }
 #ticketsTable tbody tr:hover { background-color: rgb(248, 250, 252); }

@@ -45,11 +45,11 @@ window.LiveUpdates = (() => {
         const latest = notifications[0];
         const alert = document.createElement('div'); alert.className = 'hd-live-alert'; alert.setAttribute('role', 'alert');
         const title = document.createElement('strong');
-        title.textContent = notifications.some(n=>n.titulo==='Chamado transferido para você') ? (notifications.length===1?'Chamado transferido para você':notifications.length+' atualizações de chamados') : notifications.length === 1 ? 'Novo chamado recebido' : notifications.length + ' novos chamados recebidos';
+        title.textContent = notifications.length===1 && latest.titulo.startsWith('Chamado cancelado') ? 'Chamado #' + String(latest.chamado_id).padStart(6,'0') + (latest.titulo.endsWith('pelo solicitante')?' cancelado pelo solicitante':' cancelado') : notifications.some(n=>n.titulo==='Chamado transferido para você'||n.titulo.startsWith('Chamado cancelado')) ? (notifications.length===1?'Chamado transferido para você':notifications.length+' atualizações de chamados') : notifications.length === 1 ? 'Novo chamado recebido' : notifications.length + ' novos chamados recebidos';
         const link = document.createElement('a'); link.href = 'chamado-detalhes.html?id=' + encodeURIComponent(latest.chamado_id);
         link.textContent = 'Ver chamado #' + String(latest.chamado_id).padStart(6, '0');
         const close = document.createElement('button'); close.type = 'button'; close.textContent = '×';
-        close.setAttribute('aria-label', 'Fechar aviso de novo chamado'); close.addEventListener('click', () => alert.remove());
+        close.setAttribute('aria-label', 'Fechar aviso de chamado'); close.addEventListener('click', () => alert.remove());
         alert.append(title, link, close); container.append(alert);
         while (container.children.length > 3) container.firstElementChild.remove();
     }
@@ -60,7 +60,7 @@ window.LiveUpdates = (() => {
         document.querySelectorAll('.notification-dot').forEach(e => e.hidden = !count);
         const threshold = Math.max(highWater, storedId());
         const max = Math.max(threshold, ...notifications.map(n => Number(n.id)));
-        const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && ['Novo chamado','Chamado transferido para você'].includes(n.titulo)) : [];
+        const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && ['Novo chamado','Chamado transferido para você','Chamado cancelado','Chamado cancelado pelo solicitante'].includes(n.titulo)) : [];
         remember(max); initialized = true;
         document.dispatchEvent(new CustomEvent('helpdesk:notifications', {detail: notifications}));
         if (Auth.support() && fresh.length) { popup(fresh); bell(); }
