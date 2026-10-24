@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.multipart.MultipartFile;
 import java.time.*;
 import java.net.URI;
 import java.util.*;
@@ -25,7 +24,7 @@ public class DeskService {
  @Value("${app.sla-response-minutes}") private int responseMinutes;
  @Value("${app.sla-resolution-minutes}") private int resolutionMinutes;
  private static final String USERS="SELECT u.id,u.nome,u.email,u.perfil,u.filial_id,u.ativo,u.telefone,u.setor,u.criado_em,u.preferencias,u.senha_local_ativa,u.senha_temporaria,u.foto_versao,f.nome filial_nome,f.cidade FROM usuarios u LEFT JOIN filiais f ON f.id=u.filial_id";
- private static final String TICKETS="SELECT c.*,COALESCE(c.solicitante_nome,u.nome) solicitante,u.email solicitante_email,u.telefone solicitante_telefone,f.nome filial_nome,t.nome tecnico FROM chamados c LEFT JOIN usuarios u ON u.id=c.solicitante_id JOIN filiais f ON f.id=c.filial_id LEFT JOIN usuarios t ON t.id=c.tecnico_id";
+ private static final String TICKETS="SELECT c.*,COALESCE(c.solicitante_nome,u.nome) solicitante,f.nome filial_nome,t.nome tecnico FROM chamados c LEFT JOIN usuarios u ON u.id=c.solicitante_id JOIN filiais f ON f.id=c.filial_id LEFT JOIN usuarios t ON t.id=c.tecnico_id";
  public DeskService(DeskRepository r,PasswordEncoder encoder,AttendanceArchive archive){this.r=r;this.encoder=encoder;this.archive=archive;}
  public static ResponseStatusException bad(String m){return new ResponseStatusException(HttpStatus.BAD_REQUEST,m);}
  private static void require(boolean ok){if(!ok)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Você não tem permissão para esta operação.");}
@@ -94,7 +93,6 @@ public class DeskService {
   switch(b.acao()){
    case "assumir" -> {if(!old.equals("ABERTO")&&!old.equals("AGUARDANDO_USUARIO"))throw new ResponseStatusException(HttpStatus.CONFLICT,"Chamado já assumido ou encerrado.");next="EM_ATENDIMENTO";r.update("UPDATE chamados SET tecnico_id=?,atendimento=COALESCE(atendimento,CURRENT_TIMESTAMP) WHERE id=?",u.id(),id);}
    case "finalizar" -> {if(!Set.of("EM_ATENDIMENTO","AGUARDANDO_USUARIO").contains(old))throw bad("Assuma o chamado antes de finalizar.");if(text(b.solucao()).isBlank())throw bad("Informe a solução aplicada.");next="FINALIZADO";r.update("UPDATE chamados SET finalizacao=CURRENT_TIMESTAMP,solucao=? WHERE id=?",text(b.solucao()),id);}
-   case "aguardar" -> {if(!old.equals("EM_ATENDIMENTO"))throw bad("O chamado não está em atendimento.");next="AGUARDANDO_USUARIO";}
    case "cancelar" -> {require(u.admin());if(Set.of("FINALIZADO","CANCELADO").contains(old))throw bad("Chamado já encerrado.");next="CANCELADO";r.update("UPDATE chamados SET finalizacao=CURRENT_TIMESTAMP WHERE id=?",id);}
    case "reabrir" -> {require(u.admin());if(!Set.of("FINALIZADO","CANCELADO").contains(old))throw bad("Somente chamados encerrados podem ser reabertos.");next="ABERTO";r.update("UPDATE chamados SET finalizacao=null,tecnico_id=null,atendimento=null,solucao='',inicio_ciclo=CURRENT_TIMESTAMP,cancelado_por_solicitante=false,motivo_cancelamento='',chave_cancelamento_hash=null WHERE id=?",id);}
    default -> throw bad("Ação inválida.");
@@ -129,9 +127,6 @@ public class DeskService {
  public List<Map<String,Object>> notifications(){return r.rows("SELECT n.* FROM notificacoes n JOIN chamados c ON c.id=n.chamado_id WHERE n.usuario_id=? AND "+scope(current())+" ORDER BY n.id DESC",current().id());}
  public void readNotification(Long id){if(id!=null){if(r.update("UPDATE notificacoes SET lida=true WHERE id=? AND usuario_id=?",id,current().id())==0)throw new ResponseStatusException(HttpStatus.NOT_FOUND);}else r.update("UPDATE notificacoes SET lida=true WHERE usuario_id=?",current().id());}
  public void clearNotifications(){r.update("DELETE FROM notificacoes WHERE usuario_id=?",current().id());}
- public List<Map<String,Object>> attachments(long id){ticket(id);return r.rows("SELECT id,chamado_id,autor_id,nome,tamanho,criado_em FROM anexos WHERE chamado_id=? ORDER BY criado_em",id);}
- public void upload(long id,MultipartFile file)throws java.io.IOException {ticket(id);var t=exists(r.one("SELECT * FROM chamados WHERE id=? FOR UPDATE",id));var actor=current();if(actor.support()&&!actor.admin()&&!"ABERTO".equals(t.get("status")))require(Objects.equals(t.get("tecnico_id"),actor.id()));if(Set.of("FINALIZADO","CANCELADO").contains(t.get("status")))throw bad("Chamado encerrado.");String name=text(file.getOriginalFilename()).replace('\\','/');name=name.substring(name.lastIndexOf('/')+1);if(file.isEmpty()||file.getSize()>10*1024*1024||name.length()>255||!name.toLowerCase(Locale.ROOT).matches(".+\\.(jpg|jpeg|png|pdf|doc|docx|xls|xlsx|txt)"))throw bad("Arquivo inválido ou maior que 10 MB.");if(attachments(id).size()>=20)throw bad("Limite de 20 anexos por chamado.");r.update("INSERT INTO anexos(id,chamado_id,autor_id,nome,tamanho,conteudo) VALUES (?,?,?,?,?,?)",UUID.randomUUID().toString(),id,current().id(),name,file.getSize(),file.getBytes());audit(id,"ANEXO","Arquivo anexado: "+name);}
- public Map<String,Object> download(long id,String attachmentId){ticket(id);return exists(r.one("SELECT * FROM anexos WHERE id=? AND chamado_id=?",attachmentId,id));}
  public Map<String,Object> dashboard(){var data=metrics(Map.of());var rows=(List<?>)data.get("chamados");data.put("chamados",rows.stream().limit(5).toList());return data;}
  public Map<String,Object> metrics(Map<String,String> filters){validatePeriod(filters);var list=tickets(false).stream().filter(t->matches(t,filters)).sorted(Comparator.<Map<String,Object>,Instant>comparing(t->Instant.parse(t.get("abertura").toString())).thenComparingLong(t->((Number)t.get("id")).longValue()).reversed()).toList();var result=new LinkedHashMap<String,Object>();result.put("total",list.size());
   for(String key:List.of("status","prioridade","filial_nome","cidade","tecnico","categoria"))result.put("por_"+key,list.stream().collect(Collectors.groupingBy(t->Objects.toString(t.get(key),"Não atribuído"),TreeMap::new,Collectors.counting())));

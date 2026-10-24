@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
@@ -29,7 +28,6 @@ class AttendanceHistoryTest {
  long ticket(long branch){return repo.insert("INSERT INTO chamados(titulo,descricao,solicitante_nome,filial_id,cidade,prioridade,sla_resposta,sla_resolucao,origem) VALUES ('Impressora','Falha de impressão','Maria',?,'Londrina','MEDIA',5,10,'QR')",branch);}
  JsonNode read(String path,MockHttpSession session)throws Exception{return mapper.readTree(mvc.perform(get(path).session(session)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());}
  JsonNode act(long ticket,MockHttpSession session,String action,String solution)throws Exception{return mapper.readTree(mvc.perform(post("/api/chamados/"+ticket+"/acoes").session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("acao",action,"solucao",solution)))).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());}
- String upload(long ticket,MockHttpSession session,String name)throws Exception{mvc.perform(multipart("/api/chamados/"+ticket+"/anexos").file(new MockMultipartFile("arquivo",name,"text/plain",name.getBytes())).session(session).with(csrf())).andExpect(status().isOk());return read("/api/chamados/"+ticket+"/anexos",session).get(read("/api/chamados/"+ticket+"/anexos",session).size()-1).get("id").asText();}
  @Test void closureLeavesActiveQueueAndOnlyOwnerOrScopedAdminCanConsultIt()throws Exception{
   long a=branch("A"),b=branch("B"),one=actor("one","SUPORTE",a),two=actor("two","SUPORTE",a),adminA=actor("admin-a","ADMIN",a),adminB=actor("admin-b","ADMIN",b),id=ticket(a);
   var first=session(one);var second=session(two);assertEquals(1,read("/api/chamados",second).size());act(id,first,"assumir","");
@@ -43,15 +41,13 @@ class AttendanceHistoryTest {
   mvc.perform(post("/api/chamados/"+id+"/acoes").session(first).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"reabrir\"}")).andExpect(status().isForbidden());
   assertEquals("Driver reinstalado",read("/api/atendimentos/"+record,first).get("solucao").asText());
  }
- @Test void reopenedTicketKeepsPreviousSolutionFilesHistoryAndTechnicianLink()throws Exception{
+ @Test void reopenedTicketKeepsPreviousSolutionHistoryAndTechnicianLink()throws Exception{
   long a=branch("A"),one=actor("original","SUPORTE",a),two=actor("replacement","SUPORTE",a),id=ticket(a);var first=session(one);var second=session(two);
-  act(id,first,"assumir","");String oldFile=upload(id,first,"evidencia-original.txt");long original=act(id,first,"finalizar","Solução original").get("registro_atendimento").asLong();
+  act(id,first,"assumir","");long original=act(id,first,"finalizar","Solução original").get("registro_atendimento").asLong();
   int oldEvents=read("/api/atendimentos/"+original+"/historico",first).size();String originalDate=read("/api/atendimentos/"+original,first).get("finalizacao").asText();
-  mvc.perform(multipart("/api/chamados/"+id+"/anexos").file(new MockMultipartFile("arquivo","alteracao.txt","text/plain","x".getBytes())).session(first).with(csrf())).andExpect(status().isBadRequest());
   var reopened=act(id,master(),"reabrir","");assertNull(repo.one("SELECT tecnico_id FROM chamados WHERE id=?",id).get("tecnico_id"));assertEquals("",reopened.get("solucao").asText());assertEquals(1,read("/api/chamados",second).size());
-  assertEquals(1,read("/api/atendimentos",first).size());act(id,second,"assumir","");String newFile=upload(id,second,"evidencia-nova.txt");long replacement=act(id,second,"finalizar","Solução posterior").get("registro_atendimento").asLong();
-  var preserved=read("/api/atendimentos/"+original,first);assertEquals("Solução original",preserved.get("solucao").asText());assertEquals("original",preserved.get("tecnico").asText());assertEquals(originalDate,preserved.get("finalizacao").asText());assertEquals(oldEvents,read("/api/atendimentos/"+original+"/historico",first).size());assertEquals(1,read("/api/atendimentos/"+original+"/anexos",first).size());
-  mvc.perform(get("/api/atendimentos/"+original+"/anexos/"+oldFile).session(first)).andExpect(status().isOk()).andExpect(content().bytes("evidencia-original.txt".getBytes()));mvc.perform(get("/api/atendimentos/"+original+"/anexos/"+newFile).session(first)).andExpect(status().isNotFound());
+  assertEquals(1,read("/api/atendimentos",first).size());act(id,second,"assumir","");long replacement=act(id,second,"finalizar","Solução posterior").get("registro_atendimento").asLong();
+  var preserved=read("/api/atendimentos/"+original,first);assertEquals("Solução original",preserved.get("solucao").asText());assertEquals("original",preserved.get("tecnico").asText());assertEquals(originalDate,preserved.get("finalizacao").asText());assertEquals(oldEvents,read("/api/atendimentos/"+original+"/historico",first).size());
   mvc.perform(get("/api/atendimentos/"+replacement).session(first)).andExpect(status().isNotFound());assertEquals(1,read("/api/atendimentos",first).size());assertEquals(1,read("/api/atendimentos",second).size());assertEquals(2,read("/api/atendimentos",master()).size());
  }
  @Test void technicianRetainsOwnRecordsAfterMovingUnitsButDoesNotGainOtherRecords()throws Exception{

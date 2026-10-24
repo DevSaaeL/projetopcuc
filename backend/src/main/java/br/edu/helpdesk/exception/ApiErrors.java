@@ -11,5 +11,5 @@ public class ApiErrors {
  @ExceptionHandler(MethodArgumentNotValidException.class) ResponseEntity<?> validation(MethodArgumentNotValidException e){return ResponseEntity.badRequest().body(Map.of("message","Dados inválidos. Confira os campos e seus limites.","fields",e.getBindingResult().getFieldErrors().stream().map(f->f.getField()).distinct().toList()));}
  @ExceptionHandler(DataIntegrityViolationException.class) ResponseEntity<?> conflict(){return ResponseEntity.status(409).body(Map.of("message","Registro duplicado ou vinculado a outros dados."));}
  @ExceptionHandler({org.springframework.http.converter.HttpMessageNotReadableException.class,org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class}) ResponseEntity<?> malformed(){return ResponseEntity.badRequest().body(Map.of("message","Dados ou identificador inválidos."));}
- @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class) ResponseEntity<?> upload(){return ResponseEntity.status(413).body(Map.of("message","Limite de anexos excedido (10 MB por arquivo)."));}
+ @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class) ResponseEntity<?> upload(){return ResponseEntity.status(413).body(Map.of("message","Arquivo maior que o limite permitido."));}
 }

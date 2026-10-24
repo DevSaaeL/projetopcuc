@@ -16,7 +16,7 @@ As senhas locais existentes continuam funcionando. Uma conta anteriormente usada
 
 ## Câmera e chamados
 
-Novo chamado usa a câmera para identificar o local; o navegador pede permissão ao clicar no botão. O leitor usa jsQR 1.4.0, distribuído localmente com licença Apache-2.0 em frontend/assets/vendor, sem enviar imagens da câmera ao servidor. URLs de outros sites são rejeitadas. A câmera fecha ao sair da página ou concluir a leitura. A conversa do chamado e suas APIs foram removidas; histórico de ações e anexos continuam disponíveis.
+Novo chamado usa a câmera para identificar o local; o navegador pede permissão ao clicar no botão. O leitor usa jsQR 1.4.0, distribuído localmente com licença Apache-2.0 em frontend/assets/vendor, sem enviar imagens da câmera ao servidor. URLs de outros sites são rejeitadas. A câmera fecha ao sair da página ou concluir a leitura. A conversa do chamado e suas APIs foram removidas; o histórico de ações continua disponível.
 
 ## Banco
 
@@ -44,10 +44,18 @@ Nos novos chamados públicos, o solicitante pode cancelar com motivo obrigatóri
 
 O cancelamento do solicitante registra o nome, o motivo e a ação `CANCELADO_SOLICITANTE` na auditoria, notifica a equipe da unidade e preserva o encerramento no histórico. Técnicos continuam sem permissão para cancelar pela API da equipe.
 
-Chamados finalizados ou cancelados saem da fila ativa. Técnicos consultam seus próprios atendimentos, inclusive após mudança de unidade; administradores consultam o histórico das unidades permitidas, e o administrador mestre consulta todos. Cada encerramento preserva solução, responsável, datas, histórico e anexos em uma consulta somente leitura. Somente administradores podem reabrir, sem sobrescrever o registro anterior.
+Chamados finalizados ou cancelados saem da fila ativa. Técnicos consultam seus próprios atendimentos, inclusive após mudança de unidade; administradores consultam o histórico das unidades permitidas, e o administrador mestre consulta todos. Cada encerramento preserva solução, responsável, datas, histórico em uma consulta somente leitura. Somente administradores podem reabrir, sem sobrescrever o registro anterior.
 
 ## Transferência entre técnicos
 
 O técnico responsável e os administradores podem transferir chamados em atendimento ou aguardando usuário. O destino deve ser outro técnico ativo vinculado à unidade do chamado. O motivo é obrigatório e fica registrado no histórico e nos logs, junto dos responsáveis anterior e novo e de quem realizou a transferência. O novo responsável recebe uma notificação com alerta conforme suas preferências.
 
 A transferência preserva o status e os prazos originais. O responsável anterior perde a permissão de alterar o atendimento; a conclusão é registrada no histórico do novo responsável. Formulários com responsável desatualizado são rejeitados para evitar sobrescrever outra transferência. Chamados abertos sem responsável ou encerrados não podem ser transferidos.
+
+## Simplificação do atendimento
+
+Assumir um chamado executa a ação diretamente, na lista e nos detalhes, sem confirmação adicional. Cliques repetidos são bloqueados enquanto a requisição está em andamento; a API mantém a validação de unidade e a proteção contra dois técnicos assumirem o mesmo chamado.
+
+A ação Aguardar usuário e as APIs de anexos foram removidas, junto da interface, dos eventos JavaScript, das consultas periódicas de anexos e dos estilos antigos de chat e upload. E-mail e telefone do solicitante não são exibidos nem retornados nas consultas de chamados e atendimentos. Os dados de contato do perfil continuam disponíveis na própria conta.
+
+As migrações já aplicadas, os arquivos antigos no banco e os registros de auditoria foram preservados. Referências a estados e ações antigos permanecem somente para interpretar o histórico e permitir concluir ou transferir chamados que já estavam aguardando usuário. Novos atendimentos não entram mais nesse estado.

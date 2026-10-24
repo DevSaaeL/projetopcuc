@@ -1336,43 +1336,6 @@ textarea.form-control {
 
 
 /* ============================================================
-   CHAT
-   ============================================================ */
-
-.chat-avatar,
-.message-avatar {
-    background:
-        var(--pucpr-primary) !important;
-
-    color:
-        var(--white) !important;
-}
-
-
-.chat-input textarea:focus,
-.comment-box textarea:focus {
-    border-color:
-        var(--pucpr-primary) !important;
-
-    box-shadow:
-        0 0 0 3px rgba(139, 0, 0, 0.10) !important;
-}
-
-
-.btn-send,
-.send-message {
-    background:
-        var(--pucpr-primary) !important;
-
-    border-color:
-        var(--pucpr-primary) !important;
-
-    color:
-        var(--white) !important;
-}
-
-
-/* ============================================================
    TIMELINE
    ============================================================ */
 
@@ -1727,7 +1690,6 @@ textarea.form-control {
 /* Navegação compartilhada: mantém as variantes existentes no desktop. */
 html body .sidebar a[hidden] { display:none !important; }
 .hd-menu-button { display:none; }
-.message-bubble { white-space:pre-wrap; overflow-wrap:anywhere; }
 @media(max-width:991.98px) {
  html body .sidebar { transform:translateX(-100%) !important; }
  html body .sidebar.show { display:flex !important; transform:translateX(0) !important; width:250px !important; z-index:1060 !important; }
@@ -1893,7 +1855,6 @@ html body .sidebar a[hidden] { display:none !important; }
 /* Navegação responsiva compartilhada. */
 html body .sidebar a[hidden] { display:none !important; }
 .hd-menu-button { display:none; }
-.message-bubble { white-space:pre-wrap; overflow-wrap:anywhere; }
 @media(max-width:991.98px) {
  html body .sidebar { transform:translateX(-100%) !important; }
  html body .sidebar.show { display:flex !important; transform:translateX(0) !important; width:250px !important; z-index:1060 !important; }

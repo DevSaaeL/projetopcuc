@@ -49,17 +49,12 @@ public class ApiController {
  @GetMapping("/atendimentos") Object attendances(){return archive.list(service.current());}
  @GetMapping("/atendimentos/{id}") Object attendance(@PathVariable long id){return archive.record(id,service.current());}
  @GetMapping("/atendimentos/{id}/historico") Object attendanceHistory(@PathVariable long id){return archive.history(id,service.current());}
- @GetMapping("/atendimentos/{id}/anexos") Object attendanceAttachments(@PathVariable long id){return archive.attachments(id,service.current());}
- @GetMapping("/atendimentos/{id}/anexos/{aid}") ResponseEntity<byte[]> attendanceDownload(@PathVariable long id,@PathVariable String aid){var a=archive.download(id,aid,service.current());return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).header(HttpHeaders.CONTENT_DISPOSITION,ContentDisposition.attachment().filename(a.get("nome").toString(),java.nio.charset.StandardCharsets.UTF_8).build().toString()).body((byte[])a.get("conteudo"));}
  @GetMapping("/chamados/{id}") Object ticket(@PathVariable long id){return service.ticket(id);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Ticket data){return service.createTicket(data);}
  @PostMapping("/chamados/{id}/acoes") Object action(@PathVariable long id,@Valid @RequestBody Action data){return service.action(id,data);}
  @GetMapping("/chamados/{id}/tecnicos-transferencia") Object transferCandidates(@PathVariable long id){return service.transferCandidates(id);}
  @PostMapping("/chamados/{id}/transferir") Object transfer(@PathVariable long id,@Valid @RequestBody Transfer data){return service.transfer(id,data);}
  @GetMapping("/chamados/{id}/historico") Object history(@PathVariable long id){return service.history(id);}
- @GetMapping("/chamados/{id}/anexos") Object attachments(@PathVariable long id){return service.attachments(id);}
- @PostMapping("/chamados/{id}/anexos") void upload(@PathVariable long id,@RequestParam MultipartFile arquivo)throws Exception{service.upload(id,arquivo);}
- @GetMapping("/chamados/{id}/anexos/{aid}") ResponseEntity<byte[]> download(@PathVariable long id,@PathVariable String aid){var a=service.download(id,aid);return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).header(HttpHeaders.CONTENT_DISPOSITION,ContentDisposition.attachment().filename(a.get("nome").toString(),java.nio.charset.StandardCharsets.UTF_8).build().toString()).body((byte[])a.get("conteudo"));}
  @GetMapping("/notificacoes") Object notifications(){return service.notifications();}
  @PutMapping("/notificacoes/lidas") void read(){service.readNotification(null);}
  @PutMapping("/notificacoes/{id}/lida") void read(@PathVariable long id){service.readNotification(id);}
