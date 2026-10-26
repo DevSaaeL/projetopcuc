@@ -3,7 +3,7 @@ function voltarChamados(){location.href=historyView?'meus-chamados.html':'chamad
 function finalizarChamado(){bootstrap.Modal.getOrCreateInstance(App.$('modalFinalizar')).show();}
 async function agir(acao,solucao=''){const result=await API.post('/chamados/'+chamadoId+'/acoes',{acao,solucao});if(result.registro_atendimento){location.replace('chamado-detalhes.html?atendimento='+result.registro_atendimento);return;}await carregarDetalhes();}
 let assumingTicket=false;
-function assumirChamado(){if(assumingTicket)return;assumingTicket=true;App.run(async()=>{try{await agir('assumir');}finally{assumingTicket=false;}});}
+function assumirChamado(){if(chamadoAtual?.status!=='ABERTO'){finalizarChamado();return;}if(assumingTicket)return;assumingTicket=true;App.run(async()=>{try{await agir('assumir');}finally{assumingTicket=false;}});}
 function cancelarChamado(){if(!Auth.admin())return;if(confirm('Deseja cancelar este chamado?'))App.run(()=>agir('cancelar'));}
 function confirmarFinalizacao(){App.run(async()=>{const solucao=App.$('solucaoFinal').value.trim();if(!solucao)throw Error('Informe a solução aplicada.');await agir('finalizar',solucao);bootstrap.Modal.getInstance(App.$('modalFinalizar')).hide();});}
 async function carregarHistorico(){const history=await API.get(detailResource()+'/historico');document.querySelector('.timeline').innerHTML=history.map(h=>`<div class="timeline-item"><div class="timeline-icon"><i class="bi bi-clock"></i></div><div class="timeline-title">${App.esc(App.labels[h.acao]||h.acao)}</div><div class="timeline-text">${App.esc(h.autor)}: ${App.esc(h.descricao)}</div><div class="timeline-time">${App.date(h.criado_em)}</div></div>`).join('');}
@@ -28,10 +28,11 @@ async function carregarDetalhes(){
  App.$('transferTicket').hidden=historyView||t.somente_leitura||!['EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status)||!t.tecnico_id||!(Auth.admin()||t.tecnico_id===Auth.user.id);
  const terminal=['FINALIZADO','CANCELADO'].includes(t.status);
  const readOnly=historyView||terminal||t.somente_leitura,canAct=Auth.support()&&(Auth.admin()||t.status==='ABERTO'||t.tecnico_id===Auth.user.id);
- document.querySelectorAll('[data-ticket-action]').forEach(b=>{const event=(Object.keys(b.dataset).find(key=>key.startsWith('event'))||'').replaceAll('-','');b.hidden=readOnly||!canAct||(['event2','event8'].includes(event)&&!Auth.admin());b.disabled=terminal||(['event1','event6'].includes(event)&&!['EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status))||(event==='event5'&&!['ABERTO','AGUARDANDO_USUARIO'].includes(t.status));});
+ document.querySelectorAll('[data-ticket-action]').forEach(b=>{const event=(Object.keys(b.dataset).find(key=>key.startsWith('event'))||'').replaceAll('-','');b.hidden=readOnly||!canAct||(['event2','event8'].includes(event)&&!Auth.admin());b.disabled=terminal;});
  App.$('readOnlyActions').hidden=!readOnly&&canAct;App.$('readOnlyActions').textContent=readOnly?'Registro disponível somente para consulta.':'Atendimento sob responsabilidade de outro técnico.';App.$('backToHistory').hidden=!readOnly;App.$('reopenTicket').hidden=!Auth.admin()||!t.pode_reabrir;
  App.$('solutionCard').hidden=!readOnly&&!t.solucao;App.text('recordedSolution',t.solucao||'Nenhuma solução registrada para este encerramento.');App.text('closureBy','Encerrado em '+App.date(t.finalizacao)+(t.finalizado_por_nome?' · Registrado por '+t.finalizado_por_nome:''));
  App.$('attendanceNotice').hidden=!historyView;if(historyView)App.text('attendanceNotice','Atendimento #'+t.registro_id+' · Registro da conclusão, somente para consulta. '+(['ABERTO','EM_ATENDIMENTO','AGUARDANDO_USUARIO'].includes(t.status_atual)?'Este chamado está em um novo ciclo de atendimento. ':'')+(t.encerramento_estimado?'O horário original de encerramento deste registro antigo não está disponível.':''));
+ const primary=document.querySelector('[data-event-5]');const finishing=t.status!=='ABERTO';primary.disabled=readOnly||!canAct;primary.className='btn '+(finishing?'btn-success':'btn-puc-primary');primary.textContent=finishing?'Finalizar chamado':'Assumir chamado';primary.setAttribute('aria-label',primary.textContent);
  await carregarHistorico();}finally{loadingDetails=false;}
 }
 App.start(async()=>{
@@ -56,9 +57,7 @@ App.start(async()=>{
 
 // Eventos da estrutura HTML, registrados sem atributos executáveis.
 document.querySelector('[data-event-0]')?.addEventListener('click', function(event) { voltarChamados(); });
-document.querySelector('[data-event-1]')?.addEventListener('click', function(event) { finalizarChamado(); });
 document.querySelector('[data-event-2]')?.addEventListener('click', function(event) { cancelarChamado(); });
 document.querySelector('[data-event-5]')?.addEventListener('click', function(event) { assumirChamado(); });
-document.querySelector('[data-event-6]')?.addEventListener('click', function(event) { finalizarChamado(); });
 document.querySelector('[data-event-8]')?.addEventListener('click', function(event) { cancelarChamado(); });
 document.querySelector('[data-event-9]')?.addEventListener('click', function(event) { confirmarFinalizacao(); });

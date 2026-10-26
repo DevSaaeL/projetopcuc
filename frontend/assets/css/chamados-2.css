@@ -17,6 +17,7 @@
   .responsive-ticket-list tbody td:last-child::before { display: none; }
   .responsive-ticket-list .mobile-accept-ticket { display: block; order: -1; flex: 0 0 100%; width: 100%; min-height: 56px; font-size: 17px; font-weight: 700; border-radius: 10px; background: #a6192e; border-color: #a6192e; color: #fff; touch-action: manipulation; }
   .responsive-ticket-list .mobile-accept-ticket:disabled { opacity: .7; }
+  .responsive-ticket-list .mobile-finish-ticket { background: #198754; border-color: #198754; }
   .responsive-ticket-list .ticket-secondary-actions { width: 100%; }
   .responsive-ticket-list .ticket-details-link { flex: 1; gap: 8px; }
   .responsive-ticket-list .mobile-action-label { display: inline; }

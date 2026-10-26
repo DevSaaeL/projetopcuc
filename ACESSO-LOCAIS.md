@@ -59,3 +59,5 @@ Assumir um chamado executa a ação diretamente, na lista e nos detalhes, sem co
 A ação Aguardar usuário e as APIs de anexos foram removidas, junto da interface, dos eventos JavaScript, das consultas periódicas de anexos e dos estilos antigos de chat e upload. E-mail e telefone do solicitante não são exibidos nem retornados nas consultas de chamados e atendimentos. Os dados de contato do perfil continuam disponíveis na própria conta.
 
 As migrações já aplicadas, os arquivos antigos no banco e os registros de auditoria foram preservados. Referências a estados e ações antigos permanecem somente para interpretar o histórico e permitir concluir ou transferir chamados que já estavam aguardando usuário. Novos atendimentos não entram mais nesse estado.
+
+O botão principal dos detalhes e dos cartões no celular muda de Assumir chamado para Finalizar chamado após a assunção. A finalização na lista exige informar a solução e usa a mesma API de encerramento, preservando as permissões e o registro em Meus chamados.
