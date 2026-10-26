@@ -3,6 +3,7 @@
 .sla-late { color: rgb(220, 38, 38); }
 .sla-finished { color: rgb(100, 116, 139); }
 .mobile-accept-ticket { display: none; }
+.mobile-action-label { display: none; }
 @media (max-width: 767px) {
   table.responsive-ticket-list { display: block; min-width: 0 !important; width: 100%; }
   .responsive-ticket-list thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -14,7 +15,12 @@
   .responsive-ticket-list tbody td:nth-child(5), .responsive-ticket-list tbody td:nth-child(6) { display: none; }
   .responsive-ticket-list tbody td:last-child { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left !important; border-top: 1px solid #edf0f5; margin-top: 8px; }
   .responsive-ticket-list tbody td:last-child::before { display: none; }
-  .responsive-ticket-list .mobile-accept-ticket { display: block; flex: 1; min-height: 48px; font-weight: 600; }
+  .responsive-ticket-list .mobile-accept-ticket { display: block; order: -1; flex: 0 0 100%; width: 100%; min-height: 56px; font-size: 17px; font-weight: 700; border-radius: 10px; background: #a6192e; border-color: #a6192e; color: #fff; touch-action: manipulation; }
+  .responsive-ticket-list .mobile-accept-ticket:disabled { opacity: .7; }
+  .responsive-ticket-list .ticket-secondary-actions { width: 100%; }
+  .responsive-ticket-list .ticket-details-link { flex: 1; gap: 8px; }
+  .responsive-ticket-list .mobile-action-label { display: inline; }
+  .responsive-ticket-list .technician-extra-menu { display: none; }
   .responsive-ticket-list .btn-icon { min-width: 46px; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
   .responsive-ticket-list .ticket-title { white-space: normal; }
 }
