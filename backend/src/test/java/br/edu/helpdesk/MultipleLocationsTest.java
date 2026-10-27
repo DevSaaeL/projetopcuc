@@ -23,6 +23,25 @@ class MultipleLocationsTest {
  MockHttpSession session(long id){var session=new MockHttpSession();session.setAttribute("uid",id);session.setAttribute("version",repo.account(id).versaoSessao());return session;}
  JsonNode create(MockHttpSession session,String path,Object data)throws Exception{var result=body(mvc.perform(post(path).session(session).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data))).andExpect(status().isOk()).andReturn());if(path.equals("/api/usuarios"))repo.update("UPDATE usuarios SET senha_temporaria=false WHERE id=?",result.get("id").asLong());return result;}
  Map<String,Object> user(String name,String role,List<Long> locations){return Map.of("nome",name,"email",name+"@locations.test","perfil",role,"filialIds",locations,"ativo",true);}
+ @Test @org.springframework.transaction.annotation.Transactional
+ void singleBranchTechnicianCannotReadAnotherBranchEvenWithForgedFilters()throws Exception{
+  var master=session(repo.account("master@locations.test").id());
+  long local=create(master,"/api/filiais",Map.of("nome","Unidade permitida","cidade","Londrina","estado","PR","ativo",true)).get("id").asLong();
+  long foreign=create(master,"/api/filiais",Map.of("nome","Unidade restrita","cidade","Curitiba","estado","PR","ativo",true)).get("id").asLong();
+  long techId=create(master,"/api/usuarios",user("single-branch-tech","SUPORTE",List.of(local))).get("id").asLong();var tech=session(techId);
+  long own=create(master,"/api/chamados",Map.of("titulo","Local permitido","descricao","Teste local","filialId",local)).get("id").asLong();
+  long hidden=create(master,"/api/chamados",Map.of("titulo","Informação de outra unidade","descricao","Teste restrito","filialId",foreign)).get("id").asLong();
+  for(String path:List.of("/api/chamados","/api/chamados?visao=todos","/api/chamados?filial_id="+foreign)){
+   var tickets=body(mvc.perform(get(path).session(tech)).andExpect(status().isOk()).andReturn());assertEquals(1,tickets.size());assertEquals(own,tickets.get(0).get("id").asLong());assertEquals(local,tickets.get(0).get("filial_id").asLong());
+  }
+  mvc.perform(get("/api/auth/me").session(tech)).andExpect(jsonPath("$.locais.length()").value(1)).andExpect(jsonPath("$.locais[0].id").value(local));
+  mvc.perform(get("/api/filiais").session(tech)).andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].id").value(local));
+  mvc.perform(get("/api/dashboard").session(tech)).andExpect(jsonPath("$.total").value(1));
+  mvc.perform(get("/api/relatorios?filial_id="+foreign).session(tech)).andExpect(jsonPath("$.total").value(0));
+  mvc.perform(get("/api/chamados/"+hidden).session(tech)).andExpect(status().isNotFound());
+  mvc.perform(post("/api/chamados/"+hidden+"/acoes").session(tech).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{\"acao\":\"assumir\"}")).andExpect(status().isNotFound());
+  for(String path:List.of("/api/usuarios","/api/qrcodes","/api/assuntos","/api/admin/recorrencias","/api/admin/saude"))mvc.perform(get(path).session(tech)).andExpect(status().isForbidden());
+ }
  @Test void technicianWithTwoLocationsCannotAccessAThirdAndChangesRevokeSessions()throws Exception{
   var master=session(repo.account("master@locations.test").id());
   assertEquals(0,body(mvc.perform(get("/api/filiais").session(master)).andReturn()).size());

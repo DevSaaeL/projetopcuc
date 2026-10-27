@@ -35,3 +35,4 @@
 @media (max-width: 768px) {
   #ticketsTable { min-width: 1250px; }
 }
+:where(html[data-page="chamados"]) #ticketFilters [hidden] { display: none !important; }

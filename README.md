@@ -18,6 +18,8 @@ O frontend usa a API da mesma origem (`apiBase: ''`).
 
 ## Acompanhamento e gestão
 
+Na lista de chamados ativos, técnicos têm busca, status e período, com identificação de suas filiais de atuação. Técnicos vinculados a uma única filial não veem seletores de cidade, filial ou técnico. Quando há mais de uma filial atribuída, o seletor mostra somente seus locais cadastrados. Os filtros administrativos completos ficam disponíveis aos administradores. A restrição dos dados é aplicada também no servidor, independentemente dos filtros enviados pelo navegador.
+
 A equipe gerencia os atendimentos pelo painel, sem menu ou formulário interno de "Novo chamado". A abertura pelo solicitante começa no QR Code do local. O endereço antigo `novo-chamado.html?qr=...` continua redirecionando ao formulário público, preservando os códigos já impressos. O endereço antigo sem QR Code redireciona à lista de chamados da equipe.
 
 Solicitantes recebem um link público de acompanhamento, sem login, com protocolo, assunto, status e posição na fila da filial. A fila é ordenada pelo início do ciclo e pelo identificador do chamado; inclui todos os chamados não encerrados, inclusive os assumidos e os que aguardam o solicitante. A posição não representa previsão de horário. O acompanhamento atualiza a cada 10 segundos e não expõe nomes, contatos, anexos ou soluções.

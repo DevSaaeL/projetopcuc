@@ -301,7 +301,7 @@
                 </h2>
 
                 <p class="text-muted mb-0">
-                    Visualize, filtre e acompanhe os chamados de TI.
+                    Visualize, filtre e acompanhe os chamados de TI.</p><p id="ticketScope" class="small text-muted mb-0 mt-2" role="status" hidden>
                 </p>
 
             </div>
@@ -463,7 +463,7 @@
              FILTROS
         ================================================== -->
 
-        <div class="dashboard-card mb-4">
+        <div class="dashboard-card mb-4" id="ticketFilters">
 
 
             <div class="d-flex align-items-center justify-content-between mb-3">
@@ -505,7 +505,7 @@
 
                 <!-- BUSCA -->
 
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-4" data-basic-filter>
 
                     <label class="form-label">
                         Buscar chamado
@@ -534,7 +534,7 @@
 
                 <!-- STATUS -->
 
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2" data-basic-filter>
 
                     <label class="form-label">
                         Status
@@ -573,7 +573,7 @@
 
                 <!-- PRIORIDADE -->
 
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2" data-ticket-filter hidden>
 
                     <label class="form-label">
                         Prioridade
@@ -612,7 +612,7 @@
 
                 <!-- CATEGORIA -->
 
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2" data-ticket-filter hidden>
 
                     <label class="form-label">
                         Categoria
@@ -675,7 +675,7 @@
 
                 <!-- SLA -->
 
-                <div class="col-6 col-lg-2">
+                <div class="col-6 col-lg-2" data-ticket-filter hidden>
 
                     <label class="form-label">
                         SLA
@@ -711,7 +711,7 @@
 
                 <!-- CIDADE -->
 
-                <div class="col-6 col-lg-3">
+                <div class="col-6 col-lg-3" data-ticket-filter hidden>
 
                     <label class="form-label">
                         Cidade
@@ -721,23 +721,7 @@
                         id="cityFilter"
                         class="form-select"
                     >
-
-                        <option value="">
-                            Todas
-                        </option>
-
-                        <option value="londrina">
-                            Londrina
-                        </option>
-
-                        <option value="cambe">
-                            Cambé
-                        </option>
-
-                        <option value="maringa">
-                            Maringá
-                        </option>
-
+                        <option value="">Todos</option>
                     </select>
 
                 </div>
@@ -746,7 +730,7 @@
 
                 <!-- FILIAL -->
 
-                <div class="col-6 col-lg-3">
+                <div class="col-6 col-lg-3" data-ticket-filter hidden>
 
                     <label class="form-label">
                         Filial
@@ -756,27 +740,7 @@
                         id="branchFilter"
                         class="form-select"
                     >
-
-                        <option value="">
-                            Todas
-                        </option>
-
-                        <option value="matriz">
-                            Matriz Londrina
-                        </option>
-
-                        <option value="centro">
-                            Unidade Centro
-                        </option>
-
-                        <option value="cambe">
-                            Unidade Cambé
-                        </option>
-
-                        <option value="maringa">
-                            Unidade Maringá
-                        </option>
-
+                        <option value="">Todos</option>
                     </select>
 
                 </div>
@@ -785,7 +749,7 @@
 
                 <!-- TÉCNICO -->
 
-                <div class="col-6 col-lg-3">
+                <div class="col-6 col-lg-3" data-ticket-filter hidden>
 
                     <label class="form-label">
                         Técnico
@@ -795,23 +759,7 @@
                         id="technicianFilter"
                         class="form-select"
                     >
-
-                        <option value="">
-                            Todos
-                        </option>
-
-                        <option value="samuel">
-                            Samuel
-                        </option>
-
-                        <option value="joao">
-                            João Silva
-                        </option>
-
-                        <option value="carlos">
-                            Carlos Souza
-                        </option>
-
+                        <option value="">Todos</option>
                     </select>
 
                 </div>
@@ -820,7 +768,7 @@
 
                 <!-- DATA -->
 
-                <div class="col-6 col-lg-3">
+                <div class="col-6 col-lg-3" data-basic-filter>
 
                     <label class="form-label">
                         Período
@@ -1206,7 +1154,7 @@
 <script src="../assets/js/auth.js"></script>
 <script src="../assets/js/app.js"></script>
 <script src="../assets/js/ticket-clock.js"></script>
-<script src="../assets/js/tickets.js"></script>
+<script src="../assets/js/ticket-scope.js"></script><script src="../assets/js/tickets.js"></script>
 <script src="../assets/js/chamados.js"></script>
 
 
