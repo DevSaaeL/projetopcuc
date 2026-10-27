@@ -1,0 +1,48 @@
+html[data-page="admin-insights"] {
+    --puc-red: #a6192e;
+    --muted: #64748b;
+}
+html[data-page="admin-insights"] .sidebar {
+    width: 250px;
+}
+html[data-page="admin-insights"] .main-content {
+    min-width: 0;
+}
+html[data-page="admin-insights"] .card-custom {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+}
+html[data-page="admin-insights"] .page-subtitle {
+    margin-bottom: 0;
+}
+html[data-page="admin-insights"] .table {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+html[data-page="admin-insights"] .table th {
+    color: var(--text-secondary);
+    background: #f7f9fc;
+    white-space: nowrap;
+}
+html[data-page="admin-insights"] .table th,
+html[data-page="admin-insights"] .table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+}
+html[data-page="admin-insights"] #healthDetails dd {
+    overflow-wrap: anywhere;
+}
+@media(max-width:575.98px) {
+    html[data-page="admin-insights"] .page-content { padding: 16px; }
+    html[data-page="admin-insights"] .card-custom.p-4 { padding: 18px !important; }
+    html[data-page="admin-insights"] .card-custom > .d-flex {
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-start !important;
+    }
+    html[data-page="admin-insights"] .h4 { font-size: 20px; }
+    html[data-page="admin-insights"] #insightFilters button { width: 100%; }
+}

@@ -1745,7 +1745,7 @@ html body .sidebar a[hidden] { display:none !important; }
 :where(html[data-page="ler-qrcode"]) *,
 :where(html[data-page="login"]) *,
 :where(html[data-page="qr-codes"]) *,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) *,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) *,
 :where(html[data-page="usuarios"]) * { box-sizing: border-box; }
 :where(html[data-page="chamados"]) html,
 :where(html[data-page="chamados"]) body,
@@ -1770,65 +1770,65 @@ html body .sidebar a[hidden] { display:none !important; }
 :where(html[data-page="dashboard"]) .menu-item:hover,
 :where(html[data-page="filiais"]) .menu-item:hover,
 :where(html[data-page="qr-codes"]) .menu-item:hover,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .menu-item:hover,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .menu-item:hover,
 :where(html[data-page="usuarios"]) .menu-item:hover { color: rgb(255, 255, 255); background: rgba(166, 25, 46, 0.25); }
 :where(html[data-page="dashboard"]) .menu-item.active,
 :where(html[data-page="filiais"]) .menu-item.active,
 :where(html[data-page="qr-codes"]) .menu-item.active,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .menu-item.active,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .menu-item.active,
 :where(html[data-page="usuarios"]) .menu-item.active { color: rgb(255, 255, 255); background: var(--puc-red); }
 :where(html[data-page="filiais"]) body,
 :where(html[data-page="qr-codes"]) body,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) body { margin: 0px; background: var(--background); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) body { margin: 0px; background: var(--background); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
 :where(html[data-page="filiais"]) .sidebar,
 :where(html[data-page="qr-codes"]) .sidebar,
 :where(html[data-page="usuarios"]) .sidebar { top: 0px; left: 0px; bottom: 0px; height: 100vh; z-index: 1000; overflow-y: auto; position: fixed !important; width: 250px !important; background: var(--sidebar) !important; }
 :where(html[data-page="filiais"]) .sidebar-brand,
 :where(html[data-page="qr-codes"]) .sidebar-brand,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .sidebar-brand,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .sidebar-brand,
 :where(html[data-page="usuarios"]) .sidebar-brand { height: 72px; display: flex; align-items: center; gap: 12px; padding: 0px 20px; color: rgb(255, 255, 255); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 :where(html[data-page="filiais"]) .sidebar-brand-icon,
 :where(html[data-page="qr-codes"]) .sidebar-brand-icon,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .sidebar-brand-icon,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .sidebar-brand-icon,
 :where(html[data-page="usuarios"]) .sidebar-brand-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--puc-red); display: flex; align-items: center; justify-content: center; }
 :where(html[data-page="filiais"]) .sidebar-menu,
 :where(html[data-page="qr-codes"]) .sidebar-menu,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .sidebar-menu,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .sidebar-menu,
 :where(html[data-page="usuarios"]) .sidebar-menu { padding: 15px 12px; }
 :where(html[data-page="filiais"]) .menu-title,
 :where(html[data-page="qr-codes"]) .menu-title,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .menu-title { margin: 18px 8px 8px; color: rgb(148, 163, 184); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .menu-title { margin: 18px 8px 8px; color: rgb(148, 163, 184); font-size: 10px; font-weight: 700; text-transform: uppercase; }
 :where(html[data-page="filiais"]) .menu-item,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .menu-item,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .menu-item,
 :where(html[data-page="usuarios"]) .menu-item { min-height: 42px; display: flex; align-items: center; gap: 11px; padding: 10px 12px; margin-bottom: 4px; border-radius: 8px; color: rgb(209, 213, 219); text-decoration: none; font-size: 14px; }
 :where(html[data-page="filiais"]) .menu-item i,
 :where(html[data-page="qr-codes"]) .menu-item i,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .menu-item i { width: 20px; text-align: center; }
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .menu-item i { width: 20px; text-align: center; }
 :where(html[data-page="filiais"]) .main-content,
 :where(html[data-page="qr-codes"]) .main-content,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .main-content,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .main-content,
 :where(html[data-page="usuarios"]) .main-content { width: calc(100% - 250px); margin-left: 250px; min-height: 100vh; }
 :where(html[data-page="filiais"]) .topbar,
 :where(html[data-page="qr-codes"]) .topbar,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .topbar,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .topbar,
 :where(html[data-page="usuarios"]) .topbar { height: 82px; background: rgb(255, 255, 255); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0px 30px; }
 :where(html[data-page="filiais"]) .page-title,
 :where(html[data-page="qr-codes"]) .page-title,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .page-title,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .page-title,
 :where(html[data-page="usuarios"]) .page-title { margin: 0px; font-size: 25px; font-weight: 700; }
 :where(html[data-page="filiais"]) .page-subtitle,
 :where(html[data-page="qr-codes"]) .page-subtitle,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .page-subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .page-subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
 :where(html[data-page="filiais"]) .user-area,
 :where(html[data-page="qr-codes"]) .user-area,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .user-area,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .user-area,
 :where(html[data-page="usuarios"]) .user-area { display: flex; align-items: center; gap: 10px; }
 :where(html[data-page="filiais"]) .user-avatar,
 :where(html[data-page="qr-codes"]) .user-avatar,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--puc-red); color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--puc-red); color: rgb(255, 255, 255); display: flex; align-items: center; justify-content: center; font-weight: 700; }
 :where(html[data-page="filiais"]) .page-content,
 :where(html[data-page="qr-codes"]) .page-content,
-:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"])) .page-content,
+:where(html:is([data-page="relatorios"],[data-page="logs"],[data-page="assuntos"],[data-page="atendimentos"],[data-page="admin-insights"])) .page-content,
 :where(html[data-page="usuarios"]) .page-content { padding: 30px; }
 :where(html[data-page="filiais"]) .card-custom,
 :where(html[data-page="qr-codes"]) .card-custom,
