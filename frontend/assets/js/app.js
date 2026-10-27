@@ -59,7 +59,7 @@ window.LiveUpdates = (() => {
         document.querySelectorAll('.notification-count,.notification-badge,.menu-item[href="notificacoes.html"] .menu-badge').forEach(e => e.textContent = count);
         document.querySelectorAll('.notification-dot').forEach(e => e.hidden = !count);
         const threshold = Math.max(highWater, storedId());
-        const max = Math.max(threshold, ...notifications.map(n => Number(n.id)));
+        const max = notifications.reduce((max, notification) => Math.max(max, Number(notification.id)), threshold);
         const fresh = initialized ? notifications.filter(n => Number(n.id) > threshold && !n.lida && n.tipo === 'chamado' && ['Novo chamado','Chamado transferido para você','Chamado cancelado','Chamado cancelado pelo solicitante'].includes(n.titulo)) : [];
         remember(max); initialized = true;
         document.dispatchEvent(new CustomEvent('helpdesk:notifications', {detail: notifications}));
@@ -81,7 +81,7 @@ window.LiveUpdates = (() => {
                 results.forEach(result => { if (result.status === 'rejected') expired(result.reason); });
             }
         } catch (error) { expired(error); }
-        finally { running = false; if (!stopped) timer = setTimeout(tick, 3000); }
+        finally { running = false; if (!stopped) timer = setTimeout(tick, document.hidden ? 15000 : 3000); }
     }
     function start(account) {
         if (user) return;

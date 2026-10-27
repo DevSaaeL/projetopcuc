@@ -23,8 +23,8 @@ public class PublicTicketService {
  }
  @Transactional
  public Map<String,Object> location(String id){var q=qr(id,false);q.put("assuntos",TicketTopicService.active(repo,((Number)q.get("filial_id")).longValue()));
-  var active=repo.rows("SELECT id FROM chamados WHERE filial_id=? AND LOWER(TRIM(bloco))=LOWER(TRIM(?)) AND LOWER(TRIM(sala))=LOWER(TRIM(?)) AND status NOT IN ('FINALIZADO','CANCELADO') ORDER BY COALESCE(inicio_ciclo,abertura),id",q.get("filial_id"),q.get("bloco"),q.get("sala"));
-  q.put("chamados_ativos",active.stream().map(row->receipt(((Number)row.get("id")).longValue())).toList());q.remove("filial_id");return q;}
+  var active=repo.rows(queueQuery("?")+" WHERE c.filial_id=? AND LOWER(TRIM(c.bloco))=LOWER(TRIM(?)) AND LOWER(TRIM(c.sala))=LOWER(TRIM(?)) AND c.status NOT IN ('FINALIZADO','CANCELADO') ORDER BY COALESCE(c.inicio_ciclo,c.abertura),c.id",q.get("filial_id"),q.get("filial_id"),q.get("bloco"),q.get("sala"));
+  q.put("chamados_ativos",active.stream().map(this::publicReceipt).toList());q.remove("filial_id");return q;}
  @Transactional
  public Map<String,Object> create(String qrId,String name,long topicId,String requestId,String key){
   var q=qr(qrId,true);
@@ -34,7 +34,7 @@ public class PublicTicketService {
   var duplicate=repo.one("SELECT id FROM chamados WHERE filial_id=? AND LOWER(TRIM(bloco))=LOWER(TRIM(?)) AND LOWER(TRIM(sala))=LOWER(TRIM(?)) AND assunto_id=? AND status NOT IN ('FINALIZADO','CANCELADO') ORDER BY COALESCE(inicio_ciclo,abertura),id LIMIT 1",q.get("filial_id"),q.get("bloco"),q.get("sala"),topicId);
   if(duplicate!=null){var result=receipt(((Number)duplicate.get("id")).longValue());result.put("ja_existente",true);return result;}
   long id=repo.insert("INSERT INTO chamados(titulo,descricao,solicitante_nome,filial_id,cidade,bloco,sala,prioridade,sla_resposta,sla_resolucao,origem,qr_id,requisicao_id,assunto_id,categoria) VALUES (?,?,?,?,?,?,?,'MEDIA',?,?,'QR',?,?,?,?)",title,"Assunto selecionado: "+title,name.trim(),q.get("filial_id"),q.get("cidade"),q.get("bloco"),q.get("sala"),responseMinutes,resolutionMinutes,qrId,requestId,topicId,title);
-  if(key!=null)repo.update("UPDATE chamados SET chave_cancelamento_hash=? WHERE id=?",hash(key),id);
+  repo.update("UPDATE chamados SET acompanhamento_token=?,chave_cancelamento_hash=? WHERE id=?",UUID.randomUUID().toString(),key==null?null:hash(key),id);
   repo.update("INSERT INTO auditoria(chamado_id,autor_nome,acao,descricao) VALUES (?,?,'ABERTO','Chamado aberto pelo QR Code, sem conta de acesso.')",id,name.trim());
   var targets=repo.rows("SELECT id FROM usuarios WHERE ativo=true AND (perfil='MASTER_ADMIN' OR (perfil IN ('ADMIN','SUPORTE') AND id IN (SELECT usuario_id FROM usuario_filiais WHERE filial_id=?)))",q.get("filial_id"));
   for(var target:targets)repo.update("INSERT INTO notificacoes(usuario_id,chamado_id,tipo,titulo) VALUES (?,?,'chamado','Novo chamado')",target.get("id"),id);
@@ -58,19 +58,22 @@ public class PublicTicketService {
  }
  private Map<String,Object> ownedReceipt(long id){var row=repo.one("SELECT id,status,cancelado_por_solicitante,motivo_cancelamento FROM chamados WHERE id=?",id);var result=receipt(id);result.putAll(row);return result;}
  public Map<String,Object> tracking(String token){
-  var ticket=repo.one("SELECT id FROM chamados WHERE acompanhamento_token=?",token);
+  var ticket=repo.one(queueQuery("(SELECT filial_id FROM chamados WHERE acompanhamento_token=?)")+" WHERE c.acompanhamento_token=?",token,token);
   if(ticket==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Acompanhamento não encontrado. Confira o link recebido.");
-  return receipt(((Number)ticket.get("id")).longValue());
+  return publicReceipt(ticket);
  }
  private Map<String,Object> receipt(long id){
-  var ticket=repo.one("SELECT id,filial_id,assunto_id,titulo,status,abertura,inicio_ciclo,atendimento,finalizacao,acompanhamento_token FROM chamados WHERE id=?",id);
+  return publicReceipt(repo.one(queueQuery("(SELECT filial_id FROM chamados WHERE id=?)")+" WHERE c.id=?",id,id));
+ }
+ private String queueQuery(String branchExpression){
+  return "WITH fila AS (SELECT id,ROW_NUMBER() OVER (ORDER BY COALESCE(inicio_ciclo,abertura),id) posicao_fila FROM chamados WHERE filial_id="+branchExpression+" AND status NOT IN ('FINALIZADO','CANCELADO')) SELECT c.id,c.assunto_id,c.titulo,c.status,c.abertura,c.atendimento,c.finalizacao,c.acompanhamento_token,f.posicao_fila FROM chamados c LEFT JOIN fila f ON f.id=c.id";
+ }
+ private Map<String,Object> publicReceipt(Map<String,Object> ticket){
+  long id=((Number)ticket.get("id")).longValue();
   if(ticket.get("acompanhamento_token")==null){repo.update("UPDATE chamados SET acompanhamento_token=? WHERE id=? AND acompanhamento_token IS NULL",UUID.randomUUID().toString(),id);ticket.put("acompanhamento_token",repo.one("SELECT acompanhamento_token FROM chamados WHERE id=?",id).get("acompanhamento_token"));}
   var result=new LinkedHashMap<String,Object>();
-  for(String key:List.of("assunto_id","titulo","status","abertura","atendimento","finalizacao","acompanhamento_token"))result.put(key,ticket.get(key));
+  for(String key:List.of("assunto_id","titulo","status","abertura","atendimento","finalizacao","acompanhamento_token","posicao_fila"))result.put(key,ticket.get(key));
   result.put("protocolo",String.format("#%06d",id));
-  boolean active=!Set.of("FINALIZADO","CANCELADO").contains(ticket.get("status"));
-  Object cycle=java.time.OffsetDateTime.parse(Objects.toString(ticket.get("inicio_ciclo"),ticket.get("abertura").toString()));
-  result.put("posicao_fila",active?repo.one("SELECT COUNT(*) total FROM chamados WHERE filial_id=? AND status NOT IN ('FINALIZADO','CANCELADO') AND (COALESCE(inicio_ciclo,abertura)<? OR (COALESCE(inicio_ciclo,abertura)=? AND id<=?))",ticket.get("filial_id"),cycle,cycle,id).get("total"):null);
   return result;
  }
 }

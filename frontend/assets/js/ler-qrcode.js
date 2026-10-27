@@ -1,1 +1,1 @@
-location.replace('solicitar.html'+location.search);
+if(location.protocol!=='file:')location.replace('solicitar.html'+location.search+location.hash);

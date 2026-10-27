@@ -61,6 +61,10 @@ test('background tabs receive alerts and refresh their list as soon as they beco
  assert.equal(refreshes,1);assert.equal(s.elements.get('liveTicketAlerts').children.length,1);
  s.document.hidden=false;s.document.dispatchEvent({type:'visibilitychange'});await flush();assert.equal(refreshes,2);
 });
+test('background polling reduces traffic and restores the foreground interval immediately',async()=>{
+ const s=setup();s.start();await flush();s.document.hidden=true;await s.poll();assert.equal(s.delays.at(-1),15000);
+ s.document.hidden=false;s.document.dispatchEvent({type:'visibilitychange'});await flush();assert.equal(s.delays.at(-1),3000);
+});
 
 
 test('refresh is scheduled every three seconds and identical notifications do not redraw',async()=>{const s=setup();s.start();await flush();assert.equal(s.delays.at(-1),3000);const count=s.events.length;await s.poll();assert.equal(s.events.length,count);assert.equal(s.delays.at(-1),3000);});

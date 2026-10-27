@@ -27,7 +27,7 @@ public class AttendanceArchive {
   row.put("ultimo_evento_id",repo.one("SELECT COALESCE(MAX(id),0) last_id FROM auditoria WHERE chamado_id=?",ticketId).get("last_id"));
   // Rebind normalized timestamp strings as temporal values for PostgreSQL.
   for(String field:List.of("abertura","inicio_ciclo","atendimento","finalizacao"))if(row.get(field)!=null)row.put(field,java.time.OffsetDateTime.parse(row.get(field).toString()));
-  long id=repo.insert("INSERT INTO atendimentos_chamado("+String.join(",",COLUMNS)+") VALUES ("+String.join(",",Collections.nCopies(COLUMNS.size(),"?"))+")",COLUMNS.stream().map(row::get).toArray());
+  repo.insert("INSERT INTO atendimentos_chamado("+String.join(",",COLUMNS)+") VALUES ("+String.join(",",Collections.nCopies(COLUMNS.size(),"?"))+")",COLUMNS.stream().map(row::get).toArray());
  }
  private void decorate(Map<String,Object> row){row.remove("solicitante_email");row.remove("solicitante_telefone");row.put("protocolo",String.format("#%06d",((Number)row.get("id")).longValue()));row.put("somente_leitura",true);row.put("posicao_fila",null);TicketTiming.decorate(row,Instant.now());}
  public List<Map<String,Object>> list(Account actor){var rows=repo.rows(SELECT+" WHERE "+scope(actor)+" ORDER BY a.finalizacao DESC,a.id DESC");rows.forEach(this::decorate);return rows;}

@@ -18,6 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class LocalAuthenticationTest {
  @Autowired MockMvc mvc; @Autowired ObjectMapper mapper; @Autowired DeskRepository repo;
+ @Test void oversizedUtf8PasswordIsRejectedWithoutServerError()throws Exception{
+  mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(java.util.Map.of("username","master@local.test","password","é".repeat(50))))).andExpect(status().isUnauthorized());
+ }
  @Test void localAdminLoginGenerationAndPasswordChangeInvalidateOtherSessions()throws Exception{
   String credentials="{\"username\":\"master@local.test\",\"password\":\"OnlyForTests-123456\"}";
   var session=(MockHttpSession)mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(credentials)).andExpect(status().isOk()).andReturn().getRequest().getSession();
