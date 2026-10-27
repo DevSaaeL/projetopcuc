@@ -2,6 +2,7 @@
 <html lang="pt-BR" data-page="usuarios">
 
 <head>
+<script src="../assets/js/theme.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +23,7 @@
 
     <link rel="stylesheet" href="../assets/css/usuarios.css">
 
+<link rel="stylesheet" href="../assets/css/theme.css">
 </head>
 
 <body>
@@ -234,7 +236,7 @@
 
                             <div id="usuarioCredenciais" class="credential-panel mb-4"><label class="form-label" for="usuarioSenha">Senha temporária de acesso</label><div class="input-group mb-2"><input id="usuarioSenha" type="password" class="form-control" readonly autocomplete="off" placeholder="Clique em gerar senha"><button type="button" class="btn btn-outline-secondary" data-password-toggle="usuarioSenha" aria-label="Mostrar senha" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></div><button type="button" id="gerarSenha" class="btn btn-outline-primary"><i class="bi bi-key me-2"></i>Gerar senha aleatória</button><p class="form-text mb-0">No primeiro acesso, será obrigatório criar e confirmar uma senha própria com pelo menos 8 caracteres, letra maiúscula, minúscula, número e caractere especial. Ao editar, gere uma senha apenas se quiser redefinir o acesso.</p></div>
                             <fieldset class="location-selector mb-4"><legend class="form-label fs-6">Locais de atuação</legend><div id="usuarioLocais" class="location-options"></div><div class="form-text">Selecione uma ou mais unidades. Técnicos recebem somente chamados desses locais. O administrador mestre tem acesso a todos.</div></fieldset>
-                            <div class="form-check mb-3"><input id="usuarioAtivo" type="checkbox" class="form-check-input" checked><label for="usuarioAtivo" class="form-check-label">Usuário ativo</label></div>
+                            <fieldset id="usuarioBlocosField" class="location-selector mb-4" hidden><legend class="form-label fs-6">Blocos prioritários</legend><p class="form-text">Marque os blocos pelos quais este técnico é responsável. Ele continuará vendo e podendo atender todos os chamados de suas filiais.</p><div id="usuarioBlocos" class="location-options"></div><a href="blocos.html" class="small">Cadastrar ou gerenciar blocos</a></fieldset><div class="form-check mb-3"><input id="usuarioAtivo" type="checkbox" class="form-check-input" checked><label for="usuarioAtivo" class="form-check-label">Usuário ativo</label></div>
 <button
                                 type="submit"
                                 class="btn btn-puc w-100"

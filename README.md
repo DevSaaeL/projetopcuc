@@ -30,7 +30,7 @@ Administradores acessam **Gestão e saúde** pelo menu. O painel apresenta até 
 
 ## Executar os testes
 
-Na raiz, execute `node scripts/check-frontend.cjs` para validar os arquivos da interface e `node --test tests/*.test.cjs` para os testes JavaScript. A [revisão técnica](docs/REVISAO_2026-10-27.md) registra a limpeza e as otimizações realizadas. A [proposta de blocos prioritários](docs/PROPOSTA_BLOCOS_PRIORITARIOS.md) está disponível para avaliação, sem alteração dessa regra de atendimento.
+Na raiz, execute `node scripts/check-frontend.cjs` para validar os arquivos da interface e `node --test tests/*.test.cjs` para os testes JavaScript. A [revisão técnica](docs/REVISAO_2026-10-27.md) registra a limpeza e as otimizações realizadas. O [guia de blocos prioritários e aparência](docs/PROPOSTA_BLOCOS_PRIORITARIOS.md) explica a configuração implementada e seu uso.
 
 ```powershell
 cd backend

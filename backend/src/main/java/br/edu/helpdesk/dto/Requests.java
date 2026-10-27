@@ -4,10 +4,14 @@ public final class Requests {
  public record Login(@NotBlank @Size(max=200) String username,@NotBlank @Size(max=72) String password){}
  public record Register(@Email @NotBlank @Size(max=200) String email,@NotBlank @Size(min=12,max=72) String senha){}
  public record Branch(@NotBlank @Size(max=160) String nome,@NotBlank @Size(max=120) String cidade,@Pattern(regexp="[A-Z]{2}") @NotNull String estado,@Size(max=300) String endereco,@Size(max=160) String responsavel,@Size(max=40) String telefone,boolean ativo){}
- public record User(@NotBlank @Size(max=160) String nome,@Email @NotBlank @Size(max=200) String email,@Size(max=72) String senha,@NotBlank String perfil,Long filialId,boolean ativo,@Size(max=100) java.util.List<@NotNull Long> filialIds){
+ public record User(@NotBlank @Size(max=160) String nome,@Email @NotBlank @Size(max=200) String email,@Size(max=72) String senha,@NotBlank String perfil,Long filialId,boolean ativo,@Size(max=100) java.util.List<@NotNull Long> filialIds,@Size(max=300) java.util.List<@NotNull @Positive Long> blocoIds){
   public User(String nome,String email,String senha,String perfil,Long filialId,boolean ativo){this(nome,email,senha,perfil,filialId,ativo,null);}
+  public User(String nome,String email,String senha,String perfil,Long filialId,boolean ativo,java.util.List<Long> filialIds){this(nome,email,senha,perfil,filialId,ativo,filialIds,null);}
  }
- public record Qr(@NotBlank @Size(max=160) String nome,@NotNull Long filialId,@NotBlank @Size(max=80) String bloco,@NotBlank @Size(max=80) String sala,@Size(max=300) String descricao){}
+ public record Block(@NotNull @Positive Long filialId,@NotBlank @Size(max=80) String nome,boolean ativo){}
+ public record Qr(@NotBlank @Size(max=160) String nome,@NotNull Long filialId,@NotBlank @Size(max=80) String bloco,@NotBlank @Size(max=80) String sala,@Size(max=300) String descricao,Long blocoId){
+  public Qr(String nome,Long filialId,String bloco,String sala,String descricao){this(nome,filialId,bloco,sala,descricao,null);}
+ }
  public record Topic(@NotNull Long filialId,@NotBlank @Size(max=80) String nome,boolean ativo){}
  public record Topics(@NotEmpty @Size(max=100) java.util.List<@NotNull Long> filialIds,@NotBlank @Size(max=80) String nome,boolean ativo){}
  public record Ticket(@Size(max=150) String titulo,@Size(max=2000) String descricao,Long filialId,@Size(max=80) String bloco,@Size(max=80) String sala,@Size(max=100) String setor,@Size(max=80) String categoria,@Size(max=40) String tipoAtendimento,@Pattern(regexp="BAIXA|MEDIA|ALTA|CRITICA") String prioridade,@Size(max=36) String qrId,Long assuntoId){}

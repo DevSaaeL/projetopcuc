@@ -18,7 +18,7 @@ public class PublicTicketService {
  @Value("${app.sla-resolution-minutes}") private int resolutionMinutes;
  public PublicTicketService(DeskRepository repo,AttendanceArchive archive){this.repo=repo;this.archive=archive;}
  private Map<String,Object> qr(String id,boolean lock){
-  var qr=repo.one("SELECT q.id,q.nome,q.filial_id,q.bloco,q.sala,f.nome filial_nome,f.cidade FROM qrcodes q JOIN filiais f ON f.id=q.filial_id WHERE q.id=? AND q.ativo=true AND f.ativo=true"+(lock?" FOR UPDATE":""),id);
+  var qr=repo.one("SELECT q.id,q.nome,q.filial_id,q.bloco_id,q.bloco,q.sala,f.nome filial_nome,f.cidade FROM qrcodes q JOIN filiais f ON f.id=q.filial_id WHERE q.id=? AND q.ativo=true AND f.ativo=true"+(lock?" FOR UPDATE":""),id);
   if(qr==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND,"QR Code inválido ou desativado. Procure a equipe de TI.");return qr;
  }
  @Transactional
@@ -34,7 +34,7 @@ public class PublicTicketService {
   var duplicate=repo.one("SELECT id FROM chamados WHERE filial_id=? AND LOWER(TRIM(bloco))=LOWER(TRIM(?)) AND LOWER(TRIM(sala))=LOWER(TRIM(?)) AND assunto_id=? AND status NOT IN ('FINALIZADO','CANCELADO') ORDER BY COALESCE(inicio_ciclo,abertura),id LIMIT 1",q.get("filial_id"),q.get("bloco"),q.get("sala"),topicId);
   if(duplicate!=null){var result=receipt(((Number)duplicate.get("id")).longValue());result.put("ja_existente",true);return result;}
   long id=repo.insert("INSERT INTO chamados(titulo,descricao,solicitante_nome,filial_id,cidade,bloco,sala,prioridade,sla_resposta,sla_resolucao,origem,qr_id,requisicao_id,assunto_id,categoria) VALUES (?,?,?,?,?,?,?,'MEDIA',?,?,'QR',?,?,?,?)",title,"Assunto selecionado: "+title,name.trim(),q.get("filial_id"),q.get("cidade"),q.get("bloco"),q.get("sala"),responseMinutes,resolutionMinutes,qrId,requestId,topicId,title);
-  repo.update("UPDATE chamados SET acompanhamento_token=?,chave_cancelamento_hash=? WHERE id=?",UUID.randomUUID().toString(),key==null?null:hash(key),id);
+  repo.update("UPDATE chamados SET acompanhamento_token=?,chave_cancelamento_hash=?,bloco_id=? WHERE id=?",UUID.randomUUID().toString(),key==null?null:hash(key),q.get("bloco_id"),id);
   repo.update("INSERT INTO auditoria(chamado_id,autor_nome,acao,descricao) VALUES (?,?,'ABERTO','Chamado aberto pelo QR Code, sem conta de acesso.')",id,name.trim());
   var targets=repo.rows("SELECT id FROM usuarios WHERE ativo=true AND (perfil='MASTER_ADMIN' OR (perfil IN ('ADMIN','SUPORTE') AND id IN (SELECT usuario_id FROM usuario_filiais WHERE filial_id=?)))",q.get("filial_id"));
   for(var target:targets)repo.update("INSERT INTO notificacoes(usuario_id,chamado_id,tipo,titulo) VALUES (?,?,'chamado','Novo chamado')",target.get("id"),id);

@@ -73,7 +73,7 @@ class PublicTrackingAndInsightsTest {
   mvc.perform(get("/api/admin/recorrencias").session(session(admin))).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(2)).andExpect(jsonPath("$.por_local[0].total").value(2)).andExpect(jsonPath("$.por_local[0].sala").value("101"));
   mvc.perform(get("/api/admin/recorrencias?filial_id="+b).session(session(admin))).andExpect(jsonPath("$.total").value(0));
   mvc.perform(get("/api/admin/recorrencias?inicio=2026-12-31&fim=2026-01-01").session(session(admin))).andExpect(status().isBadRequest());
-  mvc.perform(get("/api/admin/saude").session(session(admin))).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SAUDAVEL")).andExpect(jsonPath("$.migracao").value("12")).andExpect(jsonPath("$.banco_latencia_ms").isNumber());
+  mvc.perform(get("/api/admin/saude").session(session(admin))).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SAUDAVEL")).andExpect(jsonPath("$.migracao").value("13")).andExpect(jsonPath("$.banco_latencia_ms").isNumber());
  }
  @Test @Transactional(propagation=Propagation.NOT_SUPPORTED)
  void simultaneousSubmissionsCreateOnlyOneTicket()throws Exception{

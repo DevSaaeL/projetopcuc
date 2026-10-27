@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-page="qr-codes">
 <head>
+<script src="../assets/js/theme.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Codes | HelpDesk TI</title>
@@ -12,6 +13,7 @@
 
     <link rel="stylesheet" href="../assets/css/qr-codes.css">
     <link rel="stylesheet" href="../assets/css/qr-cartaz-impressao.css">
+<link rel="stylesheet" href="../assets/css/theme.css">
 </head>
 
 <body>
@@ -151,13 +153,7 @@
                                     <label for="qrBloco" class="form-label fw-semibold">
                                         Bloco
                                     </label>
-                                    <input
-                                        type="text"
-                                        id="qrBloco"
-                                        class="form-control"
-                                        placeholder="Ex.: A"
-                                        required
-                                    >
+                                    <select id="qrBloco" class="form-select" required disabled><option value="">Selecione a filial primeiro</option></select><a href="blocos.html" class="small">Gerenciar blocos</a>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
