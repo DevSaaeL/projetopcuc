@@ -17,6 +17,7 @@ public class PublicTicketController {
  @PostMapping("/chamados/{id}/consultar") Object status(@PathVariable long id,@Valid @RequestBody Access data){return service.status(id,data.chave());}
  @PostMapping("/chamados/{id}/cancelar") Object cancel(@PathVariable long id,@Valid @RequestBody Cancellation data){return service.cancel(id,data.chave(),data.motivo());}
  @GetMapping("/qrcodes/{id}") Object location(@PathVariable String id){return service.location(id);}
+ @GetMapping("/acompanhamento/{token}") Object tracking(@PathVariable String token){return service.tracking(token);}
  @PostMapping("/chamados") Object create(@Valid @RequestBody Submission data,HttpServletRequest request){
   var session=request.getSession();
   synchronized(session){

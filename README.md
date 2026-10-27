@@ -16,7 +16,15 @@ Abra `http://localhost:8080/pages/login.html`. O perfil de desenvolvimento usa H
 
 O frontend usa a API da mesma origem (`apiBase: ''`).
 
-## Testes
+## Acompanhamento e gestão
+
+Solicitantes recebem um link público de acompanhamento, sem login, com protocolo, assunto, status e posição na fila da filial. A fila é ordenada pelo início do ciclo e pelo identificador do chamado; inclui todos os chamados não encerrados, inclusive os assumidos e os que aguardam o solicitante. A posição não representa previsão de horário. O acompanhamento atualiza a cada 10 segundos e não expõe nomes, contatos, anexos ou soluções.
+
+A leitura do QR Code mostra os chamados ativos do mesmo local. Uma nova solicitação do mesmo assunto, filial, bloco e sala retorna o chamado ativo existente, sem criar outro ou repetir notificações. Outro assunto ou local continua permitido. Após finalizar ou cancelar, é possível abrir uma nova solicitação. Essa proteção se aplica à abertura pública; a equipe mantém o cadastro manual de chamados. QR Codes diferentes do mesmo local compartilham a verificação, com comparação de bloco e sala sem distinção entre maiúsculas e minúsculas e ignorando espaços nas extremidades.
+
+Administradores acessam **Gestão e saúde** pelo menu. O painel apresenta até 20 locais e assuntos com mais chamados, com filtros por filial e período de abertura, respeitando os locais de atuação. O administrador mestre consulta todas as filiais. A tela de saúde mostra disponibilidade da aplicação e banco, latência, tempo ativo, versão e migração, sem revelar credenciais. Falhas que impeçam autenticação ou acesso à API aparecem como impossibilidade de consultar o sistema. O painel não substitui monitoramento externo nem testes de restauração de backups.
+
+## Executar os testes
 
 ```powershell
 cd backend

@@ -4,7 +4,7 @@ window.Auth = (() => {
     function loginUrl() { return 'login.html?returnTo=' + encodeURIComponent(page + location.search); }
     function destination() {
         const value = new URLSearchParams(location.search).get('returnTo');
-        const allowed = ['dashboard','chamados','novo-chamado','chamado-detalhes','meus-chamados','notificacoes','usuarios','filiais','qr-codes','relatorios','logs','assuntos','perfil','ler-qrcode'];
+        const allowed = ['admin-insights','dashboard','chamados','novo-chamado','chamado-detalhes','meus-chamados','notificacoes','usuarios','filiais','qr-codes','relatorios','logs','assuntos','perfil','ler-qrcode'];
         if (value && allowed.some(name => value === name+'.html' || value.startsWith(name+'.html?'))) return value;
         return 'dashboard.html';
     }
@@ -13,7 +13,7 @@ window.Auth = (() => {
     const ready = (page === 'login.html' || qrEntry) ? Promise.resolve(null) : API.get('/auth/me').then(value => {
         user = value;
         if (user.senha_temporaria && page !== 'primeira-senha.html') { location.replace('primeira-senha.html'); return null; }
-        if (['usuarios.html','filiais.html','qr-codes.html','assuntos.html'].includes(page) && !['ADMIN','MASTER_ADMIN'].includes(user.perfil)) {
+        if (['admin-insights.html','usuarios.html','filiais.html','qr-codes.html','assuntos.html'].includes(page) && !['ADMIN','MASTER_ADMIN'].includes(user.perfil)) {
             location.replace('meus-chamados.html'); return null;
         }
         return user;

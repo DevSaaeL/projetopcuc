@@ -1,0 +1,85 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gestão e saúde | HelpDesk TI</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="../assets/css/style.css" rel="stylesheet"><link href="../assets/css/logs.css" rel="stylesheet"></head><body>
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-icon">
+            <i class="bi bi-headset"></i>
+        </div>
+
+        <span class="fw-bold">
+            HelpDesk TI
+        </span>
+
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <div class="menu-title">Principal</div>
+
+        <a href="dashboard.html" class="menu-item">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="chamados.html" class="menu-item">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Chamados ativos</span>
+        </a>
+
+        <a href="novo-chamado.html" class="menu-item">
+            <i class="bi bi-plus-circle"></i>
+            <span>Novo chamado</span>
+        </a>
+
+        <a href="meus-chamados.html" class="menu-item">
+            <i class="bi bi-person-lines-fill"></i>
+            <span>Meus atendimentos</span>
+        </a>
+
+        <div class="menu-title">Atendimento</div>
+
+        <a href="notificacoes.html" class="menu-item">
+            <i class="bi bi-bell"></i>
+            <span>Notificações</span>
+        </a>
+
+        <div class="menu-title">Administração</div>
+
+        <a href="usuarios.html" class="menu-item">
+            <i class="bi bi-people"></i>
+            <span>Usuários</span>
+        </a>
+
+        <a href="filiais.html" class="menu-item">
+            <i class="bi bi-building"></i>
+            <span>Filiais</span>
+        </a>
+
+        <a href="qr-codes.html" class="menu-item">
+            <i class="bi bi-qr-code"></i>
+            <span>QR Codes</span>
+        </a>
+
+        <a href="relatorios.html" class="menu-item">
+            <i class="bi bi-bar-chart"></i>
+            <span>Relatórios</span>
+        </a>
+<a href="logs.html" class="menu-item"><i class="bi bi-journal-text"></i><span>Logs por usuário</span></a>
+<a href="assuntos.html" class="menu-item"><i class="bi bi-list-check"></i><span>Assuntos dos chamados</span></a>
+
+        <div class="menu-title">Conta</div>
+
+        <a href="perfil.html" class="menu-item">
+            <i class="bi bi-person-circle"></i>
+            <span>Meu perfil</span>
+        </a>
+
+    </nav>
+
+</aside>
+<main class="main-content"><header class="topbar"><div><h1 class="page-title">Gestão e saúde</h1><p class="page-subtitle">Recorrência de problemas e situação do sistema.</p></div></header><section class="page-content">
+<div class="card-custom p-4 mb-4"><h2 class="h4">Problemas recorrentes</h2><p class="text-muted">Quantidade de chamados por local e assunto. Os dados respeitam suas filiais de atuação; chamados cancelados também entram na contagem.</p><form id="insightFilters" class="row g-3 mb-4"><div class="col-md-4"><label class="form-label" for="insightBranch">Filial</label><select class="form-select" id="insightBranch"></select></div><div class="col-md-3"><label class="form-label" for="insightStart">Abertos desde</label><input type="date" class="form-control" id="insightStart"></div><div class="col-md-3"><label class="form-label" for="insightEnd">Abertos até</label><input type="date" class="form-control" id="insightEnd"></div><div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-primary">Aplicar</button></div></form><p id="insightTotal" role="status"></p>
+<h3 class="h5">Locais com mais chamados</h3><div class="table-responsive"><table class="table"><thead><tr><th>Filial</th><th>Bloco</th><th>Sala</th><th>Total</th><th>Ainda ativos</th></tr></thead><tbody id="recurringLocations"></tbody></table></div><h3 class="h5 mt-4">Assuntos com mais chamados</h3><div class="table-responsive"><table class="table"><thead><tr><th>Filial</th><th>Assunto</th><th>Total</th><th>Ainda ativos</th></tr></thead><tbody id="recurringTopics"></tbody></table></div><p class="small text-muted">Até 20 resultados por tabela, do maior para o menor número de ocorrências.</p></div>
+<div class="card-custom p-4"><div class="d-flex justify-content-between align-items-center"><h2 class="h4">Saúde do sistema</h2><button id="refreshHealth" class="btn btn-outline-primary" type="button">Verificar agora</button></div><p id="healthUpdated" role="status">Consultando…</p><div id="healthSummary" class="alert alert-info"></div><dl id="healthDetails" class="row"></dl><p class="small text-muted">A aplicação e o banco são verificados no servidor. Uma falha de conexão também pode impedir esta consulta; esta tela não confirma a existência ou a restauração de backups.</p></div>
+</section></main><script src="../assets/js/config.js"></script><script src="../assets/js/api.js"></script><script src="../assets/js/auth.js"></script><script src="../assets/js/app.js"></script><script src="../assets/js/admin-insights.js"></script></body></html>

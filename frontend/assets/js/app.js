@@ -134,6 +134,14 @@ window.App = (() => {
     }
     start(async user=>{
         if(user.senha_temporaria)return;
+        if(Auth.admin()){
+            const menu=document.querySelector('.sidebar-menu');
+            if(menu&&!menu.querySelector('[href="admin-insights.html"]')){
+                const link=document.createElement('a');link.href='admin-insights.html';link.className='menu-item';
+                if(location.pathname.endsWith('/admin-insights.html'))link.classList.add('active');
+                const icon=document.createElement('i');icon.className='bi bi-activity';const label=document.createElement('span');label.textContent='Gestão e saúde';link.append(icon,label);menu.append(link);
+            }
+        }
         document.querySelectorAll('[href="meus-chamados.html"]').forEach(link=>{const span=link.querySelector('span');if(span)span.textContent=Auth.admin()?'Histórico de chamados':'Meus atendimentos';});
         document.querySelectorAll('.user-avatar').forEach(e=>avatar(e,user));
         document.querySelectorAll('.topbar .user-name,.topbar .fw-semibold,.user-menu-info strong,.sidebar-user .user-info strong').forEach(e=>e.textContent=user.nome);
