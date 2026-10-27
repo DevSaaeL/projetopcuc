@@ -1,6 +1,5 @@
-App.start(async()=>{
- let qrId=null;const form=App.$('ticketForm');
- QrCamera.mount(async id=>{qrId=null;App.$('qrLocationInfo').hidden=true;App.$('assunto').disabled=true;const qr=await API.get('/qrcodes/'+encodeURIComponent(id));const topics=qr.assuntos||[];App.options('assunto',topics,'id','nome','Selecione o assunto');App.$('assunto').disabled=!topics.length;if(!topics.length)throw Error('Nenhum assunto disponível nesta unidade. Procure o administrador.');qrId=id;const label=App.$('qrLocationInfo');label.hidden=false;label.textContent=[qr.filial_nome,qr.cidade,'Bloco '+qr.bloco,'Sala '+qr.sala].join(' · ');});
- App.$('btnCancelar').addEventListener('click',()=>location.href='chamados.html');
- form.addEventListener('submit',event=>{event.preventDefault();App.run(async()=>{if(!qrId)throw Error('Leia o QR Code do local antes de abrir o chamado.');const button=form.querySelector('[type="submit"]');button.disabled=true;try{const result=await API.post('/chamados',{assuntoId:Number(App.$('assunto').value),qrId});QrCamera.stop();App.text('numeroChamado',result.protocolo);bootstrap.Modal.getOrCreateInstance(App.$('modalSucesso')).show();App.$('btnVerChamado').onclick=()=>location.href='chamado-detalhes.html?id='+result.id;App.$('btnNovoChamado').onclick=()=>location.reload();}finally{button.disabled=false;}});});
-});
+// Compatibilidade com os QR Codes já impressos, que usam este endereço.
+if(location.protocol!=='file:'){
+ const query=new URLSearchParams(location.search);
+ location.replace(query.has('qr')?'solicitar.html'+location.search+location.hash:'chamados.html');
+}

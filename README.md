@@ -18,6 +18,8 @@ O frontend usa a API da mesma origem (`apiBase: ''`).
 
 ## Acompanhamento e gestão
 
+A equipe gerencia os atendimentos pelo painel, sem menu ou formulário interno de "Novo chamado". A abertura pelo solicitante começa no QR Code do local. O endereço antigo `novo-chamado.html?qr=...` continua redirecionando ao formulário público, preservando os códigos já impressos. O endereço antigo sem QR Code redireciona à lista de chamados da equipe.
+
 Solicitantes recebem um link público de acompanhamento, sem login, com protocolo, assunto, status e posição na fila da filial. A fila é ordenada pelo início do ciclo e pelo identificador do chamado; inclui todos os chamados não encerrados, inclusive os assumidos e os que aguardam o solicitante. A posição não representa previsão de horário. O acompanhamento atualiza a cada 10 segundos e não expõe nomes, contatos, anexos ou soluções.
 
 A leitura do QR Code mostra os chamados ativos do mesmo local. Uma nova solicitação do mesmo assunto, filial, bloco e sala retorna o chamado ativo existente, sem criar outro ou repetir notificações. Outro assunto ou local continua permitido. Após finalizar ou cancelar, é possível abrir uma nova solicitação. Essa proteção se aplica à abertura pública; a equipe mantém o cadastro manual de chamados. QR Codes diferentes do mesmo local compartilham a verificação, com comparação de bloco e sala sem distinção entre maiúsculas e minúsculas e ignorando espaços nas extremidades.
