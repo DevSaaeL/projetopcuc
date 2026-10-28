@@ -28,8 +28,8 @@ Na aba **QR Codes**, selecione primeiro a filial e depois um bloco ativo cadastr
 
 ## Claro, Escuro e Sistema
 
-O seletor **Aparência** fica no topo das telas, inclusive login e solicitação pública. **Sistema** acompanha a aparência do Windows/navegador; **Claro** e **Escuro** fixam a escolha. A preferência é salva neste navegador e sincronizada entre suas abas. Outros dispositivos têm suas próprias preferências. QR Codes e cartazes mantêm fundo branco para leitura e impressão.
+O sistema utiliza somente o tema claro. O seletor de aparência e o modo escuro foram removidos; preferências antigas do navegador não alteram mais a interface.
 
 ## Validação
 
-Testes cobrem migração dos locais antigos, isolamento de filiais, permissões do catálogo, vínculo dos blocos, compatibilidade com edição por clientes antigos, cobertura por colegas, fila pública, desativação e preservação dos QR Codes, ordenação e persistência de aparência.
+Testes cobrem migração dos locais antigos, isolamento de filiais, permissões do catálogo, vínculo dos blocos, compatibilidade com edição por clientes antigos, cobertura por colegas, fila pública, desativação e preservação dos QR Codes, ordenação.
