@@ -4,6 +4,13 @@
 .sla-finished { color: rgb(100, 116, 139); }
 .mobile-accept-ticket { display: none; }
 .mobile-action-label { display: none; }
+#ticketStatistics[hidden], #technicianViews[hidden] { display: none !important; }
+.technician-views { display: flex; gap: 8px; margin-bottom: 20px; padding: 5px; border: 1px solid var(--border, #e2e8f0); border-radius: 14px; background: var(--surface, #fff); }
+.technician-views button { flex: 1; min-height: 48px; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--text, #334155); font-size: 14px; font-weight: 600; }
+.technician-views button[aria-pressed="true"] { background: #a6192e; color: #fff; }
+.technician-views button:focus-visible { outline: 3px solid #d1788d; outline-offset: 2px; }
+.technician-views span { display: inline-block; min-width: 24px; margin-left: 5px; padding: 2px 6px; border-radius: 7px; background: #94a3b826; font-size: 12px; }
+.technician-views button[aria-pressed="true"] span { background: #ffffff26; }
 @media (max-width: 767px) {
   table.responsive-ticket-list { display: block; min-width: 0 !important; width: 100%; }
   .responsive-ticket-list thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
