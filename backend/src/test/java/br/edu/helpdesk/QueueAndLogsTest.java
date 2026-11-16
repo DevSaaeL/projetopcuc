@@ -45,6 +45,17 @@ class QueueAndLogsTest {
   assertEquals(newest,read("/api/dashboard",session).get("chamados").get(0).get("id").asLong());
   mvc.perform(get("/api/chamados/"+foreign).session(session)).andExpect(status().isNotFound());
  }
+ @Test void technicianPriorityBranchMovesItsTicketsToTheTopWithoutHidingOtherBranches()throws Exception{
+  long a=branch("Rotina"),b=branch("Prioridade"),tech=user("tech-priority","SUPORTE",a,b);var session=session(tech);
+  long first=ticket(a,"Chamado da rotina",600,"ABERTO"),priority=ticket(b,"Chamado prioritário",10,"ABERTO");
+  repo.update("UPDATE usuario_filiais SET prioritario=true WHERE usuario_id=? AND filial_id=?",tech,b);
+  var rows=read("/api/chamados",session);
+  assertEquals(List.of(priority,first),mapper.convertValue(rows,java.util.List.class).stream().map(row->((Number)((Map<?,?>)row).get("id")).longValue()).toList());
+  assertTrue(rows.get(0).get("minha_filial_prioritaria").asBoolean());
+  assertFalse(rows.get(1).get("minha_filial_prioritaria").asBoolean());
+  assertEquals(1,read("/api/chamados/"+priority,session).get("posicao_fila").asInt());
+  assertEquals(2,read("/api/chamados/"+first,session).get("posicao_fila").asInt());
+ }
  @Test void reportsRejectInvalidPeriodsEvenWithoutVisibleTickets()throws Exception{
   long unit=branch("Relatórios"),tech=user("reports-tech","SUPORTE",unit);
   var session=session(tech);

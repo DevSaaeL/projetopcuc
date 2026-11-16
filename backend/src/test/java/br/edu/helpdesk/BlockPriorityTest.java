@@ -43,6 +43,13 @@ class BlockPriorityTest {
   mvc.perform(put("/api/usuarios/"+tech).session(session(admin)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(legacy.replace("["+a+"]","["+b+"]"))).andExpect(status().isOk()).andExpect(jsonPath("$.blocos_prioritarios.length()").value(0));
   assertTrue(repo.rows("SELECT * FROM usuario_blocos WHERE usuario_id=?",tech).isEmpty());
  }
+ @Test void technicianBranchPriorityIsSavedOnlyForAssignedBranches()throws Exception{
+  long a=branch(),b=branch(),admin=user(a,"MASTER_ADMIN"),tech=user(a,"SUPORTE");
+  String update="{\"nome\":\"Técnico\",\"email\":\"tech-priority@test.invalid\",\"perfil\":\"SUPORTE\",\"ativo\":true,\"filialIds\":["+a+","+b+"],\"filialPrioritariaIds\":["+b+"]}";
+  mvc.perform(put("/api/usuarios/"+tech).session(session(admin)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(update)).andExpect(status().isOk()).andExpect(jsonPath("$.filiais_prioritarias[0]").value(b));
+  String outside=update.replace("["+b+"]","[999999]");
+  mvc.perform(put("/api/usuarios/"+tech).session(session(admin)).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(outside)).andExpect(status().isBadRequest());
+ }
  @Test void ownAreaIsPersonalizedButColleaguesCanStillCoverAndPublicQueueIsUnchanged()throws Exception{
   long a=branch(),b=branch(),ana=user(a,"SUPORTE"),bruno=user(a,"SUPORTE"),own=block(a,"A"),other=block(a,"B");
   repo.update("INSERT INTO usuario_blocos(usuario_id,bloco_id) VALUES (?,?)",ana,own);

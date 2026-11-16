@@ -26,7 +26,7 @@ body { background: var(--background); color: var(--text); font-family: Arial, He
 html[data-page="usuarios"] :is(#hd-inline-specificity, .hd-inline-0) { font-size: 11px; }
 .credential-panel,.location-selector{padding:20px;border:1px solid #e3e8f0;border-radius:14px;background:#f8fafc}
 .location-selector legend{float:none;width:auto;font-weight:700;padding:0 6px;color:#172b4d}
-.location-options{display:grid;gap:10px;max-height:310px;overflow:auto;padding:2px}
+.location-options{display:grid;gap:10px;max-height:360px;overflow:auto;padding:2px}
 .location-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #dce3ed;border-radius:10px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s}
 .location-option:hover{border-color:#ac1730;background:#fffafb}
 .location-option:has(input:checked){border-color:#ac1730;background:#fdf0f3;box-shadow:inset 3px 0 #ac1730}
@@ -35,3 +35,13 @@ html[data-page="usuarios"] :is(#hd-inline-specificity, .hd-inline-0) { font-size
 .location-option strong,.location-option small{display:block;overflow-wrap:anywhere}
 .location-option strong{font-size:.9rem;color:#24324a}.location-option small{margin-top:3px;color:#68778c}
 .credential-panel .form-text,.location-selector .form-text{line-height:1.6;margin-top:12px}
+.location-selector-intro{margin:0 0 14px;color:#52637b;font-size:.88rem;line-height:1.55}
+.location-priority-option{align-items:stretch;justify-content:space-between;padding:0;overflow:hidden;cursor:default}
+.location-priority-option:has(input[name="filialIds"]:checked){border-color:#ac1730;background:#fff}
+.location-main{display:flex;align-items:center;gap:14px;flex:1;padding:14px 16px;cursor:pointer;min-width:0}
+.location-priority-toggle{display:flex;align-items:center;gap:8px;align-self:stretch;padding:0 16px;border-left:1px solid #e5eaf1;background:#f8fafc;color:#5c3a16;font-size:.8rem;font-weight:700;white-space:nowrap;cursor:pointer}
+.location-priority-toggle:has(input:checked){background:#fff4d7;color:#825700;box-shadow:inset 3px 0 #e6a700}
+.location-priority-toggle input{width:17px;height:17px;accent-color:#b77800;margin:0}
+.user-priority-summary{display:flex;align-items:center;gap:5px;margin:6px 0;color:#825700;font-size:12px;font-weight:700}
+.user-priority-summary i{color:#b77800}
+@media(max-width:575px){.location-priority-option{display:block}.location-priority-toggle{padding:10px 16px;border-left:0;border-top:1px solid #e5eaf1}.location-main{width:100%}}
